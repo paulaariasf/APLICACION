@@ -1,14 +1,9 @@
 from tkinter import *
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_BARRA_SUPERIOR
-from tkhtmlview import HTMLLabel
-import folium
-
 import json
 import pandas as pd
 import plotly.express as px
-
-from PIL import ImageTk
-import io
+import util.utilEstaciones as utilEstaciones
 
 
 class FormBicicletasFlotantesDesign():
