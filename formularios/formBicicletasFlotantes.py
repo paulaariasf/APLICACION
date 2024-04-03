@@ -32,14 +32,14 @@ class FormBicicletasFlotantesDesign():
 
 
     def cargar_mapa(self):
-            madrid = json.load(open("C:/Users/paula/OneDrive/Escritorio/5CARRERA/TFG/PRUEBAS/madrid-districts.geojson", 'r'))
+            madrid = json.load(open("./madrid-districts.geojson", 'r'))
 
             id_map = {}
             for feature in madrid['features']:
                 feature['id'] = feature['properties']['cartodb_id']
                 id_map[feature['properties']['name']] = feature['id']
 
-            df = pd.read_excel("C:/Users/paula/OneDrive/Escritorio/5CARRERA/TFG/PRUEBAS/bicis_barrios.xlsx")
+            df = pd.read_excel("./bicis_barrios.xlsx")
 
 
             fig = px.choropleth(df, 
