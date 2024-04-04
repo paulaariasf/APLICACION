@@ -1,6 +1,7 @@
 import requests
 import json
 import pandas as pd
+import numpy as np
 
 def devolver_estaciones():
     #Hago login y guardo el token de acceso
@@ -49,19 +50,61 @@ def limites(estaciones):
 
     return maxLon, minLon, maxLat, minLat
 
-def crear_dataframe(estaciones, n, minLon, minLat, lon_celda, lat_celda):
-    # Crear DataFrame 
-    df = pd.DataFrame(0, index=range(n), columns=range(n), dtype=int)  
 
-    # Asignar las coordenadas a las celdas de la cuadrícula y sumar las cantidades asociadas
+def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
+    #Creo matriz para guardar las coordenadas de todos los puntos
+    matriz = [[[minLon, minLat] for _ in range(n+1)] for _ in range(n+1)]
+    idMap = np.empty((n,n))
+
+    for i in range(n+1):
+        for j in range(n+1):
+            matriz[i][j] = [matriz[i][j][0] + lon_celda * j,matriz[i][j][1] + lat_celda * i]
+
+    geojson = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+    
+    #Saco las coordenadas de cada casilla para guardarlas en el geojson
+    #Guardo en el diccionario de datos los ids y los nombres de las zonas
+    datos={
+        'id': [],
+        'name': [],
+        'cantidad': [],
+    }
+    id = 1
+    for i in range (n):
+        for j in range(n):
+            datos['id'].append(id)
+            datos['name'].append(f"Zona {id}")
+            feature = {
+                "type": "Feature",
+                "properties": {"name": f"Zona {id}"},
+                "geometry": {
+                    "coordinates": [[matriz[i][j], matriz[i][j+1], matriz[i+1][j], matriz[i+1][j+1], matriz[i][j]]],
+                    "type": "Polygon"
+                },
+                'id': id
+            }
+            geojson['features'].append(feature)
+            idMap[i][j] = id
+            id = id + 1
+
+    
+    datos['cantidad'] = [0 for i in range(pow(n,2))]
+    
+    #Relleno las cantidades para cada zona
     for id in estaciones:
-        asignar_celda(estaciones[id]['coordinates'], estaciones[id]['bike_bases'], df,
-                      n, minLon, minLat, lon_celda, lat_celda)
+        zona = clasificar_punto(estaciones[id]['coordinates'], lon_celda, lat_celda, minLon, minLat, idMap)
+        datos['cantidad'][zona-1] = datos['cantidad'][zona-1] + estaciones[id]['bike_bases']
+        #print(f"La estacion {id} pertenece a la zona {zona}")
+    
+    df = pd.DataFrame(datos)
 
-    return df
+    return geojson, df
 
-def asignar_celda(coor, cantidad, df, n, minLon, minLat, lon_celda, lat_celda):
-        x, y = coor
-        columna = min(int((x - minLon) / lon_celda), n-1) 
-        fila = min(int((y - minLat) / lat_celda), n-1)
-        df.at[n-1 - fila, columna] += cantidad
+def clasificar_punto(punto, lon_celda, lat_celda, minLon, minLat, idMap):
+    lon, lat = punto
+    zona_lon = int((lon - minLon)/lon_celda)
+    zona_lat = int((lat - minLat)/lat_celda)
+    return int(idMap[zona_lon-1][zona_lat-1])
