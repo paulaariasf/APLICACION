@@ -34,7 +34,7 @@ class FormEstacionesFijasDesign():
         maxLon, minLon, maxLat, minLat = utilEstaciones.limites(estaciones)
 
         # Definir el numero de filas y columnas
-        n = 5
+        n = 10
 
         # Calcular el ancho y alto de cada celda de la cuadrícula
         lon_celda = (maxLon - minLon) / n
@@ -42,8 +42,8 @@ class FormEstacionesFijasDesign():
 
         geo_json, df = utilEstaciones.crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda)
 
-        """
-        cantidadMin = min(estaciones[id]['bike_bases'] for id in estaciones)
+        
+        """cantidadMin = min(estaciones[id]['bike_bases'] for id in estaciones)
         cantidadMax = max(estaciones[id]['bike_bases'] for id in estaciones)
 
         minZona = min(df.values.flatten())
@@ -63,7 +63,7 @@ class FormEstacionesFijasDesign():
 
 
         
-    def cargar_mapa(geo_json, df):
+    def cargar_mapa(self, geo_json, df):
         ruta_archivo = "cuadricula.geojson"
         with open(ruta_archivo, "w") as archivo:
             geojson.dump(geo_json, archivo)
@@ -75,7 +75,8 @@ class FormEstacionesFijasDesign():
                             locations='id', 
                             geojson=geojson_objeto, 
                             color='cantidad', 
-                            hover_name='name')
+                            hover_name='name',
+                            color_continuous_scale='rdylgn')
         fig.update_geos(fitbounds="locations", visible=False)
 
         fig.show()

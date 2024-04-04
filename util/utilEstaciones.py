@@ -81,7 +81,8 @@ def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
                 "type": "Feature",
                 "properties": {"name": f"Zona {id}"},
                 "geometry": {
-                    "coordinates": [[matriz[i][j], matriz[i][j+1], matriz[i+1][j], matriz[i+1][j+1], matriz[i][j]]],
+                    #"coordinates": [[matriz[i][j], matriz[i][j+1], matriz[i+1][j], matriz[i+1][j+1], matriz[i][j]]],
+                    "coordinates": [[matriz[i+1][j], matriz[i+1][j+1], matriz[i][j+1], matriz[i][j], matriz[i+1][j]]],
                     "type": "Polygon"
                 },
                 'id': id
