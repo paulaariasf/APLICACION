@@ -104,6 +104,19 @@ def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
 
     return geojson, df
 
+def crear_df_estaciones(estaciones):
+    data = {"id": [], "name": [], "bike_bases": [], "free_bases": [], "lat": [], "lon": []}
+    for id in estaciones:
+        data['id'].append(id)
+        data['name'].append(estaciones[id]['name'])
+        data['bike_bases'].append(estaciones[id]['bike_bases'])
+        data['free_bases'].append(estaciones[id]['free_bases'])
+        data['lat'].append(estaciones[id]['coordinates'][1])
+        data['lon'].append(estaciones[id]['coordinates'][0])
+    
+    df = pd.DataFrame(data)
+    return df
+
 def clasificar_punto(punto, lon_celda, lat_celda, minLon, minLat, idMap):
     lon, lat = punto
     zona_lon = int((lon - minLon)/lon_celda)
