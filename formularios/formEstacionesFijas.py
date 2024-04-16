@@ -34,7 +34,7 @@ class FormEstacionesFijasDesign():
         maxLon, minLon, maxLat, minLat = utilEstaciones.limites(estaciones)
 
         # Definir el numero de filas y columnas
-        n = 10
+        n = 50
 
         # Calcular el ancho y alto de cada celda de la cuadrícula
         lon_celda = (maxLon - minLon) / n
