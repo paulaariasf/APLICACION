@@ -105,7 +105,7 @@ def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
     return geojson, df
 
 def crear_df_estaciones(estaciones):
-    data = {"id": [], "name": [], "bike_bases": [], "free_bases": [], "lat": [], "lon": []}
+    data = {"id": [], "name": [], "bike_bases": [], "free_bases": [], "lat": [], "lon": [], 'info':[]}
     for id in estaciones:
         data['id'].append(id)
         data['name'].append(estaciones[id]['name'])
@@ -113,6 +113,7 @@ def crear_df_estaciones(estaciones):
         data['free_bases'].append(estaciones[id]['free_bases'])
         data['lat'].append(estaciones[id]['coordinates'][1])
         data['lon'].append(estaciones[id]['coordinates'][0])
+        data['info'].append(estaciones[id]['name'] + ' Bicicletas: ' + str(estaciones[id]['bike_bases']))
     
     df = pd.DataFrame(data)
     return df

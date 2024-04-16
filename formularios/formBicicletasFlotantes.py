@@ -61,10 +61,6 @@ class FormBicicletasFlotantesDesign():
                                 mapbox_style='carto-positron',
                                 color='bike_bases',
                                 size='bike_bases')
-        fig.update_geos(fitbounds="locations", visible=False)
 
-        # Guardar el gráfico como archivo HTML
-        html_file = "scatter_mapbox.html"
-        fig.write_html(html_file)
 
         fig.show()
