@@ -71,13 +71,23 @@ class FormEstacionesFijasDesign():
         with open(ruta_archivo, "r") as archivo:
             geojson_objeto = geojson.load(archivo)
 
-        fig = px.choropleth(df, 
+        """fig = px.choropleth(df, 
                             locations='id', 
                             geojson=geojson_objeto, 
                             color='cantidad', 
                             hover_name='name',
                             color_continuous_scale='rdylgn')
-        fig.update_geos(fitbounds="locations", visible=False)
+        fig.update_geos(fitbounds="locations", visible=False)"""
+
+        mapbox_token = "pk.eyJ1IjoicGF1bGFhcmlhc2YiLCJhIjoiY2x2MWViNTZpMDUzNDJpcnl5YTQ0ZnlhMSJ9.VCTWeNlVpK5UcVMpxeAhkQ"
+        fig = px.choropleth_mapbox(df, geojson=geo_json, locations='id', color='cantidad',
+                                color_continuous_scale="rdylgn",
+                                mapbox_style="carto-positron",
+                                zoom=11, center={"lat": 40.4168, "lon": -3.7038},
+                                opacity=0.5
+                                )
+
+        fig.update_layout(mapbox_accesstoken=mapbox_token)
 
         fig.show()
         
