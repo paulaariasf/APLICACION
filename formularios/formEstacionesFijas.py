@@ -40,7 +40,7 @@ class FormEstacionesFijasDesign():
         lon_celda = (maxLon - minLon) / n
         lat_celda = (maxLat - minLat) / n
 
-        geo_json, df_cuad = utilEstaciones.crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda)
+        geo_json, df_cuad = utilEstaciones.crear_geojson_df(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda)
         df_points = utilEstaciones.crear_df_estaciones(estaciones)
         
         """cantidadMin = min(estaciones[id]['bike_bases'] for id in estaciones)
@@ -80,7 +80,7 @@ class FormEstacionesFijasDesign():
         fig.update_geos(fitbounds="locations", visible=False)"""
 
         colorscale = [
-            (0, 'rgba(0, 0, 0, 0)'),  # Transparente para el valor 0
+            (0, 'rgba(0, 0, 0, 0)'),  # Transparente para el valor 0: 0, 0, 0, 0
             (0.01, 'rgb(255, 0, 0)'),  # Rojo
             (0.2, 'rgb(255, 85, 0)'),
             (0.3, 'rgb(255, 170, 0)'),
@@ -107,7 +107,21 @@ class FormEstacionesFijasDesign():
                            opacity=0.5
                           )
         fig.update_traces(marker_line_width = 0)
-        fig.update_layout(mapbox_accesstoken=mapbox_token)
+        fig.update_layout(mapbox_accesstoken=mapbox_token, 
+                          coloraxis_colorbar_title='Bicicletas por zona',
+                          coloraxis_colorbar_x=0)
+
+        fig.add_scattermapbox(
+            lat=df_points['lat'],
+            lon=df_points['lon'],
+            mode='markers',
+            marker=dict(
+                size=7,  # Tamaño ligeramente mayor para simular el borde
+                color='black',  # Color del "borde"
+                opacity=1  # Opacidad para que no cubra completamente el punto original
+            )
+        )
+
 
         fig.add_scattermapbox(
             lat=df_points['lat'],
@@ -115,8 +129,10 @@ class FormEstacionesFijasDesign():
             mode='markers',
             marker=dict(
                 size=6,
-                color='grey',
-                opacity=1
+                color=df_points['bike_bases'],
+                opacity=1,
+                colorscale='rdylgn', 
+                colorbar=dict(title='Bicicletas por estación')
             ),
             hovertext=df_points['info'],
             hoverinfo='text'

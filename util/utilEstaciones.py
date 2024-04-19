@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 def devolver_estaciones():
-    #Hago login y guardo el token de acceso
+    """#Hago login y guardo el token de acceso
     url_login = "https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/"
     headers_login = {'email':'paulariasfer01@gmail.com', 'password':'Poseido58'}
 
@@ -18,8 +18,10 @@ def devolver_estaciones():
     headers_stations = {'accessToken': token}
 
     response_stations = requests.get(url_stations, headers=headers_stations)
-    datos_stations = json.loads(response_stations.content)
+    datos_stations = json.loads(response_stations.content)"""
 
+    with open('estaciones_api.json', "r") as archivo:
+        datos_stations = json.load(archivo)
 
     stations = {}
     for station in datos_stations['data']:
@@ -51,14 +53,16 @@ def limites(estaciones):
     return maxLon, minLon, maxLat, minLat
 
 
-def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
+def crear_geojson_df(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda):
     #Creo matriz para guardar las coordenadas de todos los puntos
-    matriz = [[[minLon, minLat] for _ in range(n+1)] for _ in range(n+1)]
-    idMap = np.empty((n,n))
+    matriz = [[[minLon, maxLat] for _ in range(n+1)] for _ in range(n+1)]
+    idMap = [[0 for _ in range(n)] for _ in range(n)]
 
     for i in range(n+1):
         for j in range(n+1):
-            matriz[i][j] = [matriz[i][j][0] + lon_celda * j,matriz[i][j][1] + lat_celda * i]
+            matriz[i][j] = [matriz[i][j][0] + lon_celda * j,matriz[i][j][1] - lat_celda * i]
+            
+    #print(matriz)
 
     geojson = {
             "type": "FeatureCollection",
@@ -73,7 +77,7 @@ def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
         'cantidad': [],
     }
     id = 1
-    for i in range (n):
+    for i in range(n):
         for j in range(n):
             datos['id'].append(id)
             datos['name'].append(f"Zona {id}")
@@ -81,7 +85,6 @@ def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
                 "type": "Feature",
                 "properties": {"name": f"Zona {id}"},
                 "geometry": {
-                    #"coordinates": [[matriz[i][j], matriz[i][j+1], matriz[i+1][j], matriz[i+1][j+1], matriz[i][j]]],
                     "coordinates": [[matriz[i+1][j], matriz[i+1][j+1], matriz[i][j+1], matriz[i][j], matriz[i+1][j]]],
                     "type": "Polygon"
                 },
@@ -91,17 +94,18 @@ def crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda):
             idMap[i][j] = id
             id = id + 1
 
+    #print(idMap)
     
     datos['cantidad'] = [0 for i in range(pow(n,2))]
     
     #Relleno las cantidades para cada zona
     for id in estaciones:
-        zona = clasificar_punto(estaciones[id]['coordinates'], lon_celda, lat_celda, minLon, minLat, idMap)
-        datos['cantidad'][zona-1] = datos['cantidad'][zona-1] + estaciones[id]['bike_bases']
+        zona = clasificar_punto(n, estaciones[id]['coordinates'], lon_celda, lat_celda, minLon, minLat, idMap)
+        datos['cantidad'][zona] = datos['cantidad'][zona] + estaciones[id]['bike_bases']
         #print(f"La estacion {id} pertenece a la zona {zona}")
     
     df = pd.DataFrame(datos)
-
+    #df.to_excel('datos.xlsx')
     return geojson, df
 
 def crear_df_estaciones(estaciones):
@@ -118,8 +122,18 @@ def crear_df_estaciones(estaciones):
     df = pd.DataFrame(data)
     return df
 
-def clasificar_punto(punto, lon_celda, lat_celda, minLon, minLat, idMap):
+def clasificar_punto(n, punto, lon_celda, lat_celda, minLon, minLat, idMap):
     lon, lat = punto
     zona_lon = int((lon - minLon)/lon_celda)
     zona_lat = int((lat - minLat)/lat_celda)
-    return int(idMap[zona_lon-1][zona_lat-1])
+    return idMap[n-zona_lat-1][zona_lon-1]
+
+"""def clasificar_punto2(n, punto, lon_celda, lat_celda, minLon, minLat, idMap):
+    lon, lat = punto
+    zona_lon = int((lon - minLon) / lon_celda)
+    zona_lat = int((lat - minLat) / lat_celda)
+    if zona_lon==n:
+        zona_lon=n-1
+    if zona_lat==n:
+        zona_lat=n-1
+    return int(idMap[n-zona_lat-1][zona_lon-1])"""
