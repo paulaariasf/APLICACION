@@ -27,40 +27,23 @@ class FormBicicletasFlotantesDesign():
         self.labelImage.config(bg=COLOR_CUERPO_PRINCIPAL)
 
         estaciones = utilEstaciones.devolver_estaciones()
-        maxLon, minLon, maxLat, minLat = utilEstaciones.limites(estaciones)
 
-        # Definir el numero de filas y columnas
-        n = 10
+        estaciones = utilEstaciones.devolver_estaciones()
+        radio = 0.005 #es un valor definido, posteriormente se parametrizará
 
-        # Calcular el ancho y alto de cada celda de la cuadrícula
-        lon_celda = (maxLon - minLon) / n
-        lat_celda = (maxLat - minLat) / n
-
-        geo_json, df = utilEstaciones.crear_geojson_df(estaciones, n, minLon, minLat, lon_celda, lat_celda)
-
-        df = utilEstaciones.crear_df_estaciones(estaciones)
-        
         self.boton = Button(self.barra_boton, text="Cargar  mapa de calor", 
-                            font=("Roboto", 10, "bold"), command= lambda: self.cargar_mapa(geo_json, df))
+                            font=("Roboto", 10, "bold"), command= lambda: self.cargar_mapa(estaciones, radio))
         self.boton.config(padx=10, pady=10, bd=0, bg=COLOR_BARRA_SUPERIOR, fg="white")
         self.boton.pack()
 
 
-    def cargar_mapa(self, geo_json, df):
-        ruta_archivo = "cuadricula.geojson"
-        with open(ruta_archivo, "w") as archivo:
-            geojson.dump(geo_json, archivo)
-
-        with open(ruta_archivo, "r") as archivo:
-            geojson_objeto = geojson.load(archivo)
-
-
-        fig = px.scatter_mapbox(df,
-                                lat='lat',
-                                lon='lon',
-                                mapbox_style='carto-positron',
-                                color='bike_bases',
-                                size='bike_bases')
-
-
+    def cargar_mapa(self, estaciones, radio):
+        df_flotantes = utilEstaciones.generar_flotantes(estaciones, radio)
+        mapbox_token = "pk.eyJ1IjoicGF1bGFhcmlhc2YiLCJhIjoiY2x2MWViNTZpMDUzNDJpcnl5YTQ0ZnlhMSJ9.VCTWeNlVpK5UcVMpxeAhkQ"
+        fig = px.scatter_mapbox(df_flotantes, 
+                        lat='lat', 
+                        lon='lon',
+                        zoom=11,
+                        mapbox_style="carto-positron")
+        fig.update_layout(mapbox_accesstoken=mapbox_token)
         fig.show()

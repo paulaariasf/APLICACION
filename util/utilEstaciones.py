@@ -137,3 +137,35 @@ def clasificar_punto(n, punto, lon_celda, lat_celda, minLon, minLat, idMap):
     if zona_lat==n:
         zona_lat=n-1
     return int(idMap[n-zona_lat-1][zona_lon-1])"""
+
+
+
+def generar_puntos(centro, radio, nPuntos):
+    #Polares
+    random_rad = np.random.uniform(0, radio, nPuntos)
+    random_ang = np.random.uniform(0, 2*np.pi, nPuntos)
+    
+    #Cartesianas
+    lon = centro[0] + random_rad * np.cos(random_ang)
+    lat = centro[1] + random_rad * np.sin(random_ang)
+    
+    puntos = np.column_stack((lon, lat))
+    
+    return puntos
+
+def generar_flotantes(estaciones, radio):
+    data = {"id": [], "lat": [], "lon": [], 'info':[]}
+    id_bici = 1
+    for id in estaciones:
+        puntos_flotantes = generar_puntos(estaciones[id]['coordinates'], 
+                                            radio, 
+                                            estaciones[id]['bike_bases'])
+        for p in puntos_flotantes:
+            data['id'].append(id_bici)
+            data['lat'].append(p[1])
+            data['lon'].append(p[0])
+            data['info'].append('Bicicleta nº '+ str(id_bici))
+            id_bici = id_bici + 1
+    
+    df_flotantes = pd.DataFrame(data)
+    return df_flotantes
