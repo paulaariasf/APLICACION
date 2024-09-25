@@ -56,7 +56,8 @@ def limites(estaciones):
 def crear_geojson_df(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda):
     #Creo matriz para guardar las coordenadas de todos los puntos
     matriz = [[[minLon, maxLat] for _ in range(n+1)] for _ in range(n+1)]
-    idMap = [[0 for _ in range(n)] for _ in range(n)]
+    #idMap = [[0 for _ in range(n)] for _ in range(n)]
+    idMap = np.repeat(0, repeats=n**2).reshape((n,n))
 
     for i in range(n+1):
         for j in range(n+1):
@@ -108,6 +109,42 @@ def crear_geojson_df(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda
     #df.to_excel('datos.xlsx')
     return geojson, df
 
+
+def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda):
+    #Creo matriz para guardar las coordenadas de todos los puntos
+    matriz = [[(maxLat, minLon) for _ in range(n+1)] for _ in range(n+1)]
+    #idMap = [[0 for _ in range(n)] for _ in range(n)]
+    idMap = np.repeat(0, repeats=n**2).reshape((n,n))
+
+    for i in range(n+1):
+        for j in range(n+1):
+            matriz[i][j] = (matriz[i][j][0] - lat_celda * j,matriz[i][j][1] + lon_celda * i)
+    
+    diccionario={
+        'ids': [],
+        'coordenadas': [],
+        'cantidades': [],
+    }
+    id = 1
+    for i in range(n):
+        for j in range(n):
+            diccionario['ids'].append(id)
+            coord_poligono = [matriz[i+1][j], matriz[i+1][j+1], matriz[i][j+1], matriz[i][j]]
+            diccionario['coordenadas'].append(coord_poligono)
+            idMap[i][j] = id
+            id = id + 1
+
+    
+    diccionario['cantidades'] = [0 for i in range(pow(n,2))]
+    
+    #Relleno las cantidades para cada zona
+    for id in estaciones:
+        zona = clasificar_punto(n, estaciones[id]['coordinates'], lon_celda, lat_celda, minLon, minLat, idMap)
+        diccionario['cantidades'][zona] = diccionario['cantidades'][zona] + estaciones[id]['bike_bases']
+        #print(f"La estacion {id} pertenece a la zona {zona}")
+    return diccionario
+
+
 def crear_df_estaciones(estaciones):
     data = {"id": [], "name": [], "bike_bases": [], "free_bases": [], "lat": [], "lon": [], 'info':[]}
     for id in estaciones:
@@ -149,12 +186,12 @@ def generar_puntos(centro, radio, nPuntos):
     lon = centro[0] + random_rad * np.cos(random_ang)
     lat = centro[1] + random_rad * np.sin(random_ang)
     
-    puntos = np.column_stack((lon, lat))
-    
+    #puntos = np.column_stack((lon, lat))
+    puntos = [[pair] for pair in zip(lat, lon)]
     return puntos
 
 def generar_flotantes(estaciones, radio):
-    data = {"id": [], "lat": [], "lon": [], 'info':[]}
+    data = {'id': [], 'lat': [], 'lon': [], 'info':[]}
     id_bici = 1
     for id in estaciones:
         puntos_flotantes = generar_puntos(estaciones[id]['coordinates'], 
@@ -169,3 +206,42 @@ def generar_flotantes(estaciones, radio):
     
     df_flotantes = pd.DataFrame(data)
     return df_flotantes
+
+def generar_flotantes_v2(estaciones, radio):
+    data = {'id': [], 'coord': [], 'info':[]}
+    id_bici = 1
+    for id in estaciones:
+        puntos_flotantes = generar_puntos(estaciones[id]['coordinates'], 
+                                            radio, 
+                                            estaciones[id]['bike_bases'])
+        for p in puntos_flotantes:
+            data['id'].append(id_bici)
+            data['coord'].append(p)
+            data['info'].append('Bicicleta nº '+ str(id_bici))
+            id_bici = id_bici + 1
+    
+    df_flotantes = pd.DataFrame(data)
+    return df_flotantes
+
+def get_color(valor, min_val, max_val):
+
+    valor_aux = max(min(valor, max_val), min_val)
+    escala = (valor - min_val) / (max_val - min_val)
+
+    if valor_aux == 0:
+        return None
+    
+    if escala <= 0.5:   # Entre rojo (255, 0, 0) y amarillo (255, 255, 0)
+        r = 255
+        g = int(255 * (escala / 0.5))  # Va de 0 a 255
+        b = 0
+    else:               # Entre amarillo (255, 255, 0) y verde (0, 255, 0)
+        r = int(255 * (1 - (escala - 0.5) / 0.5))  # Va de 255 a 0
+        g = 255
+        b = 0
+    
+    r = max(0, min(255, r))
+    g = max(0, min(255, g))
+    b = max(0, min(255, b))
+
+    return f'#{r:02x}{g:02x}{b:02x}'

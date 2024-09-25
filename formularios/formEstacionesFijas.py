@@ -39,6 +39,7 @@ class FormEstacionesFijasDesign():
         # Calcular el ancho y alto de cada celda de la cuadrícula
         lon_celda = (maxLon - minLon) / n
         lat_celda = (maxLat - minLat) / n
+        print(f"Maxlon: {maxLon},Minlon :{minLon}, Maxlat:{maxLat}, MinLat:{minLat}, Lon_celda: {lon_celda}, lat_celda: {lat_celda}" )
 
         geo_json, df_cuad = utilEstaciones.crear_geojson_df(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda)
         df_points = utilEstaciones.crear_df_estaciones(estaciones)
