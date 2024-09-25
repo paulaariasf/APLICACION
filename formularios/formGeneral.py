@@ -7,9 +7,7 @@ from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_CUERPO_PRINCI
 from formularios.formConstruccion import FormConstruccionDesign
 from formularios.formInicio import FormInicioDesign
 from formularios.formEstacionesFijas import FormEstacionesFijasDesign
-from formularios.formEstacionesFijas_v2 import FormEstacionesFijasDesign_v2
 from formularios.formBicicletasFlotantes import FormBicicletasFlotantesDesign
-from formularios.formBicicletasFlotantes_v2 import FormBicicletasFlotantesDesign_v2
 
 
 class FormularioGeneral(Tk):
@@ -137,9 +135,8 @@ class FormularioGeneral(Tk):
 
     def abrir_panel_estaciones_fijas(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        #FormEstacionesFijasDesign(self.cuerpoPrincipal, self.imagenEstacionesFijas)
-        FormEstacionesFijasDesign_v2(self.cuerpoPrincipal)
+        FormEstacionesFijasDesign(self.cuerpoPrincipal)
 
     def abrir_panel_bicicletas_flotantes(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        FormBicicletasFlotantesDesign_v2(self.cuerpoPrincipal)
+        FormBicicletasFlotantesDesign(self.cuerpoPrincipal)
