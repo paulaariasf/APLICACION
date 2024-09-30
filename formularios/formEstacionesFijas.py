@@ -14,7 +14,7 @@ class FormEstacionesFijasDesign():
         anadir_mapa(self, self.frame_general)
 
         # Definir el numero de filas y columnas
-        n = 50
+        n = 10
 
         self.estaciones = utilEstaciones.devolver_estaciones()
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
@@ -24,6 +24,10 @@ class FormEstacionesFijasDesign():
 
         self.diccionario = utilEstaciones.crear_dicCoord(self.estaciones, n, self.minLon, self.minLat, self.maxLat, self.lon_celda, self.lat_celda)
 
+        
+        #creacion_paneles_info(self, panel_principal)
+        pintar_estaciones(self)
+        pintar_mapa_calor(self, n)
 
 def creacion_paneles_info(self, panel_principal):
     self.barra_superior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)

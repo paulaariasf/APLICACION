@@ -82,12 +82,20 @@ class FormularioGeneral(Tk):
         fontAwesome=font.Font(family="FontAwesome", size=15)
 
         #Botones del menu lateral
-        self.buttonEstacionesFijas = Button(self.menuLateral, text="\uf3c5    Estaciones fijas", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+
+        self.buttonTipoTransporte = Button(self.menuLateral, text="\uf3c5    Tipo de transporte", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+        self.buttonTipoTransporte.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonTipoTransporte.pack(side=TOP)
+        self.bindHoverEvents(self.buttonTipoTransporte)
+
+        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
+                                                 command=self.abrir_panel_estaciones_fijas, anchor="e")
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
         self.bindHoverEvents(self.buttonEstacionesFijas)
 
-        self.buttonBicicletasFlotantes = Button(self.menuLateral, text="\uf206    Bicicletas flotantes", font=fontAwesome, command=self.abrir_panel_bicicletas_flotantes)
+        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text="\uf206    Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
+                                                     command=self.abrir_panel_bicicletas_flotantes, anchor="e")
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBicicletasFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonBicicletasFlotantes)
@@ -102,6 +110,34 @@ class FormularioGeneral(Tk):
         self.buttonDemanda.pack(side=TOP)
         self.bindHoverEvents(self.buttonDemanda)
 
+    def botones_desplegados(self):
+        fontAwesome=font.Font(family="FontAwesome", size=15)
+
+        self.buttonTipoTransporte = Button(self.menuLateral, text="   \uf3c5    Tipo de transporte", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+        self.buttonTipoTransporte.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonTipoTransporte.pack(side=TOP)
+        self.bindHoverEvents(self.buttonTipoTransporte)
+
+        self.buttonEstacionesFijas = Button(self.menuLateral, text="\uf3c5    Estaciones fijas", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+        self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonEstacionesFijas.pack(side=TOP)
+        self.bindHoverEvents(self.buttonEstacionesFijas)
+
+        self.buttonBicicletasFlotantes = Button(self.menuLateral, text="\uf206    Bicicletas flotantes", font=fontAwesome, command=self.abrir_panel_bicicletas_flotantes)
+        self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonBicicletasFlotantes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonBicicletasFlotantes)
+
+        self.buttonIntegracion = Button(self.menuLateral, text="   \ue4bd    Integración", font=fontAwesome, command=self.abrir_panel_construccion)
+        self.buttonIntegracion.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonIntegracion.pack(side=TOP)
+        self.bindHoverEvents(self.buttonIntegracion)
+
+        self.buttonDemanda = Button(self.menuLateral, text="   \ue4b7    Demanda", font=fontAwesome, command=self.abrir_panel_construccion)
+        self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonDemanda.pack(side=TOP)
+        self.bindHoverEvents(self.buttonDemanda)
+        
     def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
         button.bind("<Enter>", lambda event: self.on_enter(event, button))
