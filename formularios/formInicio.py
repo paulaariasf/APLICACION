@@ -1,7 +1,7 @@
 from tkinter import *
 from config import COLOR_CUERPO_PRINCIPAL
 import util.utilImagenes as utilImagenes
-from formularios.formEstacionesFijas import FormEstacionesFijasDesign
+from formularios.formMapa import FormMapaDesign
 
 class FormInicioDesign():
 
@@ -41,7 +41,7 @@ class FormInicioDesign():
         def abrir_pagina_principal():
             for widget in panel_principal.winfo_children():
                 widget.destroy()
-            FormEstacionesFijasDesign(panel_principal)
+            FormMapaDesign(panel_principal)
 
         # Creación del botón
         boton = Button(frame_boton, text="Pulse para iniciar", font=("Roboto", 16), 

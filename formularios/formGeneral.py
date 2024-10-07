@@ -6,7 +6,7 @@ from PIL import ImageTk, Image
 from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_CURSOR_ENCIMA
 from formularios.formConstruccion import FormConstruccionDesign
 from formularios.formInicio import FormInicioDesign
-from formularios.formEstacionesFijas import FormEstacionesFijasDesign
+from formularios.formMapa import FormMapaDesign
 from formularios.formBicicletasFlotantes import FormBicicletasFlotantesDesign
 
 
@@ -37,7 +37,7 @@ class FormularioGeneral(Tk):
         self.controlesBarraSuperior()
 
         self.menuLateral = Frame(self, bg=COLOR_MENU_LATERAL, width=200)
-        self.menuLateral.pack(side=LEFT, fill="both", expand=False)
+        #self.menuLateral.pack(side=LEFT, fill="both", expand=False)
         self.controlesMenuLateral()
 
         self.cuerpoPrincipal = Frame(self, bg=COLOR_CUERPO_PRINCIPAL)
@@ -88,14 +88,16 @@ class FormularioGeneral(Tk):
         self.buttonTipoTransporte.pack(side=TOP)
         self.bindHoverEvents(self.buttonTipoTransporte)
 
+        checkbox_fijas = IntVar()
         self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
-                                                 command=self.abrir_panel_estaciones_fijas, anchor="e")
+                                                 variable=checkbox_fijas, anchor="e")
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
         self.bindHoverEvents(self.buttonEstacionesFijas)
 
+        checkbox_flotantes = IntVar()
         self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text="\uf206    Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
-                                                     command=self.abrir_panel_bicicletas_flotantes, anchor="e")
+                                                     variable=checkbox_flotantes, anchor="e")
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBicicletasFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonBicicletasFlotantes)
@@ -118,12 +120,12 @@ class FormularioGeneral(Tk):
         self.buttonTipoTransporte.pack(side=TOP)
         self.bindHoverEvents(self.buttonTipoTransporte)
 
-        self.buttonEstacionesFijas = Button(self.menuLateral, text="\uf3c5    Estaciones fijas", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
         self.bindHoverEvents(self.buttonEstacionesFijas)
 
-        self.buttonBicicletasFlotantes = Button(self.menuLateral, text="\uf206    Bicicletas flotantes", font=fontAwesome, command=self.abrir_panel_bicicletas_flotantes)
+        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text="\uf206    Bicicletas flotantes", font=fontAwesome, command=self.abrir_panel_bicicletas_flotantes)
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBicicletasFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonBicicletasFlotantes)
@@ -171,7 +173,7 @@ class FormularioGeneral(Tk):
 
     def abrir_panel_estaciones_fijas(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        FormEstacionesFijasDesign(self.cuerpoPrincipal)
+        FormMapaDesign(self.cuerpoPrincipal)
 
     def abrir_panel_bicicletas_flotantes(self):
         self.limpiar_panel(self.cuerpoPrincipal)

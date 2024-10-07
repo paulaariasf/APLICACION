@@ -1,10 +1,11 @@
 from tkinter import *
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_BARRA_SUPERIOR
 import util.utilEstaciones as utilEstaciones
+import util.utilImagenes as utilImagenes
 import tkintermapview
 
 
-class FormEstacionesFijasDesign():
+class FormMapaDesign():
 
     def __init__(self, panel_principal):
 
@@ -14,20 +15,20 @@ class FormEstacionesFijasDesign():
         anadir_mapa(self, self.frame_general)
 
         # Definir el numero de filas y columnas
-        n = 10
+        self.n = 10
 
         self.estaciones = utilEstaciones.devolver_estaciones()
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
 
-        self.lon_celda = (self.maxLon - self.minLon) / n
-        self.lat_celda = (self.maxLat - self.minLat) / n
+        self.lon_celda = (self.maxLon - self.minLon) / self.n
+        self.lat_celda = (self.maxLat - self.minLat) / self.n
 
-        self.diccionario = utilEstaciones.crear_dicCoord(self.estaciones, n, self.minLon, self.minLat, self.maxLat, self.lon_celda, self.lat_celda)
+        self.diccionario = utilEstaciones.crear_dicCoord(self.estaciones, self.n, self.minLon, self.minLat, self.maxLat, self.lon_celda, self.lat_celda)
 
         
         #creacion_paneles_info(self, panel_principal)
         pintar_estaciones(self)
-        pintar_mapa_calor(self, n)
+        pintar_mapa_calor(self, self.n)
 
 def creacion_paneles_info(self, panel_principal):
     self.barra_superior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)
@@ -73,18 +74,20 @@ def anadir_mapa(self, frame):
     self.labelMap=tkintermapview.TkinterMapView(frame, width=900, height=700, corner_radius=0)
     self.labelMap.pack(fill="both")
     self.labelMap.config(bg=COLOR_CUERPO_PRINCIPAL)
-
+    
+    #self.labelMap.set_marker(40.4454477, -3.6853377000000003)
     self.labelMap.set_position(40.4168, -3.7038)
     self.labelMap.set_zoom(12)
 
     self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
-
+    #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
+    
 
 def pintar_mapa_calor(self,n):
     for i in range(pow(n, 2)):
         self.labelMap.set_polygon(self.diccionario['coordenadas'][i],
                                 fill_color=utilEstaciones.get_color(self.diccionario['cantidades'][i], 0, max(self.diccionario['cantidades'])),
-                                outline_color=None,
+                                outline_color="red",
                                 name=f'Zona {self.diccionario['ids'][i]}')
 
     self.labelMap.add_right_click_menu_command(label="Right Click",
@@ -97,6 +100,15 @@ def pintar_estaciones(self):
                                 outline_color="blue",
                                 border_width=1,
                                 name=self.estaciones[id]['name'])
+        
+def pintar_estaciones_v2(self):
+    self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/green_marker.ico", (15,20))
+    for id in self.estaciones:
+        self.labelMap.set_marker(self.estaciones[id]['coordinates'][1], self.estaciones[id]['coordinates'][0], 
+                                 icon=self.imagenEstacionesFijas)
 
 def click_event(coords):
     print(f"Ha pulsado en las coordenadas: {coords}")
+
+
+
