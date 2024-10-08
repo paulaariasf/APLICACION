@@ -54,11 +54,10 @@ def limites(estaciones):
     return maxLon, minLon, maxLat, minLat
 
 
-def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda):
+def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, idMap):
     #Creo matriz para guardar las coordenadas de todos los puntos
     matriz = [[(maxLat, minLon) for _ in range(n+1)] for _ in range(n+1)]
     #idMap = [[0 for _ in range(n)] for _ in range(n)]
-    idMap = np.repeat(0, repeats=n**2).reshape((n,n))
 
     for i in range(n+1):
         for j in range(n+1):
@@ -85,7 +84,6 @@ def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda):
     for id in estaciones:
         estaciones[id]['zona'] = clasificar_punto(n, estaciones[id]['coordinates'], lon_celda, lat_celda, minLon, minLat, idMap)
         diccionario['cantidades'][estaciones[id]['zona']] = diccionario['cantidades'][estaciones[id]['zona']] + estaciones[id]['bike_bases']
-    print(estaciones)
     return diccionario
 
 
@@ -117,7 +115,7 @@ def generar_puntos(centro, radio, nPuntos):
     lat = centro[1] + random_rad * np.sin(random_ang)
     
     #puntos = np.column_stack((lon, lat))
-    puntos = [[pair] for pair in zip(lat, lon)]
+    puntos = [pair for pair in zip(lat, lon)]
     return puntos
 
 def generar_flotantes(estaciones, radio):
