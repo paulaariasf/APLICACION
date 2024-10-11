@@ -46,10 +46,10 @@ def limites(estaciones):
         coordenadasLon.append(coordEstacion[0])
         coordenadasLat.append(coordEstacion[1])
         
-    maxLon = max(coordenadasLon)
-    minLon = min(coordenadasLon)
-    maxLat = max(coordenadasLat)
-    minLat = min(coordenadasLat)
+    maxLon = max(coordenadasLon) + 0.000001
+    minLon = min(coordenadasLon) - 0.000001
+    maxLat = max(coordenadasLat) + 0.000001
+    minLat = min(coordenadasLat) - 0.000001
 
     return maxLon, minLon, maxLat, minLat
 
@@ -61,37 +61,43 @@ def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, 
 
     for i in range(n+1):
         for j in range(n+1):
-            matriz[i][j] = (matriz[i][j][0] - lat_celda * j,matriz[i][j][1] + lon_celda * i)
-    
+            matriz[i][j] = (matriz[i][j][0] - lat_celda * i, matriz[i][j][1] + lon_celda * j)
     diccionario={
         'ids': [],
         'coordenadas': [],
         'cantidades': [],
+        'num_estaciones': []
     }
     id = 1
     for i in range(n):
         for j in range(n):
             diccionario['ids'].append(id)
-            coord_poligono = [matriz[i+1][j], matriz[i+1][j+1], matriz[i][j+1], matriz[i][j]]
+            coord_poligono = [matriz[i][j], matriz[i][j+1], matriz[i+1][j+1], matriz[i+1][j]]
             diccionario['coordenadas'].append(coord_poligono)
             idMap[i][j] = id
             id = id + 1
 
     
     diccionario['cantidades'] = [0 for i in range(pow(n,2))]
+    diccionario['num_estaciones'] = [0 for i in range(pow(n,2))]
     
     #Relleno las cantidades para cada zona
     for id in estaciones:
-        estaciones[id]['zona'] = clasificar_punto(n, estaciones[id]['coordinates'], lon_celda, lat_celda, minLon, minLat, idMap)
-        diccionario['cantidades'][estaciones[id]['zona']] = diccionario['cantidades'][estaciones[id]['zona']] + estaciones[id]['bike_bases']
+        #if(estaciones[id]['name'] == "518 - Tampico - Plaza Barbados"):
+        #    print("parar")
+        estaciones[id]['zona'] = clasificar_punto(n, estaciones[id]['coordinates'][::-1], lon_celda, lat_celda, minLon, maxLat, idMap)
+        #print(f"estacion: {estaciones[id]['name']} coords : {estaciones[id]['coordinates'][::-1]} zona: {estaciones[id]['zona']}")
+        diccionario['cantidades'][estaciones[id]['zona']-1] = diccionario['cantidades'][estaciones[id]['zona']-1] + estaciones[id]['bike_bases']
+        diccionario['num_estaciones'][estaciones[id]['zona']-1] = diccionario['num_estaciones'][estaciones[id]['zona']-1] + 1
+    #print(diccionario)
     return diccionario
 
 
-def clasificar_punto(n, punto, lon_celda, lat_celda, minLon, minLat, idMap):
-    lon, lat = punto
-    zona_lon = int((lon - minLon)/lon_celda)
-    zona_lat = int((lat - minLat)/lat_celda)
-    return idMap[n-zona_lat-1][zona_lon-1]
+def clasificar_punto(n, punto, lon_celda, lat_celda, minLon, maxLat, idMap):
+    lat, lon = punto
+    zona_lat = int(abs(lat - maxLat)/lat_celda)
+    zona_lon = int(abs(lon - minLon)/lon_celda)
+    return idMap[zona_lat][zona_lon]
 
 """def clasificar_punto2(n, punto, lon_celda, lat_celda, minLon, minLat, idMap):
     lon, lat = punto
@@ -154,10 +160,16 @@ def generar_flotantes_v2(estaciones, radio):
 def get_color(valor, min_val, max_val):
 
     valor_aux = max(min(valor, max_val), min_val)
-    escala = (valor - min_val) / (max_val - min_val)
-
     if valor_aux == 0:
         return None
+    colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
+    puntos = (min_val + (np.linspace(0, 1, 10)**2) * (max_val - min_val)).tolist()
+    for i in range(len(puntos)-1):
+        if puntos[i] <= valor_aux < puntos[i+1]:
+            return colores[i]
+    return "#00FF00"
+    """
+    escala = (valor - min_val) / (max_val - min_val)
     
     if escala <= 0.5:   # Entre rojo (255, 0, 0) y amarillo (255, 255, 0)
         r = 255
@@ -173,6 +185,7 @@ def get_color(valor, min_val, max_val):
     b = max(0, min(255, b))
 
     return f'#{r:02x}{g:02x}{b:02x}'
+    """
 
 """
 def crear_geojson_df(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda):

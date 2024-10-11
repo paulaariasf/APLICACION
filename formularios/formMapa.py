@@ -27,11 +27,11 @@ class FormMapaDesign():
         self.close_infozona()
 
         self.infozona_frame = Frame(self.frame_general, bg="white", borderwidth=1, relief="solid")
-        self.infozona_frame.place(relx=0.8, rely=0.8)
+        self.infozona_frame.place(relx=0.8, rely=0.75)
         
-        zona = utilEstaciones.clasificar_punto(self.n, (coords[1], coords[0]), self.lon_celda, self.lat_celda, self.minLon, self.minLat, self.idMap)
-        
-        info_label = Label(self.infozona_frame, text=f"Zona seleccionada: {zona} de {self.n**2}\n Cantidad de bicis: {self.diccionario['cantidades'][zona]}", bg="white")
+        zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat, self.idMap)
+
+        info_label = Label(self.infozona_frame, text=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]}", bg="white")
         info_label.pack(side="left", padx=5, pady=5)
 
         close_button = Button(self.infozona_frame, text="x", command=self.close_infozona, bg="white", fg="red", borderwidth=0)
@@ -45,12 +45,14 @@ class FormMapaDesign():
         self.diccionario = utilEstaciones.crear_dicCoord(self.estaciones, self.n, self.minLon, self.minLat, self.maxLat, self.lon_celda, self.lat_celda, self.idMap)
 
         for i in range(pow(self.n, 2)):
+            #print(f"Zona: {self.diccionario['ids'][i]}, color: {utilEstaciones.get_color(self.diccionario['cantidades'][i], 0, max(self.diccionario['cantidades']))}, cantidad: {self.diccionario['cantidades'][i]}")
             self.labelMap.set_polygon(self.diccionario['coordenadas'][i],
                                     fill_color=utilEstaciones.get_color(self.diccionario['cantidades'][i], 0, max(self.diccionario['cantidades'])),
-                                    outline_color=None,
+                                    outline_color="grey",
+                                    border_width=1,
                                     name=f'Zona {self.diccionario['ids'][i]}')
 
-        self.labelMap.add_right_click_menu_command(label="Show Info",
+        self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
                                         command=self.show_info_zona,
                                         pass_coords=True)
     
@@ -122,7 +124,7 @@ class FormMapaDesign():
                            (coord_estacion[0] + d, coord_estacion[1])]
             self.labelMap.set_polygon(coordinates,
                                     outline_color="blue",
-                                    border_width=3,
+                                    border_width=5,
                                     name=id,
                                     command=self.show_info_estacion,
                                     )
