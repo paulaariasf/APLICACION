@@ -5,8 +5,8 @@ from formularios.formMapa import FormMapaDesign
 
 class FormInicioDesign():
 
-    def __init__(self, panel_principal, logo, aplicacion_ancho):
-
+    def __init__(self, panel_principal, logo, aplicacion_ancho, buttonMenuLateral):
+        self.mapa = None
         #Frames
         barraSuperior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL, height=50)
         barraSuperior.pack(side=TOP, fill=X, expand=True, pady=0)
@@ -41,9 +41,12 @@ class FormInicioDesign():
         def abrir_pagina_principal():
             for widget in panel_principal.winfo_children():
                 widget.destroy()
-            FormMapaDesign(panel_principal)
+            buttonMenuLateral.invoke()
+            self.mapa = FormMapaDesign(panel_principal)
 
         # Creación del botón
         boton = Button(frame_boton, text="Pulse para iniciar", font=("Roboto", 16), 
                        bg="#1F71A9", fg="white", width=20, command=abrir_pagina_principal)
         boton.pack(pady=10)
+    def get_mapa(self):
+        return self.mapa

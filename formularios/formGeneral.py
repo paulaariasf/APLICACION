@@ -22,6 +22,7 @@ class FormularioGeneral(Tk):
         self.imagenBicicletaFlotante = utilImagenes.leer_imagen("./imagenes/bicicletaFlotante.png", (500, 300))
         self.config_window()
         self.paneles()
+        self.mapa = None
         
     def config_window(self):
         #Configuracion inicial de la ventana
@@ -83,19 +84,19 @@ class FormularioGeneral(Tk):
 
         #Botones del menu lateral
 
-        self.buttonTipoTransporte = Button(self.menuLateral, text="\uf3c5    Tipo de transporte", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+        self.buttonTipoTransporte = Button(self.menuLateral, text="\uf3c5    Tipo de transporte", font=fontAwesome, command=self.abrir_panel_mapa)
         self.buttonTipoTransporte.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonTipoTransporte.pack(side=TOP)
         self.bindHoverEvents(self.buttonTipoTransporte)
 
-        checkbox_fijas = IntVar()
+        checkbox_fijas = BooleanVar()
         self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
-                                                 variable=checkbox_fijas, anchor="e")
+                                                 variable=checkbox_fijas, anchor="e", command= lambda : self.boton_estacionesfijas(checkbox_fijas))
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
         self.bindHoverEvents(self.buttonEstacionesFijas)
 
-        checkbox_flotantes = IntVar()
+        checkbox_flotantes = BooleanVar()
         self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text="\uf206    Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
                                                      variable=checkbox_flotantes, anchor="e")
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
@@ -112,7 +113,7 @@ class FormularioGeneral(Tk):
         self.buttonDemanda.pack(side=TOP)
         self.bindHoverEvents(self.buttonDemanda)
 
-    def botones_desplegados(self):
+    """def botones_desplegados(self):
         fontAwesome=font.Font(family="FontAwesome", size=15)
 
         self.buttonTipoTransporte = Button(self.menuLateral, text="   \uf3c5    Tipo de transporte", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
@@ -120,7 +121,7 @@ class FormularioGeneral(Tk):
         self.buttonTipoTransporte.pack(side=TOP)
         self.bindHoverEvents(self.buttonTipoTransporte)
 
-        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=fontAwesome, command=self.abrir_panel_estaciones_fijas)
+        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=fontAwesome, command=self.abrir_panel_mapa)
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
         self.bindHoverEvents(self.buttonEstacionesFijas)
@@ -139,6 +140,7 @@ class FormularioGeneral(Tk):
         self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonDemanda.pack(side=TOP)
         self.bindHoverEvents(self.buttonDemanda)
+        """
         
     def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
@@ -169,12 +171,19 @@ class FormularioGeneral(Tk):
 
     def abrir_panel_inicio(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        FormInicioDesign(self.cuerpoPrincipal, self.imagenPortada, self.aplicacion_ancho)
+        self.inicio = FormInicioDesign(self.cuerpoPrincipal, self.imagenPortada, self.aplicacion_ancho, self.buttonMenuLateral)
+        self.mapa = self.inicio.get_mapa()
 
-    def abrir_panel_estaciones_fijas(self):
+    def abrir_panel_mapa(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        FormMapaDesign(self.cuerpoPrincipal)
+        self.mapa = FormMapaDesign(self.cuerpoPrincipal)
 
     def abrir_panel_bicicletas_flotantes(self):
         self.limpiar_panel(self.cuerpoPrincipal)
         FormBicicletasFlotantesDesign(self.cuerpoPrincipal)
+
+    def boton_estacionesfijas(self,checkbox_fijas):
+        if checkbox_fijas.get() == True:
+            self.mapa.pintar_estaciones()
+        elif checkbox_fijas.get() == False:
+            self.mapa.borrar_estaciones()

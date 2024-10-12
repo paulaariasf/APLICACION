@@ -14,12 +14,20 @@ class FormMapaDesign():
         self.frame_general.pack(fill="both")
 
         self.estaciones = utilEstaciones.devolver_estaciones()
+        
+        self.poligonos_estaciones = []
+        self.poligonos_zonas = {}
+
+        self.pol_seleccion = None
+        self.est_seleccion = None
 
         anadir_mapa(self, self.frame_general)
 
         #creacion_paneles_info(self, panel_principal)
     
     def close_infozona(self):
+        if self.pol_seleccion is not None:
+            self.pol_seleccion.delete()
         if hasattr(self, 'infozona_frame'):
             self.infozona_frame.destroy()
 
@@ -34,7 +42,13 @@ class FormMapaDesign():
         info_label = Label(self.infozona_frame, text=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]}", bg="white")
         info_label.pack(side="left", padx=5, pady=5)
 
-        close_button = Button(self.infozona_frame, text="x", command=self.close_infozona, bg="white", fg="red", borderwidth=0)
+        #Resaltar zona seleccionada
+        self.pol_seleccion =self.labelMap.set_polygon(self.diccionario['coordenadas'][zona-1],
+                                    fill_color="#1F71A9",
+                                    outline_color="#1F71A9",
+                                    border_width=3)
+
+        close_button = Button(self.infozona_frame, text="x", command=lambda: self.close_infozona(), bg="white", fg="red", borderwidth=0)
         close_button.pack(side="right", padx=5, pady=5)
 
     def pintar_mapa_calor(self):
@@ -98,6 +112,8 @@ class FormMapaDesign():
             messagebox.showerror("Error", "Por favor, introduce un número válido.")
 
     def close_infoest(self):
+        if self.est_seleccion is not None:
+            self.est_seleccion.delete()
         if hasattr(self, 'infoest_frame'):
             self.infoest_frame.destroy()
 
@@ -105,12 +121,14 @@ class FormMapaDesign():
         self.close_infoest()
 
         self.infoest_frame = Frame(self.frame_general, bg="white", borderwidth=1, relief="solid")
-        self.infoest_frame.place(relx=0.7, rely=0.9)
+        self.infoest_frame.place(relx=0.6, rely=0.9)
         
-        id = polygon.name
+        id, coord_estacion = polygon.name
         info_label = Label(self.infoest_frame, text=f"Estación seleccionada: {self.estaciones[id]['name']} \n Cantidad de bicis: {self.estaciones[id]['bike_bases']}", bg="white")
         info_label.pack(side="left", padx=5, pady=5)
 
+        #Añadir marcador en la estacion seleccionada
+        self.est_seleccion = self.labelMap.set_marker(coord_estacion[0], coord_estacion[1])
         close_button = Button(self.infoest_frame, text="x", command=self.close_infoest, bg="white", fg="red", borderwidth=0)
         close_button.pack(side="right", padx=5, pady=5)
     
@@ -122,15 +140,21 @@ class FormMapaDesign():
                            (coord_estacion[0], coord_estacion[1]+ d),
                            (coord_estacion[0] + d, coord_estacion[1] + d),
                            (coord_estacion[0] + d, coord_estacion[1])]
-            self.labelMap.set_polygon(coordinates,
+            poligono = self.labelMap.set_polygon(coordinates,
                                     outline_color="blue",
                                     border_width=5,
-                                    name=id,
+                                    name=(id, coord_estacion),
                                     command=self.show_info_estacion,
                                     )
+            self.poligonos_estaciones.append(poligono)
+    
+    def borrar_estaciones(self):
+        for poligono in self.poligonos_estaciones:
+            poligono.delete()
+
             
     def pintar_flotantes(self):
-        radio = 0.005 #es un valor definido, posteriormente se parametrizará
+        radio = 0.005
         df_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, radio)        
 
         for i in range(len(df_flotantes['id'])):
@@ -144,10 +168,45 @@ class FormMapaDesign():
 
             self.labelMap.set_polygon(coordinates,
                                     outline_color="red",
-                                    border_width=2,
+                                    border_width=3,
                                     name=df_flotantes['info'][i])
 
-def creacion_paneles_info(self, panel_principal):
+
+def anadir_mapa(self, frame):
+    self.labelMap=tkintermapview.TkinterMapView(frame, width=900, height=700, corner_radius=0)
+    self.labelMap.pack(fill="both")
+    self.labelMap.config(bg=COLOR_CUERPO_PRINCIPAL)
+    
+    #self.labelMap.set_marker(40.4454477, -3.6853377000000003)
+    self.labelMap.set_position(40.4168, -3.7038)
+    self.labelMap.set_zoom(12)
+
+    self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
+    #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
+
+    #Botones
+    self.buttonMapaCalor = Button(frame, text='Mostrar Mapa de Calor', font=("Roboto", 12, "bold"), 
+                       bg="#1F71A9", fg="white", width=22, command=self.introducir_n)
+    self.buttonMapaCalor.place(relx=0.8, rely=0.05)
+
+    self.buttonEstaciones = Button(frame, text='Mostrar Estaciones Fijas', font=("Roboto", 12, "bold"), 
+                       bg="#1F71A9", fg="white", width=22, command=self.pintar_estaciones)
+    self.buttonEstaciones.place(relx=0.8, rely=0.15)
+
+    self.buttonBicicletas = Button(frame, text='Mostrar Bicicletas Flotantes', font=("Roboto", 12, "bold"), 
+                       bg="#1F71A9", fg="white", width=22, command=self.pintar_flotantes)
+    self.buttonBicicletas.place(relx=0.8, rely=0.25)
+
+        
+def pintar_estaciones_v2(self):
+    self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/green_marker.ico", (15,20))
+    for id in self.estaciones:
+        self.labelMap.set_marker(self.estaciones[id]['coordinates'][1], self.estaciones[id]['coordinates'][0], 
+                                 icon=self.imagenEstacionesFijas)
+
+
+
+"""def creacion_paneles_info(self, panel_principal):
     self.barra_superior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)
     self.barra_superior.pack(side=TOP, fill=X, expand=False)
 
@@ -186,39 +245,4 @@ def creacion_paneles_info(self, panel_principal):
     self.labelInfoEstacion.pack(side=LEFT, anchor="n", fill=X, expand=False)
 
     anadir_mapa(self, self.barra_inferior)
-
-def anadir_mapa(self, frame):
-    self.labelMap=tkintermapview.TkinterMapView(frame, width=900, height=700, corner_radius=0)
-    self.labelMap.pack(fill="both")
-    self.labelMap.config(bg=COLOR_CUERPO_PRINCIPAL)
-    
-    #self.labelMap.set_marker(40.4454477, -3.6853377000000003)
-    self.labelMap.set_position(40.4168, -3.7038)
-    self.labelMap.set_zoom(12)
-
-    self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
-    #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
-
-    #Botones
-    self.buttonMapaCalor = Button(frame, text='Mostrar Mapa de Calor', font=("Roboto", 12, "bold"), 
-                       bg="#1F71A9", fg="white", width=22, command=self.introducir_n)
-    self.buttonMapaCalor.place(relx=0.8, rely=0.05)
-
-    self.buttonEstaciones = Button(frame, text='Mostrar Estaciones Fijas', font=("Roboto", 12, "bold"), 
-                       bg="#1F71A9", fg="white", width=22, command=self.pintar_estaciones)
-    self.buttonEstaciones.place(relx=0.8, rely=0.15)
-
-    self.buttonBicicletas = Button(frame, text='Mostrar Bicicletas Flotantes', font=("Roboto", 12, "bold"), 
-                       bg="#1F71A9", fg="white", width=22, command=self.pintar_flotantes)
-    self.buttonBicicletas.place(relx=0.8, rely=0.25)
-
-        
-def pintar_estaciones_v2(self):
-    self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/green_marker.ico", (15,20))
-    for id in self.estaciones:
-        self.labelMap.set_marker(self.estaciones[id]['coordinates'][1], self.estaciones[id]['coordinates'][0], 
-                                 icon=self.imagenEstacionesFijas)
-
-
-
-
+"""
