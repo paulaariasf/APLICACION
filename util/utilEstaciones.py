@@ -157,17 +157,16 @@ def generar_flotantes_v2(estaciones, radio):
     df_flotantes = pd.DataFrame(data)
     return df_flotantes
 
-def get_color(valor, min_val, max_val):
+def get_color(valor, rangos, colores):
 
-    valor_aux = max(min(valor, max_val), min_val)
-    if valor_aux == 0:
+    if valor == 0:
         return None
-    colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
-    puntos = (min_val + (np.linspace(0, 1, 10)**2) * (max_val - min_val)).tolist()
-    for i in range(len(puntos)-1):
-        if puntos[i] <= valor_aux < puntos[i+1]:
+    
+    for i in range(len(rangos)-1):
+        if rangos[i] <= valor < rangos[i+1]:
             return colores[i]
-    return "#00FF00"
+    if valor == rangos[len(rangos)-1]:
+        return "#00FF00"
     """
     escala = (valor - min_val) / (max_val - min_val)
     

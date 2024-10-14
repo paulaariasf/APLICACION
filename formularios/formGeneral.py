@@ -3,7 +3,7 @@ from tkinter import font
 import util.utilVentana as utilVentana
 import util.utilImagenes as utilImagenes
 from PIL import ImageTk, Image
-from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_CURSOR_ENCIMA
+from config import COLOR_BARRA_SUPERIOR, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL
 from formularios.formConstruccion import FormConstruccionDesign
 from formularios.formInicio import FormInicioDesign
 from formularios.formMapa import FormMapaDesign
@@ -36,10 +36,10 @@ class FormularioGeneral(Tk):
         self.barraSuperior = Frame(self, bg=COLOR_BARRA_SUPERIOR, height=50)
         self.barraSuperior.pack(side=TOP, fill="both")
         self.controlesBarraSuperior()
-
+        
         self.menuLateral = Frame(self, bg=COLOR_MENU_LATERAL, width=200)
         #self.menuLateral.pack(side=LEFT, fill="both", expand=False)
-        self.controlesMenuLateral()
+        #self.controlesMenuLateral()
 
         self.cuerpoPrincipal = Frame(self, bg=COLOR_CUERPO_PRINCIPAL)
         self.cuerpoPrincipal.pack(side=RIGHT, fill="both", expand=True)
@@ -51,7 +51,7 @@ class FormularioGeneral(Tk):
 
         #Boton de menu lateral
         self.buttonMenuLateral = Button(self.barraSuperior, text="\uf0c9", font=fontAwesome,
-                                        command=self.togglePanel, bd=0, bg=COLOR_BARRA_SUPERIOR, fg="white")
+                                        command = self.togglePanel, bd=0, bg=COLOR_BARRA_SUPERIOR, fg="white")
         self.buttonMenuLateral.config(padx=10, pady=10)
         self.buttonMenuLateral.pack(side=LEFT)
 
@@ -77,9 +77,9 @@ class FormularioGeneral(Tk):
         if self.menuLateral.winfo_ismapped():
             self.menuLateral.pack_forget()
         else:
-            self.menuLateral.pack(side=LEFT, fil="y")
+            self.menuLateral.pack(side=LEFT, fill="y")
 
-    def controlesMenuLateral(self):
+    """def controlesMenuLateral(self):
         fontAwesome=font.Font(family="FontAwesome", size=15)
 
         #Botones del menu lateral
@@ -111,7 +111,7 @@ class FormularioGeneral(Tk):
         self.buttonDemanda = Button(self.menuLateral, text="\ue4b7    Demanda", font=fontAwesome, command=self.abrir_panel_construccion)
         self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonDemanda.pack(side=TOP)
-        self.bindHoverEvents(self.buttonDemanda)
+        self.bindHoverEvents(self.buttonDemanda)"""
 
     """def botones_desplegados(self):
         fontAwesome=font.Font(family="FontAwesome", size=15)
@@ -142,7 +142,7 @@ class FormularioGeneral(Tk):
         self.bindHoverEvents(self.buttonDemanda)
         """
         
-    def bindHoverEvents(self, button):
+    """def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
         button.bind("<Enter>", lambda event: self.on_enter(event, button))
         button.bind("<Leave>", lambda event: self.on_leave(event, button))
@@ -153,7 +153,7 @@ class FormularioGeneral(Tk):
         
     def on_leave(self, event, button):
         #Restaurar estilo al salir el ratón
-        button.config(bg=COLOR_MENU_LATERAL, fg="white")
+        button.config(bg=COLOR_MENU_LATERAL, fg="white")"""
 
     
     def controlesCuerpo(self):
@@ -171,12 +171,12 @@ class FormularioGeneral(Tk):
 
     def abrir_panel_inicio(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        self.inicio = FormInicioDesign(self.cuerpoPrincipal, self.imagenPortada, self.aplicacion_ancho, self.buttonMenuLateral)
+        self.inicio = FormInicioDesign(self.cuerpoPrincipal, self.imagenPortada, self.aplicacion_ancho, self.buttonMenuLateral, self.menuLateral)
         self.mapa = self.inicio.get_mapa()
 
     def abrir_panel_mapa(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        self.mapa = FormMapaDesign(self.cuerpoPrincipal)
+        self.mapa = FormMapaDesign(self.cuerpoPrincipal, self.menuLateral)
 
     def abrir_panel_bicicletas_flotantes(self):
         self.limpiar_panel(self.cuerpoPrincipal)
