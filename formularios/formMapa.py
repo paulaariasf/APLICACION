@@ -44,13 +44,13 @@ class FormMapaDesign():
 
         checkbox_fijas = BooleanVar()
         self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
-                                                 variable=checkbox_fijas, anchor="e", command= lambda : self.boton_fijas(checkbox_fijas))
+                                                 variable=checkbox_fijas, anchor="w", command= lambda : self.boton_fijas(checkbox_fijas))
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
 
         checkbox_flotantes = BooleanVar()
         self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text="    Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
-                                                     variable=checkbox_flotantes, anchor="e", command=self.boton_flotantes(checkbox_flotantes))
+                                                     variable=checkbox_flotantes, anchor="w", command=lambda: self.boton_flotantes(checkbox_flotantes))
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBicicletasFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonBicicletasFlotantes)
@@ -60,19 +60,19 @@ class FormMapaDesign():
         self.LabelMapaCalor_menu.pack(side=TOP)
 
         self.buttonMostrarMapa_menu = Button(self.menuLateral, text=" Mostrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="e", command= self.mostrar_mapapordefecto_enmenu)
+                                                 anchor="w", command= self.mostrar_mapapordefecto_enmenu)
         self.buttonMostrarMapa_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonMostrarMapa_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapa_menu)
 
         self.buttonCambiarN_menu = Button(self.menuLateral, text=" Modificar cuadrícula", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="e", command= self.introducir_n)
+                                                 anchor="w", command= self.introducir_n)
         self.buttonCambiarN_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonCambiarN_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonCambiarN_menu)
 
         self.buttonBorrarMapa_menu = Button(self.menuLateral, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="e", command= self.borrar_mapacalor_enmenu)
+                                                 anchor="w", command= self.borrar_mapacalor_enmenu)
         self.buttonBorrarMapa_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBorrarMapa_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonBorrarMapa_menu)
@@ -127,7 +127,11 @@ class FormMapaDesign():
         close_button.pack(side="right", padx=5, pady=5)
 
     def pintar_mapa_calor(self):
+        if hasattr (self, "frame_leyenda"):
+            self.frame_leyenda.destroy()           
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
+        #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.42344035, -3.9388403499999997, 40.62173325, 40.22653325
+        print(f"maxLon: {self.maxLon}, minLon: {self.minLon}, maxLat: {self.maxLat}, minLat: {self.minLat}")
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
         self.idMap = np.repeat(0, repeats=self.n**2).reshape((self.n,self.n))
@@ -139,7 +143,15 @@ class FormMapaDesign():
         rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
         colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
         
-        self.anadir_leyenda_colores(rangos, colores)
+        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
+        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210) 
+        rangos[0]=1
+
+        i=10
+        for color in colores[::-1]:
+            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+            color_label.pack()
+            i=i-1
 
         for i in range(pow(self.n, 2)):
             poligono = self.labelMap.set_polygon(self.diccionario['coordenadas'][i],
@@ -156,16 +168,6 @@ class FormMapaDesign():
                                         command=self.show_info_zona,
                                         pass_coords=True)
     
-    def anadir_leyenda_colores(self, rangos, colores):
-        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210) 
-        rangos[0]=1
-
-        i=10
-        for color in colores[::-1]:
-            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
-            color_label.pack()
-            i=i-1
 
     def mostrar_mapapordefecto(self):
         self.borrar_mapacalor()
@@ -178,7 +180,7 @@ class FormMapaDesign():
         self.buttonBorrarMapa.place(relx=0.8, rely=0.17)
 
     def borrar_mapacalor(self):
-        if hasattr(self, "n"):
+        if hasattr(self, "n") & f"{self.n}" in self.poligonos_zonas:
             for poligono in self.poligonos_zonas[self.n]:
                 poligono.delete()
             self.buttonCambiarN.destroy()
@@ -290,14 +292,14 @@ class FormMapaDesign():
 
             coord_estacion = df_flotantes['coord'][i]
             d = 0.00000001
-            coordinates = [(coord_estacion[0], coord_estacion[1]),
-                            (coord_estacion[0], coord_estacion[1]+ d),
-                            (coord_estacion[0] + d, coord_estacion[1] + d),
-                            (coord_estacion[0] + d, coord_estacion[1])]
+            #coordinates = [(coord_estacion[0], coord_estacion[1]),
+            #                (coord_estacion[0], coord_estacion[1]+ d),
+            #                (coord_estacion[0] + d, coord_estacion[1] + d),
+            #                (coord_estacion[0] + d, coord_estacion[1])]
 
-            poligono = self.labelMap.set_polygon(coordinates,
+            poligono = self.labelMap.set_polygon([coord_estacion],
                                     outline_color="red",
-                                    border_width=3,
+                                    border_width=1,
                                     name=df_flotantes['info'][i])
             self.poligonos_flotantes.append(poligono)        
     

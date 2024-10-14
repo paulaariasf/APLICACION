@@ -92,6 +92,10 @@ def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, 
     #print(diccionario)
     return diccionario
 
+def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda, idMap):
+    #Coordenadas: [(40.62173325, -3.9388403499999997), (40.62173325, -3.42344035), (40.22653325, -3.9388403499999997), (40.22653325, -3.42344035)]
+    x=0
+
 
 def clasificar_punto(n, punto, lon_celda, lat_celda, minLon, maxLat, idMap):
     lat, lon = punto
@@ -142,7 +146,7 @@ def generar_flotantes(estaciones, radio):
     return df_flotantes
 
 def generar_flotantes_v2(estaciones, radio):
-    data = {'id': [], 'coord': [], 'info':[]}
+    """data = {'id': [], 'coord': [], 'info':[]}
     id_bici = 1
     for id in estaciones:
         puntos_flotantes = generar_puntos(estaciones[id]['coordinates'], 
@@ -152,8 +156,9 @@ def generar_flotantes_v2(estaciones, radio):
             data['id'].append(id_bici)
             data['coord'].append(p)
             data['info'].append('Bicicleta nº '+ str(id_bici))
-            id_bici = id_bici + 1
-    
+            id_bici = id_bici + 1"""
+    with open("bicicletas_flotantes.json", "r") as archivo:
+        data = json.load(archivo)
     df_flotantes = pd.DataFrame(data)
     return df_flotantes
 
