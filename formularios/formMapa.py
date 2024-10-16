@@ -6,6 +6,7 @@ import tkintermapview
 from tkinter import messagebox
 import numpy as np
 from tkinter import font
+import json
 
 class FormMapaDesign():
 
@@ -65,6 +66,12 @@ class FormMapaDesign():
         self.buttonMostrarMapa_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapa_menu)
 
+        self.buttonPorcentajeLLenado_menu = Button(self.menuLateral, text=" Mapa con porcentaje de llenado", font=font.Font(family="FontAwesome", size=8), 
+                                                 anchor="w", command= self.porcentaje_llenado)
+        self.buttonPorcentajeLLenado_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonPorcentajeLLenado_menu.pack(side=TOP)
+        self.bindHoverEvents(self.buttonPorcentajeLLenado_menu)
+
         self.buttonCambiarN_menu = Button(self.menuLateral, text=" Modificar cuadrícula", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= self.introducir_n)
         self.buttonCambiarN_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
@@ -114,7 +121,12 @@ class FormMapaDesign():
         
         zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat, self.idMap)
 
-        info_label = Label(self.infozona_frame, text=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]}", bg="white")
+        if self.clasificacion == "General":
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]} de {self.diccionario['cantidad_maxima']}"
+        elif self.clasificacion == "Llenado":
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]} de {self.diccionario['capacidades'][zona-1]}"
+
+        info_label = Label(self.infozona_frame, text=texto, bg="white")
         info_label.pack(side="left", padx=5, pady=5)
 
         #Resaltar zona seleccionada
@@ -128,21 +140,38 @@ class FormMapaDesign():
 
     def pintar_mapa_calor(self):
         if hasattr (self, "frame_leyenda"):
-            self.frame_leyenda.destroy()           
+            self.frame_leyenda.destroy()   
+        
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
-        #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.42344035, -3.9388403499999997, 40.62173325, 40.22653325
         print(f"maxLon: {self.maxLon}, minLon: {self.minLon}, maxLat: {self.maxLat}, minLat: {self.minLat}")
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
         self.idMap = np.repeat(0, repeats=self.n**2).reshape((self.n,self.n))
-        self.diccionario = utilEstaciones.crear_dicCoord(self.estaciones, self.n, self.minLon, self.minLat, self.maxLat, self.lon_celda, self.lat_celda, self.idMap)
+        self.diccionario = utilEstaciones.crear_diccionario_zonas(self.estaciones, self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, self.idMap)
+        """
+        #########################         VERSION NUEVA           #####################
+        self.maxLon, self.minLon, self.maxLat, self.minLat = -3.4214, -3.93884035, 40.62442815, 40.22383835
+        self.n = 440
+        self.lon_celda = (self.maxLon - self.minLon) / self.n #0.0011760
+        self.lat_celda = (self.maxLat - self.minLat) / self.n #0.0008983
+        print(f"lat_celda: {self.lat_celda}, lon_celda: {self.lon_celda}")
+        self.idMap = np.repeat(0, repeats=self.n**2).reshape((self.n,self.n))
+        self.diccionario = utilEstaciones.crear_diccionario_zonas(self.estaciones, self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, self.idMap)
+        with open("archivo.json", "w") as archivo:
+            json.dump(self.diccionario, archivo, indent=4)
+        """
+        if self.clasificacion == "General":
+            min_val = min(self.diccionario['cantidades'])
+            max_val = max(self.diccionario['cantidades'])
+            self.diccionario['cantidad_maxima'] = max_val
+            rangos_flotantes = min_val + (np.linspace(0, 1, 11)**2) * (max_val - min_val)
+            rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
+            colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
+        elif self.clasificacion == "LLenado":
+            rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+            colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
 
-        min_val = min(self.diccionario['cantidades'])
-        max_val = max(self.diccionario['cantidades'])
-        rangos_flotantes = min_val + (np.linspace(0, 1, 11)**2) * (max_val - min_val)
-        rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
-        colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
-        
+        ############################       Leyenda     ##############################
         self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
         self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210) 
         rangos[0]=1
@@ -152,10 +181,18 @@ class FormMapaDesign():
             color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
             color_label.pack()
             i=i-1
+        ###############################################################################
 
         for i in range(pow(self.n, 2)):
+            if self.clasificacion == "General":
+                color = utilEstaciones.get_color(self.diccionario['cantidades'][i], rangos, colores)
+            elif self.clasificacion == "LLenado":
+                if self.diccionario['capacidades'][i] != 0:
+                    porcentaje = (self.diccionario['cantidades'][i]/self.diccionario['capacidades'][i])*100
+                else: porcentaje = 0
+                color = utilEstaciones.get_color(porcentaje, rangos, colores)
             poligono = self.labelMap.set_polygon(self.diccionario['coordenadas'][i],
-                                    fill_color=utilEstaciones.get_color(self.diccionario['cantidades'][i], rangos, colores),
+                                    fill_color=color,
                                     outline_color="grey",
                                     border_width=1,
                                     name=f'Zona {self.diccionario['ids'][i]}')
@@ -169,7 +206,7 @@ class FormMapaDesign():
                                         pass_coords=True)
     
 
-    def mostrar_mapapordefecto(self):
+    """def mostrar_mapapordefecto(self):
         self.borrar_mapacalor()
         self.n = 40
         self.pintar_mapa_calor()
@@ -185,11 +222,12 @@ class FormMapaDesign():
                 poligono.delete()
             self.buttonCambiarN.destroy()
             self.buttonBorrarMapa.destroy()
-            self.frame_leyenda.destroy()
+            self.frame_leyenda.destroy()"""
 
     def mostrar_mapapordefecto_enmenu(self):
         self.borrar_mapacalor_enmenu()
         self.n = 40
+        self.clasificacion = "General"
         self.pintar_mapa_calor()
 
     def borrar_mapacalor_enmenu(self):
@@ -230,14 +268,20 @@ class FormMapaDesign():
         if input_text.isdigit():
             number = int(input_text)
             if 0 <= number <= 1000:
+                self.borrar_mapacalor_enmenu()
                 self.ventana_n.destroy()
                 self.n = number
-                self.labelMap.delete_all_polygon()
                 self.pintar_mapa_calor()
             else:
                 messagebox.showerror("Error", "Por favor, introduce un número entre 0 y 1000.")
         else:
             messagebox.showerror("Error", "Por favor, introduce un número válido.")
+
+    def porcentaje_llenado(self):
+        self.borrar_mapacalor_enmenu()
+        self.clasificacion = "LLenado"
+        self.pintar_mapa_calor()
+
 
     def close_infoest(self):
         if self.est_seleccion is not None:
@@ -324,8 +368,8 @@ def anadir_mapa(self):
     #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
 
     #Botones en mapa
-    self.buttonMapaCalor = Button(self.panel_principal, text='Mostrar Mapa de Calor', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=18, command=self.mostrar_mapapordefecto)
-    self.buttonMapaCalor.place(relx=0.8, rely=0.05)
+    #self.buttonMapaCalor = Button(self.panel_principal, text='Mostrar Mapa de Calor', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=18, command=self.mostrar_mapapordefecto)
+    #self.buttonMapaCalor.place(relx=0.8, rely=0.05)
 
     #self.buttonEstaciones = Button(self.frame_general, text='Mostrar Estaciones Fijas', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=22, command=self.pintar_estaciones)
     #self.buttonEstaciones.place(relx=0.8, rely=0.15)

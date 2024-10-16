@@ -54,10 +54,9 @@ def limites(estaciones):
     return maxLon, minLon, maxLat, minLat
 
 
-def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, idMap):
+def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda, idMap):
     #Creo matriz para guardar las coordenadas de todos los puntos
     matriz = [[(maxLat, minLon) for _ in range(n+1)] for _ in range(n+1)]
-    #idMap = [[0 for _ in range(n)] for _ in range(n)]
 
     for i in range(n+1):
         for j in range(n+1):
@@ -66,7 +65,9 @@ def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, 
         'ids': [],
         'coordenadas': [],
         'cantidades': [],
-        'num_estaciones': []
+        'capacidades': [],
+        'num_estaciones': [],
+        'cantidad_maxima': -1
     }
     id = 1
     for i in range(n):
@@ -79,6 +80,7 @@ def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, 
 
     
     diccionario['cantidades'] = [0 for i in range(pow(n,2))]
+    diccionario['capacidades'] = [0 for i in range(pow(n,2))]
     diccionario['num_estaciones'] = [0 for i in range(pow(n,2))]
     
     #Relleno las cantidades para cada zona
@@ -88,12 +90,16 @@ def crear_dicCoord(estaciones, n, minLon, minLat, maxLat, lon_celda, lat_celda, 
         estaciones[id]['zona'] = clasificar_punto(n, estaciones[id]['coordinates'][::-1], lon_celda, lat_celda, minLon, maxLat, idMap)
         #print(f"estacion: {estaciones[id]['name']} coords : {estaciones[id]['coordinates'][::-1]} zona: {estaciones[id]['zona']}")
         diccionario['cantidades'][estaciones[id]['zona']-1] = diccionario['cantidades'][estaciones[id]['zona']-1] + estaciones[id]['bike_bases']
+        diccionario['capacidades'][estaciones[id]['zona']-1] = diccionario['capacidades'][estaciones[id]['zona']-1] + (estaciones[id]['bike_bases']+estaciones[id]['free_bases'])
         diccionario['num_estaciones'][estaciones[id]['zona']-1] = diccionario['num_estaciones'][estaciones[id]['zona']-1] + 1
     #print(diccionario)
     return diccionario
 
-def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda, idMap):
+def crear_diccionario_zonas_nuevo(estaciones, n, minLon, maxLat, lon_celda, lat_celda, idMap):
     #Coordenadas: [(40.62173325, -3.9388403499999997), (40.62173325, -3.42344035), (40.22653325, -3.9388403499999997), (40.22653325, -3.42344035)]
+    #Coordenadas BUENAS: 
+    # [(40.62442815, −3.93884035), (40.62442815, −3.4214), 
+    # (40.22383835, −3.93884035), (40.22383835, −3.4214)]
     x=0
 
 
