@@ -7,6 +7,7 @@ from tkinter import messagebox
 import numpy as np
 from tkinter import font
 import json
+import math
 
 class FormMapaDesign():
 
@@ -25,6 +26,10 @@ class FormMapaDesign():
 
         self.pol_seleccion = None
         self.est_seleccion = None
+
+        self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
+
+        self.seleccionado = StringVar()
 
         anadir_mapa(self)
         self.menu_lateral(menuLateral)
@@ -61,7 +66,7 @@ class FormMapaDesign():
         self.LabelMapaCalor_menu.pack(side=TOP)
 
         self.buttonMostrarMapa_menu = Button(self.menuLateral, text=" Mostrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.mostrar_mapapordefecto_enmenu)
+                                                 anchor="w", command= self.mostrar_mapapordefecto)
         self.buttonMostrarMapa_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonMostrarMapa_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapa_menu)
@@ -73,13 +78,13 @@ class FormMapaDesign():
         self.bindHoverEvents(self.buttonPorcentajeLLenado_menu)
 
         self.buttonCambiarN_menu = Button(self.menuLateral, text=" Modificar cuadrícula", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.introducir_n)
+                                                 anchor="w", command= self.modificar_cuadricula)
         self.buttonCambiarN_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonCambiarN_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonCambiarN_menu)
 
         self.buttonBorrarMapa_menu = Button(self.menuLateral, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.borrar_mapacalor_enmenu)
+                                                 anchor="w", command= self.borrar_mapacalor)
         self.buttonBorrarMapa_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBorrarMapa_menu.pack(side=TOP)
         self.bindHoverEvents(self.buttonBorrarMapa_menu)
@@ -120,6 +125,8 @@ class FormMapaDesign():
         self.infozona_frame.place(relx=0.8, rely=0.75)
         
         zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat, self.idMap)
+        fila = (zona-1)//self.n
+        columna =((zona-1)%self.n)
 
         if self.clasificacion == "General":
             texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]} de {self.diccionario['cantidad_maxima']}"
@@ -141,49 +148,59 @@ class FormMapaDesign():
     def pintar_mapa_calor(self):
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()   
+
+        if not hasattr(self, 'n'):
+            metros = 500
+            lon_objetivo = metros/(111320*math.cos(40.4))
+            lat_objetivo = metros/111320 
+            n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
+            n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
+            self.n = math.ceil(max(n_lon, n_lat))
         
-        self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
-        print(f"maxLon: {self.maxLon}, minLon: {self.minLon}, maxLat: {self.maxLat}, minLat: {self.minLat}")
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
         self.idMap = np.repeat(0, repeats=self.n**2).reshape((self.n,self.n))
         self.diccionario = utilEstaciones.crear_diccionario_zonas(self.estaciones, self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, self.idMap)
-        """
-        #########################         VERSION NUEVA           #####################
-        self.maxLon, self.minLon, self.maxLat, self.minLat = -3.4214, -3.93884035, 40.62442815, 40.22383835
-        self.n = 440
-        self.lon_celda = (self.maxLon - self.minLon) / self.n #0.0011760
-        self.lat_celda = (self.maxLat - self.minLat) / self.n #0.0008983
-        print(f"lat_celda: {self.lat_celda}, lon_celda: {self.lon_celda}")
-        self.idMap = np.repeat(0, repeats=self.n**2).reshape((self.n,self.n))
-        self.diccionario = utilEstaciones.crear_diccionario_zonas(self.estaciones, self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, self.idMap)
-        with open("archivo.json", "w") as archivo:
-            json.dump(self.diccionario, archivo, indent=4)
-        """
+        #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.4214, -3.93884035, 40.62442815, 40.22383835
+        #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.521772, -3.784628, 40.5157613, 40.330671
+        
         if self.clasificacion == "General":
             min_val = min(self.diccionario['cantidades'])
             max_val = max(self.diccionario['cantidades'])
             self.diccionario['cantidad_maxima'] = max_val
-            rangos_flotantes = min_val + (np.linspace(0, 1, 11)**2) * (max_val - min_val)
+            rangos_flotantes = min_val + (np.linspace(0, 1, 9)**2) * (max_val - min_val)
             rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
-            colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
+
+            rangos = min_val + ((np.arange(9) ** 2) * (max_val - min_val) // 8 ** 2)
+
+            colores = ["#FF3300", "#FF6600", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#00FF00"]
+            ############################       Leyenda     ##############################
+            self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
+            self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=168)
+            i=8
+            for color in colores[::-1]:
+                color_label = Label(self.frame_leyenda, width=60, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+                color_label.pack()
+                i=i-1
+            ###############################################################################
+
         elif self.clasificacion == "LLenado":
             rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
             colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
+            i=10
+            ############################       Leyenda     ##############################
+            self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
+            self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210) 
 
-        ############################       Leyenda     ##############################
-        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210) 
-        rangos[0]=1
-
-        i=10
-        for color in colores[::-1]:
-            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
-            color_label.pack()
-            i=i-1
-        ###############################################################################
-
+            for color in colores[::-1]:
+                color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+                color_label.pack()
+                i=i-1
+            ###############################################################################
+        
+        
         for i in range(pow(self.n, 2)):
+            #if(self.diccionario['num_estaciones'][i]) != 0: #los que son 0 no pintarlos
             if self.clasificacion == "General":
                 color = utilEstaciones.get_color(self.diccionario['cantidades'][i], rangos, colores)
             elif self.clasificacion == "LLenado":
@@ -206,79 +223,77 @@ class FormMapaDesign():
                                         pass_coords=True)
     
 
-    """def mostrar_mapapordefecto(self):
+    def mostrar_mapapordefecto(self):
         self.borrar_mapacalor()
-        self.n = 40
-        self.pintar_mapa_calor()
-        self.buttonCambiarN = Button(self.panel_principal, text='Modificar cuadrícula', font=("Roboto", 8, "bold"), bg="#1F71A9", fg="white", width=17, command=self.introducir_n)
-        self.buttonCambiarN.place(relx=0.85, rely=0.12)
-
-        self.buttonBorrarMapa = Button(self.panel_principal, text='Borrar Mapa de Calor', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=18, command=self.borrar_mapacalor)
-        self.buttonBorrarMapa.place(relx=0.8, rely=0.17)
-
-    def borrar_mapacalor(self):
-        if hasattr(self, "n") & f"{self.n}" in self.poligonos_zonas:
-            for poligono in self.poligonos_zonas[self.n]:
-                poligono.delete()
-            self.buttonCambiarN.destroy()
-            self.buttonBorrarMapa.destroy()
-            self.frame_leyenda.destroy()"""
-
-    def mostrar_mapapordefecto_enmenu(self):
-        self.borrar_mapacalor_enmenu()
-        self.n = 40
         self.clasificacion = "General"
         self.pintar_mapa_calor()
 
-    def borrar_mapacalor_enmenu(self):
+    def borrar_mapacalor(self):
         if hasattr(self, "n"):
-            for poligono in self.poligonos_zonas[self.n]:
-                poligono.delete()
+            poligonos = self.poligonos_zonas[self.n]
+            if len(poligonos) != 0:
+                for poligono in poligonos:
+                    poligono.delete()
             self.frame_leyenda.destroy()
 
-    def introducir_n(self):
-        self.ventana_n = Toplevel(self.frame_mapa)
-        self.ventana_n.title("Entrada de Mapa de Calor")
+    def modificar_cuadricula(self):
+        self.ventana_mod = Toplevel(self.frame_mapa)
+        self.ventana_mod.title("Entrada de Mapa de Calor")
 
-        ancho_pantalla = self.ventana_n.winfo_screenwidth()
-        alto_pantalla = self.ventana_n.winfo_screenheight()
+        ancho_pantalla = self.ventana_mod.winfo_screenwidth()
+        alto_pantalla = self.ventana_mod.winfo_screenheight()
 
         ancho_ventana = 300
-        alto_ventana = 120
+        alto_ventana = 150
 
         x = (ancho_pantalla // 2) - (ancho_ventana // 2)
         y = (alto_pantalla // 2) - (alto_ventana // 2)
 
-        self.ventana_n.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+        self.ventana_mod.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
 
-        label = Label(self.ventana_n, text="Introduzca el número de filas y columnas deseado\n para crear el mapa de calor:")
-        label.pack(pady=5)
+        if self.n == 41: self.seleccionado.set(500)
+        elif self.n == 51: self.seleccionado.set(400)
+        elif self.n == 68: self.seleccionado.set(300)
+        elif self.n == 102: self.seleccionado.set(200)
 
-        self.text_box = Entry(self.ventana_n, width=10)
-        self.text_box.pack(padx=10, pady=5)
+        # Crear RadioButtons
+        radio500 = Radiobutton(self.ventana_mod, text="500 metros", variable=self.seleccionado, value=500)
+        radio500.pack(anchor=W)
 
-        submit_button = Button(self.ventana_n, text="Mostrar", command=self.enviar_n)
+        radio400 = Radiobutton(self.ventana_mod, text="400 metros", variable=self.seleccionado, value=400)
+        radio400.pack(anchor=W)
+
+        radio300 = Radiobutton(self.ventana_mod, text="300 metros", variable=self.seleccionado, value=300)
+        radio300.pack(anchor=W)
+
+        radio200 = Radiobutton(self.ventana_mod, text="200 metros", variable=self.seleccionado, value=200)
+        radio200.pack(anchor=W)
+
+        submit_button = Button(self.ventana_mod, text="Mostrar", command=self.enviar)
         submit_button.pack(pady=5)
 
-        self.ventana_n.protocol("WM_DELETE_WINDOW", self.ventana_n.destroy)
+        self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
 
-    def enviar_n(self):
-        input_text = self.text_box.get().strip()
 
-        if input_text.isdigit():
-            number = int(input_text)
-            if 0 <= number <= 1000:
-                self.borrar_mapacalor_enmenu()
-                self.ventana_n.destroy()
-                self.n = number
-                self.pintar_mapa_calor()
-            else:
-                messagebox.showerror("Error", "Por favor, introduce un número entre 0 y 1000.")
-        else:
-            messagebox.showerror("Error", "Por favor, introduce un número válido.")
+    def enviar(self):        
+        self.borrar_mapacalor()
+        self.ventana_mod.destroy()
+
+        
+        metros = float(self.seleccionado.get())
+        lon_objetivo = metros/(111320*math.cos(40.4))
+        lat_objetivo = metros/111320 
+        n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
+        n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
+        self.n = math.ceil(max(n_lon, n_lat))
+
+        if not hasattr(self, 'clasificacion'):
+            self.clasificacion = "General"
+
+        self.pintar_mapa_calor()
 
     def porcentaje_llenado(self):
-        self.borrar_mapacalor_enmenu()
+        self.borrar_mapacalor()
         self.clasificacion = "LLenado"
         self.pintar_mapa_calor()
 
@@ -367,16 +382,6 @@ def anadir_mapa(self):
     self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
     #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
 
-    #Botones en mapa
-    #self.buttonMapaCalor = Button(self.panel_principal, text='Mostrar Mapa de Calor', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=18, command=self.mostrar_mapapordefecto)
-    #self.buttonMapaCalor.place(relx=0.8, rely=0.05)
-
-    #self.buttonEstaciones = Button(self.frame_general, text='Mostrar Estaciones Fijas', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=22, command=self.pintar_estaciones)
-    #self.buttonEstaciones.place(relx=0.8, rely=0.15)
-
-    #self.buttonBicicletas = Button(self.frame_general, text='Mostrar Bicicletas Flotantes', font=("Roboto", 12, "bold"), bg="#1F71A9", fg="white", width=22, command=self.pintar_flotantes)
-    #self.buttonBicicletas.place(relx=0.8, rely=0.25)
-
         
 def pintar_estaciones_v2(self):
     self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/green_marker.ico", (15,20))
@@ -386,43 +391,3 @@ def pintar_estaciones_v2(self):
 
 
 
-"""def creacion_paneles_info(self, panel_principal):
-    self.barra_superior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)
-    self.barra_superior.pack(side=TOP, fill=X, expand=False)
-
-    self.barra_central = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)  
-    self.barra_central.pack(side=TOP, fill=X, expand=False)
-
-    self.barra_superior_left = Frame(self.barra_superior, bg=COLOR_CUERPO_PRINCIPAL)
-    self.barra_superior_left.pack(side=LEFT, fill=BOTH, expand=True)
-
-    self.barra_superior_right = Frame(self.barra_superior, bg=COLOR_CUERPO_PRINCIPAL)
-    self.barra_superior_right.pack(side=LEFT, fill=BOTH, expand=True)
-
-    self.barra_central_left = Frame(self.barra_central, bg=COLOR_CUERPO_PRINCIPAL)
-    self.barra_central_left.pack(side=LEFT, fill=BOTH, expand=True)
-
-    self.barra_central_right = Frame(self.barra_central, bg=COLOR_CUERPO_PRINCIPAL)
-    self.barra_central_right.pack(side=LEFT, fill=BOTH, expand=True)
-
-    self.barra_inferior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)
-    self.barra_inferior.pack(side=TOP, fill="both", expand=True)
-
-    self.labelTituloMapaCalor=Label(self.barra_superior_left, text="Información del mapa de calor")
-    self.labelTituloMapaCalor.config(fg="#1F71A9", font=("Roboto", 20, "bold"), bg=COLOR_CUERPO_PRINCIPAL, pady=10)
-    self.labelTituloMapaCalor.pack(side=LEFT, anchor="n", fill=X, expand=True)
-
-    self.labelInfoMapaCalor=Label(self.barra_central_left, text="Zona: \n\n Nº de bicicletas:")
-    self.labelInfoMapaCalor.config(fg="#1F71A9", font=("Roboto", 14), bg=COLOR_CUERPO_PRINCIPAL, pady=10)
-    self.labelInfoMapaCalor.pack(side=LEFT, anchor="n", fill=X, expand=False)
-
-    self.labelTituloEstacion=Label(self.barra_superior_right, text="Información de la estación")
-    self.labelTituloEstacion.config(fg="#1F71A9", font=("Roboto", 20, "bold"), bg=COLOR_CUERPO_PRINCIPAL, pady=10)
-    self.labelTituloEstacion.pack(side=LEFT, anchor="n", fill=X, expand=True)
-
-    self.labelInfoEstacion=Label(self.barra_central_right, text="Estación: \n\n Nº de bicicletas:")
-    self.labelInfoEstacion.config(fg="#1F71A9", font=("Roboto", 14), bg=COLOR_CUERPO_PRINCIPAL, pady=10)
-    self.labelInfoEstacion.pack(side=LEFT, anchor="n", fill=X, expand=False)
-
-    anadir_mapa(self, self.barra_inferior)
-"""

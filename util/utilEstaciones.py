@@ -67,7 +67,8 @@ def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda,
         'cantidades': [],
         'capacidades': [],
         'num_estaciones': [],
-        'cantidad_maxima': -1
+        'cantidad_maxima': -1,
+        'cantidades_mat': [],
     }
     id = 1
     for i in range(n):
@@ -82,17 +83,18 @@ def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda,
     diccionario['cantidades'] = [0 for i in range(pow(n,2))]
     diccionario['capacidades'] = [0 for i in range(pow(n,2))]
     diccionario['num_estaciones'] = [0 for i in range(pow(n,2))]
+    diccionario['cantidades_mat'] = [[0 for _ in range(n)] for _ in range(n)]
+
     
     #Relleno las cantidades para cada zona
     for id in estaciones:
-        #if(estaciones[id]['name'] == "518 - Tampico - Plaza Barbados"):
-        #    print("parar")
         estaciones[id]['zona'] = clasificar_punto(n, estaciones[id]['coordinates'][::-1], lon_celda, lat_celda, minLon, maxLat, idMap)
-        #print(f"estacion: {estaciones[id]['name']} coords : {estaciones[id]['coordinates'][::-1]} zona: {estaciones[id]['zona']}")
         diccionario['cantidades'][estaciones[id]['zona']-1] = diccionario['cantidades'][estaciones[id]['zona']-1] + estaciones[id]['bike_bases']
         diccionario['capacidades'][estaciones[id]['zona']-1] = diccionario['capacidades'][estaciones[id]['zona']-1] + (estaciones[id]['bike_bases']+estaciones[id]['free_bases'])
         diccionario['num_estaciones'][estaciones[id]['zona']-1] = diccionario['num_estaciones'][estaciones[id]['zona']-1] + 1
-    #print(diccionario)
+        fila = (estaciones[id]['zona']-1)//n
+        columna =((estaciones[id]['zona']-1)%n)
+        diccionario['cantidades_mat'][fila][columna] = diccionario['cantidades_mat'][fila][columna] + estaciones[id]['bike_bases']
     return diccionario
 
 def crear_diccionario_zonas_nuevo(estaciones, n, minLon, maxLat, lon_celda, lat_celda, idMap):
@@ -172,7 +174,7 @@ def get_color(valor, rangos, colores):
 
     if valor == 0:
         return None
-    
+
     for i in range(len(rangos)-1):
         if rangos[i] <= valor < rangos[i+1]:
             return colores[i]
