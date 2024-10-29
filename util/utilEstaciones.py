@@ -68,7 +68,8 @@ def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda,
         'capacidades': [],
         'num_estaciones': [],
         'cantidad_maxima': -1,
-        'cantidades_mat': [],
+        #'cantidades_mat': [],
+        'cantidades_suavizadas': [],
     }
     id = 1
     for i in range(n):
@@ -94,7 +95,7 @@ def crear_diccionario_zonas(estaciones, n, minLon, maxLat, lon_celda, lat_celda,
         diccionario['num_estaciones'][estaciones[id]['zona']-1] = diccionario['num_estaciones'][estaciones[id]['zona']-1] + 1
         fila = (estaciones[id]['zona']-1)//n
         columna =((estaciones[id]['zona']-1)%n)
-        diccionario['cantidades_mat'][fila][columna] = diccionario['cantidades_mat'][fila][columna] + estaciones[id]['bike_bases']
+        #diccionario['cantidades_mat'][fila][columna] = diccionario['cantidades_mat'][fila][columna] + estaciones[id]['bike_bases']
     return diccionario
 
 def crear_diccionario_zonas_nuevo(estaciones, n, minLon, maxLat, lon_celda, lat_celda, idMap):
@@ -167,8 +168,9 @@ def generar_flotantes_v2(estaciones, radio):
             id_bici = id_bici + 1"""
     with open("bicicletas_flotantes.json", "r") as archivo:
         data = json.load(archivo)
-    df_flotantes = pd.DataFrame(data)
-    return df_flotantes
+    #df_flotantes = pd.DataFrame(data)
+    #return df_flotantes
+    return data
 
 def get_color(valor, rangos, colores):
 

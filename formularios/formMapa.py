@@ -8,6 +8,7 @@ import numpy as np
 from tkinter import font
 import json
 import math
+from sklearn.cluster import DBSCAN
 
 class FormMapaDesign():
 
@@ -129,9 +130,9 @@ class FormMapaDesign():
         columna =((zona-1)%self.n)
 
         if self.clasificacion == "General":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]} de {self.diccionario['cantidad_maxima']}"
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nFactor de llenado: {self.diccionario['cantidades_suavizadas'][zona-1]:.2f} de {self.diccionario['cantidad_maxima']:.2f}"
         elif self.clasificacion == "Llenado":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades'][zona-1]} de {self.diccionario['capacidades'][zona-1]}"
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.diccionario['num_estaciones'][zona-1]}\nCantidad de bicis: {self.diccionario['cantidades_suavizadas'][zona-1]} de {self.diccionario['capacidades'][zona-1]}"
 
         info_label = Label(self.infozona_frame, text=texto, bg="white")
         info_label.pack(side="left", padx=5, pady=5)
@@ -156,7 +157,7 @@ class FormMapaDesign():
             n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
             n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
             self.n = math.ceil(max(n_lon, n_lat))
-        
+       
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
         self.idMap = np.repeat(0, repeats=self.n**2).reshape((self.n,self.n))
@@ -164,14 +165,22 @@ class FormMapaDesign():
         #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.4214, -3.93884035, 40.62442815, 40.22383835
         #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.521772, -3.784628, 40.5157613, 40.330671
         
-        if self.clasificacion == "General":
-            min_val = min(self.diccionario['cantidades'])
-            max_val = max(self.diccionario['cantidades'])
-            self.diccionario['cantidad_maxima'] = max_val
-            rangos_flotantes = min_val + (np.linspace(0, 1, 9)**2) * (max_val - min_val)
-            rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
+        if self.n == 41: self.alcance = 3
+        elif self.n == 51: self.alcance = 5
+        elif self.n == 68: self.alcance = 7
+        elif self.n == 102: self.alcance = 9
 
-            rangos = min_val + ((np.arange(9) ** 2) * (max_val - min_val) // 8 ** 2)
+        self.diccionario['cantidades_suavizadas'] = self.aplicar_gaussiana(self.diccionario['cantidades'], self.alcance)
+
+
+        if self.clasificacion == "General":
+            min_val = min(self.diccionario['cantidades_suavizadas'])
+            max_val = max(self.diccionario['cantidades_suavizadas'])
+            self.diccionario['cantidad_maxima'] = max_val
+            #rangos_flotantes = min_val + (np.linspace(0, 1, 9)**2) * (max_val - min_val)
+            #rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
+
+            rangos = min_val + ((np.arange(9) ** 2) * (max_val - min_val) / 8 ** 2)
 
             colores = ["#FF3300", "#FF6600", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#00FF00"]
             ############################       Leyenda     ##############################
@@ -179,7 +188,7 @@ class FormMapaDesign():
             self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=168)
             i=8
             for color in colores[::-1]:
-                color_label = Label(self.frame_leyenda, width=60, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+                color_label = Label(self.frame_leyenda, width=60, height=1, bg=color, text=f"{rangos[i-1]:.1f}-{rangos[i]:.1f}")
                 color_label.pack()
                 i=i-1
             ###############################################################################
@@ -198,30 +207,60 @@ class FormMapaDesign():
                 i=i-1
             ###############################################################################
         
-        
+
         for i in range(pow(self.n, 2)):
-            #if(self.diccionario['num_estaciones'][i]) != 0: #los que son 0 no pintarlos
-            if self.clasificacion == "General":
-                color = utilEstaciones.get_color(self.diccionario['cantidades'][i], rangos, colores)
-            elif self.clasificacion == "LLenado":
-                if self.diccionario['capacidades'][i] != 0:
-                    porcentaje = (self.diccionario['cantidades'][i]/self.diccionario['capacidades'][i])*100
-                else: porcentaje = 0
-                color = utilEstaciones.get_color(porcentaje, rangos, colores)
-            poligono = self.labelMap.set_polygon(self.diccionario['coordenadas'][i],
-                                    fill_color=color,
-                                    outline_color="grey",
-                                    border_width=1,
-                                    name=f'Zona {self.diccionario['ids'][i]}')
-            if self.n in self.poligonos_zonas:
-                self.poligonos_zonas[self.n].append(poligono)
-            else:
-                self.poligonos_zonas[self.n] = [poligono]
+            factor_llenado = self.diccionario['cantidades_suavizadas'][i]
+            if factor_llenado != 0: #los que son 0 no pintarlos
+                if self.clasificacion == "General":
+                    color = utilEstaciones.get_color(factor_llenado, rangos, colores)
+                elif self.clasificacion == "LLenado":
+                    if self.diccionario['capacidades'][i] != 0:
+                        porcentaje = (factor_llenado/self.diccionario['capacidades'][i])*100
+                    else: porcentaje = 0
+                    color = utilEstaciones.get_color(porcentaje, rangos, colores)
+
+                poligono = self.labelMap.set_polygon(self.diccionario['coordenadas'][i],
+                                        fill_color=color,
+                                        outline_color=None,
+                                        #outline_color="grey",
+                                        #border_width=1,
+                                        name=f'Zona {self.diccionario['ids'][i]}')
+                if self.n in self.poligonos_zonas:
+                    self.poligonos_zonas[self.n].append(poligono)
+                else:
+                    self.poligonos_zonas[self.n] = [poligono]
 
         self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
-                                        command=self.show_info_zona,
-                                        pass_coords=True)
-    
+                                            command=self.show_info_zona,
+                                            pass_coords=True)
+
+    def aplicar_gaussiana(self, cantidades, alcance, sigma=1.0):
+            # Convertimos la lista a una matriz
+            matriz = np.array(cantidades).reshape(self.n, self.n)
+            matriz_suavizada = np.zeros_like(matriz, dtype=float)
+            
+            mitad_alcance = alcance // 2
+
+            matriz_influencia = np.zeros((alcance, alcance))
+            for i in range(alcance):
+                for j in range(alcance):
+                    distancia = max(abs(i - mitad_alcance), abs(j - mitad_alcance))       # Igual en vecinos horizontales, verticales y diagonales
+                    matriz_influencia[i, j] = np.exp(-distancia ** 2 / (2 * sigma ** 2))    #funcion gaussiana
+            
+            # Normalizamos para que la suma sea 1
+            matriz_influencia /= np.sum(matriz_influencia)
+
+            for i in range(self.n):
+                for j in range(self.n):
+                    sumatoria = 0
+                    for fi in range(-mitad_alcance, mitad_alcance + 1):
+                        for fj in range(-mitad_alcance, mitad_alcance + 1):
+                            ni, nj = i + fi, j + fj  # Coordenadas del vecino
+                            if 0 <= ni < self.n and 0 <= nj < self.n:
+                                sumatoria += matriz[ni, nj] * matriz_influencia[fi + mitad_alcance, fj + mitad_alcance]
+                    matriz_suavizada[i, j] = sumatoria
+
+            return matriz_suavizada.flatten().tolist()    
 
     def mostrar_mapapordefecto(self):
         self.borrar_mapacalor()
@@ -345,7 +384,8 @@ class FormMapaDesign():
       
     def pintar_flotantes(self):
         radio = 0.005
-        df_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, radio)        
+        df_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, radio)
+        #cambiar generar_flotantes para usar esto       
 
         for i in range(len(df_flotantes['id'])):
 
@@ -360,11 +400,87 @@ class FormMapaDesign():
                                     outline_color="red",
                                     border_width=1,
                                     name=df_flotantes['info'][i])
-            self.poligonos_flotantes.append(poligono)        
+            self.poligonos_flotantes.append(poligono)
+
+    def pintar_flotantes_clusters(self):
+        data = utilEstaciones.generar_flotantes_v2(self.estaciones, 0)
+
+        coordenadas = data['coord']
+        eps = 0.008
+
+        # Aplicar el algoritmo de clustering DBSCAN
+        dbscan = DBSCAN(eps=eps, min_samples=50)
+        clusters = dbscan.fit_predict(coordenadas)
+
+        color_map = {
+            0: '#FF0000',   # Rojo
+            1: '#00FF00',   # Verde
+            2: '#0000FF',   # Azul
+            3: '#FFFF00',   # Amarillo
+            4: '#FF00FF',   # Magenta
+            5: '#00FFFF',   # Cian
+            6: '#FFA500',   # Naranja
+            7: '#800080',   # Púrpura
+            8: '#FFC0CB',   # Rosa
+            9: '#A52A2A',   # Marrón
+            10: '#808080',  # Gris
+            11: '#FFD700',  # Dorado
+            12: '#ADFF2F',  # Verde Lima
+            13: '#000080',  # Azul Marino
+            14: '#4682B4',  # Azul Acero
+            15: '#5F9EA0',  # Verde Cadete
+            16: '#D2691E',  # Chocolate
+            17: '#FF4500',  # Naranja Rojo
+            18: '#2E8B57',  # Verde Mar
+            19: '#6A5ACD',  # Azul Pizarra
+            20: '#7FFF00',  # Chartreuse
+            21: '#FF1493',  # Rosa Profundo
+            22: '#B0C4DE',  # Azul Claro
+            23: '#32CD32',  # Verde Lima
+            24: '#FF6347',  # Tomate
+            25: '#FF8C00',  # Naranja Oscuro
+            26: '#1E90FF',  # Azul Dodger
+            27: '#FFDAB9',  # Durazno
+            28: '#C71585',  # Rosa Medio
+            29: '#191970',  # Azul Medianoche
+            30: '#B22222',  # Rojo Fuego
+            31: '#7FFF00',  # Verde Lima
+            32: '#20B2AA',  # Verde Claro
+            33: '#FF69B4',  # Rosa Hot
+            34: '#CD5C5C',  # Coral
+            35: '#A9A9A9',  # Gris Oscuro
+            36: '#B8860B',  # Dorado Oscuro
+            37: '#F0E68C',  # Amarillo Khaaki
+            38: '#FFB6C1',  # Rosa Claro
+            39: '#BDB76B',  # Oliva
+            40: '#228B22',  # Verde Bosque
+            41: '#8B008B',  # Púrpura Oscuro
+            42: '#FF7F50',  # Coral
+            43: '#FFD700',  # Dorado
+            44: '#FF4500',  # Naranja Rojo
+            45: '#00FA9A',  # Verde Medio
+            46: '#9370DB',  # Púrpura Medio
+            47: '#DDA0DD',  # Púrpura Claro
+            48: '#B0E0E6',  # Azul Pálido
+            49: '#800000',  # Rojo Marrón
+            -1: '#000000'   # Ruido en negro
+        }
+        n_clusters = 0
+        # Añadir los puntos de las bicicletas al mapa
+        for i, coord in enumerate(coordenadas):
+            cluster_id = clusters[i]
+            if cluster_id > n_clusters:
+                n_clusters = cluster_id
+            color = color_map.get(cluster_id, 'black')
+            poligono = self.labelMap.set_polygon([coord],
+                                            outline_color=color,
+                                            border_width=1,
+                                            name="Outlier")
+            self.poligonos_flotantes.append(poligono)
     
     def boton_flotantes(self, checkbox_flotantes):
         if checkbox_flotantes.get() == True:
-            self.pintar_flotantes()
+            self.pintar_flotantes_clusters()
         elif checkbox_flotantes.get() == False:
             for poligono in self.poligonos_flotantes:
                 poligono.delete()
@@ -379,7 +495,7 @@ def anadir_mapa(self):
     self.labelMap.set_position(40.4168, -3.7038)
     self.labelMap.set_zoom(12)
 
-    self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
+    #self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
     #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
 
         
