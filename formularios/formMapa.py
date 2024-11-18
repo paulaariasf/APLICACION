@@ -160,11 +160,11 @@ class FormMapaDesign():
         self.buttonMostrarMapaFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapaFlotantes)
 
-        self.buttonMostrarMapaFlotantes = Button(self.menuLateral, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonMostrarMapaHuecos = Button(self.menuLateral, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= self.mostrar_mapa_huecos)
-        self.buttonMostrarMapaFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonMostrarMapaFlotantes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMostrarMapaFlotantes)
+        self.buttonMostrarMapaHuecos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMostrarMapaHuecos.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMostrarMapaHuecos)
 
         self.buttonIntegracion = Button(self.menuLateral, text=" Integración", font=fontAwesome)
         self.buttonIntegracion.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
@@ -217,15 +217,20 @@ class FormMapaDesign():
         columna =((zona-1)%self.n)
 
         if self.clasificacion == "General":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor_fijas['num_estaciones'][zona-1]}\nFactor de llenado: {self.dic_mapa_calor_fijas['cantidades_suavizadas'][zona-1]:.2f} de {self.dic_mapa_calor_fijas['cantidad_maxima']:.2f}"
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicis: {self.dic_mapa_calor['cantidades'][zona-1]}\nFactor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]:.2f}%"
         elif self.clasificacion == "Llenado":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor_fijas['num_estaciones'][zona-1]}\nCantidad de bicis: {self.dic_mapa_calor_fijas['cantidades_suavizadas'][zona-1]} de {self.diccidic_mapa_calor_fijasonario['capacidades'][zona-1]}"
-
+            if self.dic_mapa_calor['capacidades'] != 0:
+                texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicis: {self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}: {(100*(self.dic_mapa_calor['cantidades'][zona-1]/self.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
+        elif self.clasificacion == "Flotantes":
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de bicicletas:{self.dic_mapa_calor['num_estaciones'][zona-1]}  Factor de llenado: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]:.2f}%"
+        elif self.clasificacion == "Huecos":
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de huecos libres:{self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}"
+        
         info_label = Label(self.infozona_frame, text=texto, bg="white")
         info_label.pack(side="left", padx=5, pady=5)
 
         #Resaltar zona seleccionada
-        self.pol_seleccion =self.labelMap.set_polygon(self.dic_mapa_calor_fijas['coordenadas'][zona-1],
+        self.pol_seleccion =self.labelMap.set_polygon(self.dic_mapa_calor['coordenadas'][zona-1],
                                     fill_color="#1F71A9",
                                     outline_color="#1F71A9",
                                     border_width=3)
@@ -313,6 +318,80 @@ class FormMapaDesign():
                                         #outline_color="grey",
                                         #border_width=1,
                                         name=f'Zona {self.dic_mapa_calor_fijas['ids'][i]}')
+                if self.n in self.poligonos_zonas:
+                    self.poligonos_zonas[self.n].append(poligono)
+                else:
+                    self.poligonos_zonas[self.n] = [poligono]
+
+        self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
+                                            command=self.show_info_zona,
+                                            pass_coords=True)
+        
+    def pintar_mapa_completo(self):
+        if hasattr (self, "frame_leyenda"):
+            self.frame_leyenda.destroy()   
+
+        if not hasattr(self, 'n'):
+            metros = 500
+            lon_objetivo = metros/(111320*math.cos(40.4))
+            lat_objetivo = metros/111320 
+            n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
+            n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
+            self.n = math.ceil(max(n_lon, n_lat))
+       
+        self.lon_celda = (self.maxLon - self.minLon) / self.n
+        self.lat_celda = (self.maxLat - self.minLat) / self.n
+        if self.clasificacion == "General" or self.clasificacion == "Llenado":
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario_completo(self.estaciones, None,
+                    self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
+                    add_fijas=True, add_flotantes=False, mostrar_huecos=False)
+        elif self.clasificacion == "Flotantes":
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario_completo(None, self.df_flotantes, 
+                    self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
+                    add_fijas=False, add_flotantes=True, mostrar_huecos=False)
+        elif self.clasificacion == "Huecos":
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario_completo(self.estaciones, None, 
+                    self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
+                    add_fijas=False, add_flotantes=False, mostrar_huecos=True)
+        
+        if self.n == 44: self.alcance = 3
+        elif self.n == 54: self.alcance = 5
+        elif self.n == 72: self.alcance = 7
+        elif self.n == 108: self.alcance = 9
+        if self.clasificacion == "General" or self.clasificacion == "Flotantes":
+            self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
+
+
+        ############################       Leyenda     ##############################
+        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
+        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210)
+        rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
+        
+        i=10
+        for color in colores[::-1]:
+            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+            color_label.pack()
+            i=i-1
+        ###############################################################################
+        
+
+        for i in range(pow(self.n, 2)):
+            if self.clasificacion == 'General' or self.clasificacion == 'Flotantes':
+                factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
+            elif self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
+                if self.dic_mapa_calor['capacidades'][i] != 0:
+                    factor_llenado = (self.dic_mapa_calor['cantidades'][i]/self.dic_mapa_calor['capacidades'][i])*100
+                else: factor_llenado = 0
+            color = utilEstaciones.get_color(factor_llenado, rangos, colores)
+            
+            if factor_llenado != 0: #los que son 0 no pintarlos
+                poligono = self.labelMap.set_polygon(self.dic_mapa_calor['coordenadas'][i],
+                                        fill_color=color,
+                                        outline_color=None,
+                                        #outline_color="grey",
+                                        #border_width=1,
+                                        name=f'Zona {self.dic_mapa_calor['ids'][i]}')
                 if self.n in self.poligonos_zonas:
                     self.poligonos_zonas[self.n].append(poligono)
                 else:
@@ -475,12 +554,12 @@ class FormMapaDesign():
     def mostrar_mapapordefecto(self):
         self.borrar_mapacalor()
         self.clasificacion = "General"
-        self.pintar_mapa_calor()
+        self.pintar_mapa_completo()
 
     def mostrar_mapa_flotantes(self):
         self.borrar_mapacalor()
         self.clasificacion = "Flotantes"
-        self.pintar_mapa_calor_flotantes()
+        self.pintar_mapa_completo()
     
     def mostrar_mapa_huecos(self):
         self.borrar_mapacalor()
@@ -497,6 +576,8 @@ class FormMapaDesign():
     
 
     def modificar_cuadricula(self):
+        if not hasattr(self, 'n'):
+            self.n = 44
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Entrada de Mapa de Calor")
 
@@ -550,12 +631,12 @@ class FormMapaDesign():
         if not hasattr(self, 'clasificacion'):
             self.clasificacion = "General"
 
-        self.pintar_mapa_calor()
+        self.pintar_mapa_completo()
 
     def porcentaje_llenado(self):
         self.borrar_mapacalor()
-        self.clasificacion = "LLenado"
-        self.pintar_mapa_calor()
+        self.clasificacion = "Llenado"
+        self.pintar_mapa_completo()
 
 
     def close_infoest(self):
@@ -580,7 +661,6 @@ class FormMapaDesign():
         close_button.pack(side="right", padx=5, pady=5)
     
     def pintar_estaciones(self):
-        print(f'numero de estaciones: {len(self.estaciones)}')
         for id in self.estaciones:
             coord_estacion = tuple(self.estaciones[id]['coordinates'][::-1])
             d = 0.00000001
