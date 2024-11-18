@@ -2,6 +2,7 @@ from tkinter import *
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL, COLOR_MENU_CURSOR_ENCIMA
 import util.utilEstaciones as utilEstaciones
 import util.utilImagenes as utilImagenes
+import util.utilClustering as utilClustering
 import tkintermapview
 from tkinter import messagebox
 import numpy as np
@@ -9,6 +10,7 @@ from tkinter import font
 import json
 import math
 from sklearn.cluster import DBSCAN
+from sklearn.cluster import KMeans
 
 class FormMapaDesign():
 
@@ -23,6 +25,7 @@ class FormMapaDesign():
         
         self.poligonos_estaciones = []
         self.poligonos_flotantes = []
+        self.poligonos_centroides = []
         self.poligonos_zonas = {}
 
         self.pol_seleccion = None
@@ -31,6 +34,60 @@ class FormMapaDesign():
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
 
         self.seleccionado = StringVar()
+
+        self.color_map = {
+            0: '#FF0000',   # Rojo
+            1: '#00FF00',   # Verde
+            2: '#0000FF',   # Azul
+            3: '#FFFF00',   # Amarillo
+            4: '#FF00FF',   # Magenta
+            5: '#00FFFF',   # Cian
+            6: '#FFA500',   # Naranja
+            7: '#800080',   # Púrpura
+            8: '#FFC0CB',   # Rosa
+            9: '#A52A2A',   # Marrón
+            10: '#808080',  # Gris
+            11: '#FFD700',  # Dorado
+            12: '#ADFF2F',  # Verde Lima
+            13: '#000080',  # Azul Marino
+            14: '#4682B4',  # Azul Acero
+            15: '#5F9EA0',  # Verde Cadete
+            16: '#D2691E',  # Chocolate
+            17: '#FF4500',  # Naranja Rojo
+            18: '#2E8B57',  # Verde Mar
+            19: '#6A5ACD',  # Azul Pizarra
+            20: '#7FFF00',  # Chartreuse
+            21: '#FF1493',  # Rosa Profundo
+            22: '#B0C4DE',  # Azul Claro
+            23: '#32CD32',  # Verde Lima
+            24: '#FF6347',  # Tomate
+            25: '#FF8C00',  # Naranja Oscuro
+            26: '#1E90FF',  # Azul Dodger
+            27: '#FFDAB9',  # Durazno
+            28: '#C71585',  # Rosa Medio
+            29: '#191970',  # Azul Medianoche
+            30: '#B22222',  # Rojo Fuego
+            31: '#7FFF00',  # Verde Lima
+            32: '#20B2AA',  # Verde Claro
+            33: '#FF69B4',  # Rosa Hot
+            34: '#CD5C5C',  # Coral
+            35: '#A9A9A9',  # Gris Oscuro
+            36: '#B8860B',  # Dorado Oscuro
+            37: '#F0E68C',  # Amarillo Khaaki
+            38: '#FFB6C1',  # Rosa Claro
+            39: '#BDB76B',  # Oliva
+            40: '#228B22',  # Verde Bosque
+            41: '#8B008B',  # Púrpura Oscuro
+            42: '#FF7F50',  # Coral
+            43: '#FFD700',  # Dorado
+            44: '#FF4500',  # Naranja Rojo
+            45: '#00FA9A',  # Verde Medio
+            46: '#9370DB',  # Púrpura Medio
+            47: '#DDA0DD',  # Púrpura Claro
+            48: '#B0E0E6',  # Azul Pálido
+            49: '#800000',  # Rojo Marrón
+            -1: '#000000'   # Ruido en negro
+        }
 
         anadir_mapa(self)
         self.menu_lateral(menuLateral)
@@ -61,6 +118,13 @@ class FormMapaDesign():
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBicicletasFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonBicicletasFlotantes)
+
+        checkbox_centroides = BooleanVar()
+        self.buttonCentroides = Checkbutton(self.menuLateral, text="    Estaciones virtuales", font=font.Font(family="FontAwesome", size=10),
+                                                     variable=checkbox_centroides, anchor="w", command=lambda: self.boton_centroides(checkbox_centroides))
+        self.buttonCentroides.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCentroides.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCentroides)
 
         self.LabelMapaCalor_menu = Label(self.menuLateral, text="Mapa de Calor", font=fontAwesome)
         self.LabelMapaCalor_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
@@ -100,6 +164,12 @@ class FormMapaDesign():
         self.buttonDemanda.pack(side=TOP)
         self.bindHoverEvents(self.buttonDemanda)
 
+        self.buttonLimpiar = Button(self.menuLateral, text=" Limpiar", font=fontAwesome,
+                                    command= self.limpiar_mapa())
+        self.buttonLimpiar.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonLimpiar.pack(side=TOP)
+        self.bindHoverEvents(self.buttonLimpiar)
+
     def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
         button.bind("<Enter>", lambda event: self.on_enter(event, button))
@@ -113,6 +183,11 @@ class FormMapaDesign():
         #Restaurar estilo al salir el ratón
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
     
+    def limpiar_mapa(self):
+        self.borrar_mapacalor()
+        for poligono in self.poligonos_flotantes:
+                poligono.delete()
+
     def close_infozona(self):
         if self.pol_seleccion is not None:
             self.pol_seleccion.delete()
@@ -235,32 +310,37 @@ class FormMapaDesign():
                                             pass_coords=True)
 
     def aplicar_gaussiana(self, cantidades, alcance, sigma=1.0):
-            # Convertimos la lista a una matriz
-            matriz = np.array(cantidades).reshape(self.n, self.n)
-            matriz_suavizada = np.zeros_like(matriz, dtype=float)
-            
-            mitad_alcance = alcance // 2
+        # Convertimos la lista a una matriz
+        matriz = np.array(cantidades).reshape(self.n, self.n)
+        matriz_suavizada = np.zeros_like(matriz, dtype=float)
+        
+        mitad_alcance = alcance // 2
 
-            matriz_influencia = np.zeros((alcance, alcance))
-            for i in range(alcance):
-                for j in range(alcance):
-                    distancia = max(abs(i - mitad_alcance), abs(j - mitad_alcance))       # Igual en vecinos horizontales, verticales y diagonales
-                    matriz_influencia[i, j] = np.exp(-distancia ** 2 / (2 * sigma ** 2))    #funcion gaussiana
-            
-            # Normalizamos para que la suma sea 1
-            matriz_influencia /= np.sum(matriz_influencia)
+        matriz_influencia = np.zeros((alcance, alcance))
+        for i in range(alcance):
+            for j in range(alcance):
+                distancia = max(abs(i - mitad_alcance), abs(j - mitad_alcance))       # Igual en vecinos horizontales, verticales y diagonales
+                matriz_influencia[i, j] = np.exp(-distancia ** 2 / (2 * sigma ** 2))    #funcion gaussiana
+        
+        # Normalizamos para que la suma sea 1
+        matriz_influencia /= np.sum(matriz_influencia)
 
-            for i in range(self.n):
-                for j in range(self.n):
-                    sumatoria = 0
-                    for fi in range(-mitad_alcance, mitad_alcance + 1):
-                        for fj in range(-mitad_alcance, mitad_alcance + 1):
-                            ni, nj = i + fi, j + fj  # Coordenadas del vecino
-                            if 0 <= ni < self.n and 0 <= nj < self.n:
-                                sumatoria += matriz[ni, nj] * matriz_influencia[fi + mitad_alcance, fj + mitad_alcance]
-                    matriz_suavizada[i, j] = sumatoria
+        for i in range(self.n):
+            for j in range(self.n):
+                sumatoria = 0
+                for fi in range(-mitad_alcance, mitad_alcance + 1):
+                    for fj in range(-mitad_alcance, mitad_alcance + 1):
+                        ni, nj = i + fi, j + fj  # Coordenadas del vecino
+                        if 0 <= ni < self.n and 0 <= nj < self.n:
+                            sumatoria += matriz[ni, nj] * matriz_influencia[fi + mitad_alcance, fj + mitad_alcance]
+                matriz_suavizada[i, j] = sumatoria
+        rango_min = 0
+        rango_max = 100
+        matriz_suavizada_normalizada = rango_min + (matriz_suavizada - np.min(matriz_suavizada)) * \
+                                   (rango_max - rango_min) / (np.max(matriz_suavizada) - np.min(matriz_suavizada))
 
-            return matriz_suavizada.flatten().tolist()    
+
+        return matriz_suavizada_normalizada.flatten().tolist()
 
     def mostrar_mapapordefecto(self):
         self.borrar_mapacalor()
@@ -359,6 +439,7 @@ class FormMapaDesign():
         close_button.pack(side="right", padx=5, pady=5)
     
     def pintar_estaciones(self):
+        print(f'numero de estaciones: {len(self.estaciones)}')
         for id in self.estaciones:
             coord_estacion = tuple(self.estaciones[id]['coordinates'][::-1])
             d = 0.00000001
@@ -402,89 +483,74 @@ class FormMapaDesign():
                                     name=df_flotantes['info'][i])
             self.poligonos_flotantes.append(poligono)
 
-    def pintar_flotantes_clusters(self):
+    def pintar_flotantes_clusters_dbscan(self):
         data = utilEstaciones.generar_flotantes_v2(self.estaciones, 0)
 
         coordenadas = data['coord']
         eps = 0.008
 
         # Aplicar el algoritmo de clustering DBSCAN
-        dbscan = DBSCAN(eps=eps, min_samples=50)
-        clusters = dbscan.fit_predict(coordenadas)
+        clusters = utilClustering.clusters_dbscan(eps, coordenadas)
 
-        color_map = {
-            0: '#FF0000',   # Rojo
-            1: '#00FF00',   # Verde
-            2: '#0000FF',   # Azul
-            3: '#FFFF00',   # Amarillo
-            4: '#FF00FF',   # Magenta
-            5: '#00FFFF',   # Cian
-            6: '#FFA500',   # Naranja
-            7: '#800080',   # Púrpura
-            8: '#FFC0CB',   # Rosa
-            9: '#A52A2A',   # Marrón
-            10: '#808080',  # Gris
-            11: '#FFD700',  # Dorado
-            12: '#ADFF2F',  # Verde Lima
-            13: '#000080',  # Azul Marino
-            14: '#4682B4',  # Azul Acero
-            15: '#5F9EA0',  # Verde Cadete
-            16: '#D2691E',  # Chocolate
-            17: '#FF4500',  # Naranja Rojo
-            18: '#2E8B57',  # Verde Mar
-            19: '#6A5ACD',  # Azul Pizarra
-            20: '#7FFF00',  # Chartreuse
-            21: '#FF1493',  # Rosa Profundo
-            22: '#B0C4DE',  # Azul Claro
-            23: '#32CD32',  # Verde Lima
-            24: '#FF6347',  # Tomate
-            25: '#FF8C00',  # Naranja Oscuro
-            26: '#1E90FF',  # Azul Dodger
-            27: '#FFDAB9',  # Durazno
-            28: '#C71585',  # Rosa Medio
-            29: '#191970',  # Azul Medianoche
-            30: '#B22222',  # Rojo Fuego
-            31: '#7FFF00',  # Verde Lima
-            32: '#20B2AA',  # Verde Claro
-            33: '#FF69B4',  # Rosa Hot
-            34: '#CD5C5C',  # Coral
-            35: '#A9A9A9',  # Gris Oscuro
-            36: '#B8860B',  # Dorado Oscuro
-            37: '#F0E68C',  # Amarillo Khaaki
-            38: '#FFB6C1',  # Rosa Claro
-            39: '#BDB76B',  # Oliva
-            40: '#228B22',  # Verde Bosque
-            41: '#8B008B',  # Púrpura Oscuro
-            42: '#FF7F50',  # Coral
-            43: '#FFD700',  # Dorado
-            44: '#FF4500',  # Naranja Rojo
-            45: '#00FA9A',  # Verde Medio
-            46: '#9370DB',  # Púrpura Medio
-            47: '#DDA0DD',  # Púrpura Claro
-            48: '#B0E0E6',  # Azul Pálido
-            49: '#800000',  # Rojo Marrón
-            -1: '#000000'   # Ruido en negro
-        }
         n_clusters = 0
         # Añadir los puntos de las bicicletas al mapa
         for i, coord in enumerate(coordenadas):
             cluster_id = clusters[i]
             if cluster_id > n_clusters:
                 n_clusters = cluster_id
-            color = color_map.get(cluster_id, 'black')
+            color = self.color_map.get(cluster_id, 'black')
             poligono = self.labelMap.set_polygon([coord],
                                             outline_color=color,
                                             border_width=1,
                                             name="Outlier")
             self.poligonos_flotantes.append(poligono)
     
+    def pintar_flotantes_clusters_kmeans(self):
+        
+        if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
+            data = utilEstaciones.generar_flotantes_v2(self.estaciones, 0)
+            self.coordenadas_flotantes = data['coord']
+            self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
+            
+
+        for i, coord in enumerate(self.coordenadas_flotantes):
+            cluster_id = self.clusters[i]
+            color = self.color_map.get(cluster_id%50, 'black')
+            poligono = self.labelMap.set_polygon([coord],
+                                                outline_color=color,
+                                                border_width=1,
+                                                name="Outlier")
+            self.poligonos_flotantes.append(poligono)
+
+    def pintar_centroides(self):
+        if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
+            data = utilEstaciones.generar_flotantes_v2(self.estaciones, 0)
+            self.coordenadas_flotantes = data['coord']
+            self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
+
+        for i, centroide in enumerate(self.centroides):
+            poligono = self.labelMap.set_polygon([centroide],
+                                                outline_color="green",
+                                                border_width=2,
+                                                name="Outlier")
+            self.poligonos_centroides.append(poligono)
+
     def boton_flotantes(self, checkbox_flotantes):
         if checkbox_flotantes.get() == True:
-            self.pintar_flotantes_clusters()
+            labelCargando = Label(self.labelMap, text="Cargando clusters...", bg="#1F71A9", fg="white", font=("Arial", 14))
+            labelCargando.place(relx=0.5, rely=0.5, anchor="center")
+            self.pintar_flotantes_clusters_kmeans()
+            labelCargando.destroy()
         elif checkbox_flotantes.get() == False:
             for poligono in self.poligonos_flotantes:
                 poligono.delete()
 
+    def boton_centroides(self, checkbox_centroides):
+        if checkbox_centroides.get() == True:
+            self.pintar_centroides()
+        elif checkbox_centroides.get() == False:
+            for poligono in self.poligonos_centroides:
+                poligono.delete()
 
 def anadir_mapa(self):
     self.labelMap=tkintermapview.TkinterMapView(self.frame_mapa, width=900, height=700, corner_radius=0)
@@ -495,7 +561,7 @@ def anadir_mapa(self):
     self.labelMap.set_position(40.4168, -3.7038)
     self.labelMap.set_zoom(12)
 
-    #self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
+    self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
     #self.labelMap.set_tile_server("https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png", max_zoom=22)  # black and white
 
         
