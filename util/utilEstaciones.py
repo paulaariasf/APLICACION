@@ -61,7 +61,8 @@ def crear_diccionario_zonas_nuevo(estaciones, n, minLon, maxLat, lon_celda, lat_
     # (40.22383835, −3.93884035), (40.22383835, −3.4214)]
     x=0
 
-def crear_diccionario_completo(estaciones, flotantes, n, minLon, maxLat, lon_celda, lat_celda, add_fijas, add_flotantes, mostrar_huecos):
+def crear_diccionario(estaciones, flotantes, n, minLon, maxLat, lon_celda, lat_celda, add_fijas, add_flotantes, mostrar_huecos):
+    print(f'add_fijas: {add_fijas}, add_flotantes: {add_flotantes}')
     matriz = [[(maxLat, minLon) for _ in range(n+1)] for _ in range(n+1)]
     #Creo la matriz con las coordenadas para cada extremo de la cuadricula
     for i in range(n+1):
@@ -75,6 +76,9 @@ def crear_diccionario_completo(estaciones, flotantes, n, minLon, maxLat, lon_cel
             'cantidades_suavizadas': [],
         }
     diccionario['cantidades'] = [0 for i in range(pow(n,2))]
+    diccionario['cantidades_estaciones'] = [0 for i in range(pow(n,2))]
+    diccionario['cantidades_flotantes'] = [0 for i in range(pow(n,2))]
+
     #Guardo en ids y coordenadas la información sobre las zonas del mapa de calor
     id = 1 
     for i in range(n):
@@ -83,7 +87,7 @@ def crear_diccionario_completo(estaciones, flotantes, n, minLon, maxLat, lon_cel
             coord_poligono = [matriz[i][j], matriz[i][j+1], matriz[i+1][j+1], matriz[i+1][j]]
             diccionario['coordenadas'].append(coord_poligono)
             id=id+1
-            
+
     if add_fijas and estaciones != None:
         diccionario['capacidades'] = [0 for i in range(pow(n,2))]
         diccionario['num_estaciones'] = [0 for i in range(pow(n,2))]
@@ -93,6 +97,7 @@ def crear_diccionario_completo(estaciones, flotantes, n, minLon, maxLat, lon_cel
             zona = clasificar_punto(n, estaciones[id]['coordinates'][::-1], lon_celda, lat_celda, minLon, maxLat)
             estaciones[id]['zona'] = zona
             diccionario['cantidades'][zona-1] = diccionario['cantidades'][zona-1] + estaciones[id]['bike_bases']
+            diccionario['cantidades_estaciones'][zona-1] = diccionario['cantidades_estaciones'][zona-1] + estaciones[id]['bike_bases']
             diccionario['capacidades'][zona-1] = diccionario['capacidades'][zona-1] + (estaciones[id]['bike_bases']+estaciones[id]['free_bases'])
             diccionario['num_estaciones'][zona-1] = diccionario['num_estaciones'][zona-1] + 1
     
@@ -102,6 +107,7 @@ def crear_diccionario_completo(estaciones, flotantes, n, minLon, maxLat, lon_cel
             zona = clasificar_punto(n, flotantes['coord'][id-1], lon_celda, lat_celda, minLon, maxLat)
             flotantes['zona'].append(zona)
             diccionario['cantidades'][zona-1] = diccionario['cantidades'][zona-1] + 1
+            diccionario['cantidades_flotantes'][zona-1] = diccionario['cantidades_flotantes'][zona-1] + 1
 
     if mostrar_huecos and estaciones != None:
         diccionario['capacidades'] = [0 for i in range(pow(n,2))]

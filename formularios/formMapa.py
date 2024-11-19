@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import Tk, messagebox
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL, COLOR_MENU_CURSOR_ENCIMA
 import util.utilEstaciones as utilEstaciones
 import util.utilImagenes as utilImagenes
@@ -20,13 +21,17 @@ class FormMapaDesign():
         self.estaciones = utilEstaciones.devolver_estaciones()
         self.df_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, 0.005)
         
+        #Para poder borrar los mapas de calor
         self.poligonos_estaciones = []
         self.poligonos_flotantes = []
         self.poligonos_centroides = []
         self.poligonos_zonas = {}
 
+        #Para poder borrar el poligono de seleccion
         self.pol_seleccion = None
         self.est_seleccion = None
+
+        self.botones_anadidos = []
 
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
 
@@ -107,80 +112,78 @@ class FormMapaDesign():
         self.labelTipoTransporte.pack(side=TOP)
 
         checkbox_fijas = BooleanVar()
-        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5    Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
                                                  variable=checkbox_fijas, anchor="w", command= lambda : self.boton_fijas(checkbox_fijas))
         self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonEstacionesFijas.pack(side=TOP)
 
         checkbox_flotantes = BooleanVar()
-        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text="    Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
+        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
                                                      variable=checkbox_flotantes, anchor="w", command=lambda: self.boton_flotantes(checkbox_flotantes))
         self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBicicletasFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonBicicletasFlotantes)
 
         checkbox_centroides = BooleanVar()
-        self.buttonCentroides = Checkbutton(self.menuLateral, text="    Estaciones virtuales", font=font.Font(family="FontAwesome", size=10),
-                                                     variable=checkbox_centroides, anchor="w", command=lambda: self.boton_centroides(checkbox_centroides))
+        self.buttonCentroides = Checkbutton(self.menuLateral, text=" Estaciones virtuales", font=font.Font(family="FontAwesome", size=10),
+                                                    variable=checkbox_centroides, anchor="w", command=lambda: self.boton_centroides(checkbox_centroides))
         self.buttonCentroides.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonCentroides.pack(side=TOP)
         self.bindHoverEvents(self.buttonCentroides)
 
-        self.LabelMapaCalor_menu = Label(self.menuLateral, text="Mapa de Calor", font=fontAwesome)
-        self.LabelMapaCalor_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.LabelMapaCalor_menu.pack(side=TOP)
+        self.LabelMapaCalor = Label(self.menuLateral, text="Mapa de Calor", font=fontAwesome)
+        self.LabelMapaCalor.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.LabelMapaCalor.pack(side=TOP)
 
-        self.buttonMostrarMapa_menu = Button(self.menuLateral, text=" Mostrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.mostrar_mapapordefecto)
-        self.buttonMostrarMapa_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonMostrarMapa_menu.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMostrarMapa_menu)
+        self.checkbox_mapa_estaciones = BooleanVar()
+        self.buttonMostrarMapaEstaciones = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
+                                                variable=self.checkbox_mapa_estaciones, anchor="w", command=self.mostrar_mapa_general)
+        self.buttonMostrarMapaEstaciones.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMostrarMapaEstaciones.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMostrarMapaEstaciones)
 
-        self.buttonPorcentajeLLenado_menu = Button(self.menuLateral, text=" Mapa con porcentaje de llenado", font=font.Font(family="FontAwesome", size=8), 
-                                                 anchor="w", command= self.porcentaje_llenado)
-        self.buttonPorcentajeLLenado_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonPorcentajeLLenado_menu.pack(side=TOP)
-        self.bindHoverEvents(self.buttonPorcentajeLLenado_menu)
-
-        self.buttonCambiarN_menu = Button(self.menuLateral, text=" Modificar cuadrícula", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.modificar_cuadricula)
-        self.buttonCambiarN_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCambiarN_menu.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCambiarN_menu)
-
-        self.buttonBorrarMapa_menu = Button(self.menuLateral, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.borrar_mapacalor)
-        self.buttonBorrarMapa_menu.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonBorrarMapa_menu.pack(side=TOP)
-        self.bindHoverEvents(self.buttonBorrarMapa_menu)
-
-        self.buttonMostrarMapaFlotantes = Button(self.menuLateral, text=" Mostrar mapa flotantes", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.mostrar_mapa_flotantes)
+        self.checkbox_mapa_flotantes = BooleanVar()
+        self.buttonMostrarMapaFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10), 
+                                                variable=self.checkbox_mapa_flotantes, anchor="w", command= self.mostrar_mapa_general)
         self.buttonMostrarMapaFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonMostrarMapaFlotantes.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapaFlotantes)
 
+        checkbox_mapa_patinetes = BooleanVar()
+        self.buttonMostrarMapaPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", font=font.Font(family="FontAwesome", size=10), 
+                                                variable=checkbox_mapa_patinetes, anchor="w")
+        self.buttonMostrarMapaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMostrarMapaPatinetes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMostrarMapaPatinetes)
+
+        self.buttonPorcentajeLLenado = Button(self.menuLateral, text=" Mapa llenado", font=font.Font(family="FontAwesome", size=8), 
+                                                anchor="w", command=self.porcentaje_llenado)
+        self.buttonPorcentajeLLenado.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonPorcentajeLLenado.pack(side=TOP)
+        self.bindHoverEvents(self.buttonPorcentajeLLenado)
+
         self.buttonMostrarMapaHuecos = Button(self.menuLateral, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.mostrar_mapa_huecos)
+                                                anchor="w", command=self.mostrar_mapa_huecos)
         self.buttonMostrarMapaHuecos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonMostrarMapaHuecos.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapaHuecos)
 
-        self.buttonIntegracion = Button(self.menuLateral, text=" Integración", font=fontAwesome)
-        self.buttonIntegracion.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonIntegracion.pack(side=TOP)
-        self.bindHoverEvents(self.buttonIntegracion)
+        self.buttonCambiarN = Button(self.menuLateral, text=" Modificar cuadrícula", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= self.modificar_cuadricula)
+        self.buttonCambiarN.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCambiarN.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCambiarN)
+
+        self.buttonBorrarMapa = Button(self.menuLateral, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= self.borrar_mapacalor)
+        self.buttonBorrarMapa.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonBorrarMapa.pack(side=TOP)
+        self.bindHoverEvents(self.buttonBorrarMapa)
 
         self.buttonDemanda = Button(self.menuLateral, text=" Demanda", font=fontAwesome)
         self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonDemanda.pack(side=TOP)
         self.bindHoverEvents(self.buttonDemanda)
-
-        self.buttonLimpiar = Button(self.menuLateral, text=" Limpiar", font=fontAwesome,
-                                    command= self.limpiar_mapa())
-        self.buttonLimpiar.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonLimpiar.pack(side=TOP)
-        self.bindHoverEvents(self.buttonLimpiar)
 
     def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
@@ -194,11 +197,6 @@ class FormMapaDesign():
     def on_leave(self, event, button):
         #Restaurar estilo al salir el ratón
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
-    
-    def limpiar_mapa(self):
-        self.borrar_mapacalor()
-        for poligono in self.poligonos_flotantes:
-                poligono.delete()
 
     def close_infozona(self):
         if self.pol_seleccion is not None:
@@ -213,16 +211,20 @@ class FormMapaDesign():
         self.infozona_frame.place(relx=0.8, rely=0.75)
         
         zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat)
-        fila = (zona-1)//self.n
-        columna =((zona-1)%self.n)
 
-        if self.clasificacion == "General":
+        if self.clasificacion == "General" and self.checkbox_mapa_estaciones.get() and self.checkbox_mapa_flotantes.get():#flotantes y fijas
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad total bicis: {self.dic_mapa_calor['cantidades'][zona-1]}\nCantidad bicis est: {self.dic_mapa_calor['cantidades_estaciones'][zona-1]}\nCantidad bicis flotantes: {self.dic_mapa_calor['cantidades_flotantes'][zona-1]}\nFactor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]:.2f}%"
+        
+        elif self.clasificacion == "General" and self.checkbox_mapa_estaciones.get():#solo fijas
             texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicis: {self.dic_mapa_calor['cantidades'][zona-1]}\nFactor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]:.2f}%"
+        
+        elif self.clasificacion == "General" and self.checkbox_mapa_flotantes.get():#solo flotantes
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de bicicletas:{self.dic_mapa_calor['cantidades'][zona-1]}={self.dic_mapa_calor['cantidades'][zona-1]}\nFactor de llenado: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]:.2f}%"
+        
         elif self.clasificacion == "Llenado":
             if self.dic_mapa_calor['capacidades'] != 0:
                 texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicis: {self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}: {(100*(self.dic_mapa_calor['cantidades'][zona-1]/self.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
-        elif self.clasificacion == "Flotantes":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de bicicletas:{self.dic_mapa_calor['num_estaciones'][zona-1]}  Factor de llenado: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]:.2f}%"
+        
         elif self.clasificacion == "Huecos":
             texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de huecos libres:{self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}"
         
@@ -237,7 +239,7 @@ class FormMapaDesign():
 
         close_button = Button(self.infozona_frame, text="x", command=lambda: self.close_infozona(), bg="white", fg="red", borderwidth=0)
         close_button.pack(side="right", padx=5, pady=5)
-
+    """
     def pintar_mapa_calor(self):
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()   
@@ -252,7 +254,7 @@ class FormMapaDesign():
        
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
-        self.dic_mapa_calor_fijas = utilEstaciones.crear_diccionario_completo(self.estaciones, None,
+        self.dic_mapa_calor_fijas = utilEstaciones.crear_diccionario(self.estaciones, None,
                 self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                 add_fijas=True, add_flotantes=False, mostrar_huecos=False)
         #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.4214, -3.93884035, 40.62442815, 40.22383835
@@ -266,7 +268,7 @@ class FormMapaDesign():
         self.dic_mapa_calor_fijas['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor_fijas['cantidades'], self.alcance)
 
 
-        if self.clasificacion == "General":
+        if self.clasificacion == "Estaciones":
             min_val = min(self.dic_mapa_calor_fijas['cantidades_suavizadas'])
             max_val = max(self.dic_mapa_calor_fijas['cantidades_suavizadas'])
             self.dic_mapa_calor_fijas['cantidad_maxima'] = max_val
@@ -304,7 +306,7 @@ class FormMapaDesign():
         for i in range(pow(self.n, 2)):
             factor_llenado = self.dic_mapa_calor_fijas['cantidades_suavizadas'][i]
             if factor_llenado != 0: #los que son 0 no pintarlos
-                if self.clasificacion == "General":
+                if self.clasificacion == "Estaciones":
                     color = utilEstaciones.get_color(factor_llenado, rangos, colores)
                 elif self.clasificacion == "LLenado":
                     if self.dic_mapa_calor_fijas['capacidades'][i] != 0:
@@ -325,9 +327,9 @@ class FormMapaDesign():
 
         self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
                                             command=self.show_info_zona,
-                                            pass_coords=True)
+                                            pass_coords=True)"""
         
-    def pintar_mapa_completo(self):
+    def pintar_mapa(self):
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()   
 
@@ -341,24 +343,26 @@ class FormMapaDesign():
        
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
-        if self.clasificacion == "General" or self.clasificacion == "Llenado":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario_completo(self.estaciones, None,
+
+
+        if self.clasificacion == "Llenado":
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, None,
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     add_fijas=True, add_flotantes=False, mostrar_huecos=False)
-        elif self.clasificacion == "Flotantes":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario_completo(None, self.df_flotantes, 
-                    self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-                    add_fijas=False, add_flotantes=True, mostrar_huecos=False)
         elif self.clasificacion == "Huecos":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario_completo(self.estaciones, None, 
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, None, 
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     add_fijas=False, add_flotantes=False, mostrar_huecos=True)
-        
-        if self.n == 44: self.alcance = 3
-        elif self.n == 54: self.alcance = 5
-        elif self.n == 72: self.alcance = 7
-        elif self.n == 108: self.alcance = 9
-        if self.clasificacion == "General" or self.clasificacion == "Flotantes":
+        else:
+            print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, self.df_flotantes, 
+                    self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
+                    add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_flotantes.get(), mostrar_huecos=False)
+            
+            if self.n == 44: self.alcance = 3
+            elif self.n == 54: self.alcance = 5
+            elif self.n == 72: self.alcance = 7
+            elif self.n == 108: self.alcance = 9
             self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
 
 
@@ -370,14 +374,14 @@ class FormMapaDesign():
         
         i=10
         for color in colores[::-1]:
-            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}%")
             color_label.pack()
             i=i-1
         ###############################################################################
         
 
         for i in range(pow(self.n, 2)):
-            if self.clasificacion == 'General' or self.clasificacion == 'Flotantes':
+            if self.clasificacion == 'General':
                 factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
             elif self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
                 if self.dic_mapa_calor['capacidades'][i] != 0:
@@ -396,11 +400,17 @@ class FormMapaDesign():
                     self.poligonos_zonas[self.n].append(poligono)
                 else:
                     self.poligonos_zonas[self.n] = [poligono]
-
-        self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
+        par = (self.n, self.clasificacion)
+        if not par in self.botones_anadidos:
+            self.botones_anadidos.append(par)
+            if self.n == 44: metros=500
+            elif self.n == 54: metros=400
+            elif self.n == 72: metros=300
+            elif self.n == 108: metros=200
+            self.labelMap.add_right_click_menu_command(label=f"Info zona con {metros}m mapa {self.clasificacion}",
                                             command=self.show_info_zona,
                                             pass_coords=True)
-        
+    """   
     def pintar_mapa_calor_flotantes(self):
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()   
@@ -415,7 +425,7 @@ class FormMapaDesign():
        
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
-        self.dic_mapa_calor_flotantes = utilEstaciones.crear_diccionario_completo(None, self.df_flotantes, 
+        self.dic_mapa_calor_flotantes = utilEstaciones.crear_diccionario(None, self.df_flotantes, 
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     add_fijas=False, add_flotantes=True, mostrar_huecos=False)
         
@@ -462,7 +472,8 @@ class FormMapaDesign():
         self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
                                             command=self.show_info_zona,
                                             pass_coords=True)
-        
+    """
+    """
     def pintar_mapa_calor_huecos(self):
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()   
@@ -477,7 +488,7 @@ class FormMapaDesign():
        
         self.lon_celda = (self.maxLon - self.minLon) / self.n
         self.lat_celda = (self.maxLat - self.minLat) / self.n
-        self.dic_mapa_calor_huecos = utilEstaciones.crear_diccionario_completo(self.estaciones, None, 
+        self.dic_mapa_calor_huecos = utilEstaciones.crear_diccionario(self.estaciones, None, 
             self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
             add_fijas=False, add_flotantes=False, mostrar_huecos=True)
         
@@ -517,7 +528,7 @@ class FormMapaDesign():
         self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
                                             command=self.show_info_zona,
                                             pass_coords=True)
-
+    """
     def aplicar_gaussiana(self, cantidades, alcance, sigma=1.0):
         # Convertimos la lista a una matriz
         matriz = np.array(cantidades).reshape(self.n, self.n)
@@ -545,26 +556,21 @@ class FormMapaDesign():
                 matriz_suavizada[i, j] = sumatoria
         rango_min = 0
         rango_max = 100
-        matriz_suavizada_normalizada = rango_min + (matriz_suavizada - np.min(matriz_suavizada)) * \
-                                   (rango_max - rango_min) / (np.max(matriz_suavizada) - np.min(matriz_suavizada))
+        matriz_suavizada_normalizada = rango_min + (matriz_suavizada - np.min(matriz_suavizada)) * (rango_max - rango_min) / (np.max(matriz_suavizada) - np.min(matriz_suavizada))
 
 
         return matriz_suavizada_normalizada.flatten().tolist()
 
-    def mostrar_mapapordefecto(self):
+    def mostrar_mapa_general(self):
         self.borrar_mapacalor()
         self.clasificacion = "General"
-        self.pintar_mapa_completo()
-
-    def mostrar_mapa_flotantes(self):
-        self.borrar_mapacalor()
-        self.clasificacion = "Flotantes"
-        self.pintar_mapa_completo()
+        print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
+        self.pintar_mapa()
     
     def mostrar_mapa_huecos(self):
         self.borrar_mapacalor()
         self.clasificacion = "Huecos"
-        self.pintar_mapa_calor_huecos()
+        self.pintar_mapa()
 
     def borrar_mapacalor(self):
         if hasattr(self, "n"):
@@ -577,7 +583,8 @@ class FormMapaDesign():
 
     def modificar_cuadricula(self):
         if not hasattr(self, 'n'):
-            self.n = 44
+            messagebox.showwarning("Advertencia", "Debe seleccionar primero lo que desea incluir en el mapa de calor")
+            return
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Entrada de Mapa de Calor")
 
@@ -631,12 +638,12 @@ class FormMapaDesign():
         if not hasattr(self, 'clasificacion'):
             self.clasificacion = "General"
 
-        self.pintar_mapa_completo()
+        self.pintar_mapa()
 
     def porcentaje_llenado(self):
         self.borrar_mapacalor()
         self.clasificacion = "Llenado"
-        self.pintar_mapa_completo()
+        self.pintar_mapa()
 
 
     def close_infoest(self):
@@ -734,7 +741,7 @@ class FormMapaDesign():
             color = self.color_map.get(cluster_id%50, 'black')
             poligono = self.labelMap.set_polygon([coord],
                                                 outline_color=color,
-                                                border_width=1,
+                                                border_width=3,
                                                 name="Outlier")
             self.poligonos_flotantes.append(poligono)
 
@@ -746,7 +753,7 @@ class FormMapaDesign():
         for i, centroide in enumerate(self.centroides):
             poligono = self.labelMap.set_polygon([centroide],
                                                 outline_color="green",
-                                                border_width=2,
+                                                border_width=4,
                                                 name="Outlier")
             self.poligonos_centroides.append(poligono)
 

@@ -28,7 +28,7 @@ class FormularioGeneral(Tk):
         #Configuracion inicial de la ventana
         self.title("Interfaz Grafica")
         self.iconbitmap("./imagenes/bycicle_icon.ico")
-        self.aplicacion_ancho=1024
+        self.aplicacion_ancho=1200
         self.aplicacion_largo=600
         utilVentana.centrar_ventana(self, self.aplicacion_ancho, self.aplicacion_largo)
 
