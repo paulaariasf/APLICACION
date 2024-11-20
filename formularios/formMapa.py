@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import Tk, messagebox
+from tkinter.ttk import Checkbutton, Style as ttkCheckbutton, Style
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL, COLOR_MENU_CURSOR_ENCIMA
 import util.utilEstaciones as utilEstaciones
 import util.utilImagenes as utilImagenes
@@ -111,52 +112,44 @@ class FormMapaDesign():
         self.labelTipoTransporte.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.labelTipoTransporte.pack(side=TOP)
 
+        style = Style()
+        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
         checkbox_fijas = BooleanVar()
-        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
-                                                 variable=checkbox_fijas, anchor="w", command= lambda : self.boton_fijas(checkbox_fijas))
-        self.buttonEstacionesFijas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonEstacionesFijas.pack(side=TOP)
+        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+                                                 variable=checkbox_fijas, command= lambda : self.boton_fijas(checkbox_fijas))
+        self.buttonEstacionesFijas.pack(side=TOP, pady=5)
 
         checkbox_flotantes = BooleanVar()
-        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10),
-                                                     variable=checkbox_flotantes, anchor="w", command=lambda: self.boton_flotantes(checkbox_flotantes))
-        self.buttonBicicletasFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonBicicletasFlotantes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonBicicletasFlotantes)
+        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+                                                     variable=checkbox_flotantes, command=lambda: self.boton_flotantes(checkbox_flotantes))
+        self.buttonBicicletasFlotantes.pack(side=TOP, pady=5)
 
         checkbox_centroides = BooleanVar()
-        self.buttonCentroides = Checkbutton(self.menuLateral, text=" Estaciones virtuales", font=font.Font(family="FontAwesome", size=10),
-                                                    variable=checkbox_centroides, anchor="w", command=lambda: self.boton_centroides(checkbox_centroides))
-        self.buttonCentroides.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCentroides.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCentroides)
+        self.buttonCentroides = Checkbutton(self.menuLateral, text=" Estaciones virtuales", style="Custom.TCheckbutton",
+                                                    variable=checkbox_centroides, command=lambda: self.boton_centroides(checkbox_centroides))
+        self.buttonCentroides.pack(side=TOP, pady=5)
 
         self.LabelMapaCalor = Label(self.menuLateral, text="Mapa de Calor", font=fontAwesome)
         self.LabelMapaCalor.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.LabelMapaCalor.pack(side=TOP)
 
         self.checkbox_mapa_estaciones = BooleanVar()
-        self.buttonMostrarMapaEstaciones = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", font=font.Font(family="FontAwesome", size=10), 
-                                                variable=self.checkbox_mapa_estaciones, anchor="w", command=self.mostrar_mapa_general)
-        self.buttonMostrarMapaEstaciones.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonMostrarMapaEstaciones.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMostrarMapaEstaciones)
+        self.buttonMostrarMapaEstaciones = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+                                                       variable=self.checkbox_mapa_estaciones, command=self.mostrar_mapa_general)
+        self.buttonMostrarMapaEstaciones.pack(side=TOP, pady=5)
 
         self.checkbox_mapa_flotantes = BooleanVar()
-        self.buttonMostrarMapaFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", font=font.Font(family="FontAwesome", size=10), 
-                                                variable=self.checkbox_mapa_flotantes, anchor="w", command= self.mostrar_mapa_general)
-        self.buttonMostrarMapaFlotantes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonMostrarMapaFlotantes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMostrarMapaFlotantes)
+        self.buttonMostrarMapaFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa_general)
+        self.buttonMostrarMapaFlotantes.pack(side=TOP, pady=5)
 
-        checkbox_mapa_patinetes = BooleanVar()
-        self.buttonMostrarMapaPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", font=font.Font(family="FontAwesome", size=10), 
-                                                variable=checkbox_mapa_patinetes, anchor="w")
-        self.buttonMostrarMapaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonMostrarMapaPatinetes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMostrarMapaPatinetes)
+        self.checkbox_mapa_patinetes = BooleanVar()
+        self.buttonMostrarMapaPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_patinetes)
+        self.buttonMostrarMapaPatinetes.pack(side=TOP, pady=5)
 
-        self.buttonPorcentajeLLenado = Button(self.menuLateral, text=" Mapa llenado", font=font.Font(family="FontAwesome", size=8), 
+        self.buttonPorcentajeLLenado = Button(self.menuLateral, text=" Mapa porcentaje llenado", font=font.Font(family="FontAwesome", size=10), 
                                                 anchor="w", command=self.porcentaje_llenado)
         self.buttonPorcentajeLLenado.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonPorcentajeLLenado.pack(side=TOP)
@@ -208,7 +201,7 @@ class FormMapaDesign():
         self.close_infozona()
 
         self.infozona_frame = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
-        self.infozona_frame.place(relx=0.8, rely=0.75)
+        self.infozona_frame.place(x=825, y=475)
         
         zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat)
 
@@ -564,7 +557,7 @@ class FormMapaDesign():
     def mostrar_mapa_general(self):
         self.borrar_mapacalor()
         self.clasificacion = "General"
-        print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
+        #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
         self.pintar_mapa()
     
     def mostrar_mapa_huecos(self):
@@ -652,14 +645,40 @@ class FormMapaDesign():
         if hasattr(self, 'infoest_frame'):
             self.infoest_frame.destroy()
 
+    def dividir_string_por_longitud(self, texto, longitud_max_linea=25):
+        # Verificar si el string es mayor que 35
+        if len(texto) > 35:
+            palabras = texto.split()
+            lineas = []
+            linea_actual = ""
+
+            for palabra in palabras:
+                # Si cabe en la linea la agrego
+                if len(linea_actual) + len(palabra) + 1 <= longitud_max_linea:
+                    if linea_actual:
+                        linea_actual += " "
+                    linea_actual += palabra
+                else:
+                    # Si no cabe, paso a otra linea
+                    lineas.append(linea_actual)
+                    linea_actual = palabra
+
+            if linea_actual:
+                lineas.append(linea_actual)
+            return "\n".join(lineas)
+        else:
+            # Si no es mayor que 35, devolver el string original
+            return texto
+
     def show_info_estacion(self, polygon):
         self.close_infoest()
 
         self.infoest_frame = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
-        self.infoest_frame.place(relx=0.6, rely=0.9)
-        
+        self.infoest_frame.place(x=850, y=400)
+
         id, coord_estacion = polygon.name
-        info_label = Label(self.infoest_frame, text=f"Estación seleccionada: {self.estaciones[id]['name']} \n Cantidad de bicis: {self.estaciones[id]['bike_bases']}", bg="white")
+        texto_mostrar = self.dividir_string_por_longitud(self.estaciones[id]['name'], longitud_max_linea=25)
+        info_label = Label(self.infoest_frame, text=f"Estación seleccionada:\n{texto_mostrar} \n Cantidad de bicis: {self.estaciones[id]['bike_bases']}", bg="white")
         info_label.pack(side="left", padx=5, pady=5)
 
         #Añadir marcador en la estacion seleccionada
@@ -668,7 +687,9 @@ class FormMapaDesign():
         close_button.pack(side="right", padx=5, pady=5)
     
     def pintar_estaciones(self):
+        strings = []
         for id in self.estaciones:
+            strings.append(self.estaciones[id]['name'])
             coord_estacion = tuple(self.estaciones[id]['coordinates'][::-1])
             d = 0.00000001
             coordinates = [(coord_estacion[0], coord_estacion[1]),
@@ -682,7 +703,8 @@ class FormMapaDesign():
                                     command=self.show_info_estacion,
                                     )
             self.poligonos_estaciones.append(poligono)
-           
+        longest_string = max(strings, key=len)
+        max_len = len(longest_string)
     def boton_fijas(self, checkbox_fijas):
         if checkbox_fijas.get() == True:
             self.pintar_estaciones()
@@ -741,7 +763,7 @@ class FormMapaDesign():
             color = self.color_map.get(cluster_id%50, 'black')
             poligono = self.labelMap.set_polygon([coord],
                                                 outline_color=color,
-                                                border_width=3,
+                                                border_width=1.5,
                                                 name="Outlier")
             self.poligonos_flotantes.append(poligono)
 
@@ -751,9 +773,14 @@ class FormMapaDesign():
             self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
 
         for i, centroide in enumerate(self.centroides):
-            poligono = self.labelMap.set_polygon([centroide],
-                                                outline_color="green",
-                                                border_width=4,
+            d = 0.00000001
+            coordinates = [(centroide[0], centroide[1]),
+                           (centroide[0], centroide[1]+ d),
+                           (centroide[0] + d, centroide[1] + d),
+                           (centroide[0] + d, centroide[1])]
+            poligono = self.labelMap.set_polygon(coordinates,
+                                                outline_color="#ff005d",
+                                                border_width=5,
                                                 name="Outlier")
             self.poligonos_centroides.append(poligono)
 
@@ -779,7 +806,6 @@ def anadir_mapa(self):
     self.labelMap.pack(fill="both")
     self.labelMap.config(bg=COLOR_CUERPO_PRINCIPAL)
     
-    self.labelMap.set_marker(40.3279924480847, -3.7002345090959605)
     self.labelMap.set_position(40.4168, -3.7038)
     self.labelMap.set_zoom(12)
 
