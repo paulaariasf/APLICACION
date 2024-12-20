@@ -21,11 +21,13 @@ class FormMapaDesign():
 
         self.estaciones = utilEstaciones.devolver_estaciones()
         self.df_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, 0.005)
+        self.df_patinetes = utilEstaciones.generar_patinetes(self.estaciones, 0.005)
         
         #Para poder borrar los mapas de calor
         self.poligonos_estaciones = []
         self.poligonos_flotantes = []
         self.poligonos_centroides = []
+        self.poligonos_patinetes = []
         self.poligonos_zonas = {}
 
         #Para poder borrar el poligono de seleccion
@@ -130,6 +132,11 @@ class FormMapaDesign():
                                                     variable=checkbox_centroides, command=lambda: self.boton_centroides(checkbox_centroides))
         self.buttonCentroides.pack(side=TOP, pady=5)
 
+        checkbox_patinetes = BooleanVar()
+        self.buttonPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", style="Custom.TCheckbutton",
+                                                    variable=checkbox_patinetes, command=lambda: self.boton_patinetes(checkbox_patinetes))
+        self.buttonPatinetes.pack(side=TOP, pady=5)
+
         self.LabelMapaCalor = Label(self.menuLateral, text="Mapa de Calor", font=fontAwesome)
         self.LabelMapaCalor.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.LabelMapaCalor.pack(side=TOP)
@@ -146,7 +153,7 @@ class FormMapaDesign():
 
         self.checkbox_mapa_patinetes = BooleanVar()
         self.buttonMostrarMapaPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", style="Custom.TCheckbutton",
-                                                variable=self.checkbox_mapa_patinetes)
+                                                variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa_general)
         self.buttonMostrarMapaPatinetes.pack(side=TOP, pady=5)
 
         self.buttonPorcentajeLLenado = Button(self.menuLateral, text=" Mapa porcentaje llenado", font=font.Font(family="FontAwesome", size=10), 
@@ -205,15 +212,36 @@ class FormMapaDesign():
         
         zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat)
 
-        if self.clasificacion == "General" and self.checkbox_mapa_estaciones.get() and self.checkbox_mapa_flotantes.get():  #flotantes y fijas
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad total bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]}\nCantidad bicicletas est: {self.dic_mapa_calor['cantidades_estaciones'][zona-1]}\nCantidad bicicletas flotantes: {self.dic_mapa_calor['cantidades_flotantes'][zona-1]}\nFactor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
+        """if self.clasificacion == "General" and self.checkbox_mapa_estaciones.get() and self.checkbox_mapa_flotantes.get():  #flotantes y fijas
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\n \
+                    Número de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\n  \
+                    Cantidad total bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]}\n  \
+                    Cantidad bicicletas est: {self.dic_mapa_calor['cantidades_estaciones'][zona-1]}\n  \
+                    Cantidad bicicletas flotantes: {self.dic_mapa_calor['cantidades_flotantes'][zona-1]}\n  \
+                    Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
         
         elif self.clasificacion == "General" and self.checkbox_mapa_estaciones.get():#solo fijas
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]}\nFactor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\n  \
+                    Número de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\n  \
+                    Cantidad de bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]}\n  \
+                    Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
         
         elif self.clasificacion == "General" and self.checkbox_mapa_flotantes.get():#solo flotantes
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de bicicletas flotantes:{self.dic_mapa_calor['cantidades'][zona-1]}\nFactor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
-        
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\n  \
+                    Número de bicicletas flotantes:{self.dic_mapa_calor['cantidades'][zona-1]}\n  \
+                    Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
+        """
+        if self.clasificacion == "General":
+            texto=f"Zona seleccionada: {zona} de {self.n**2}\n"
+            if self.checkbox_mapa_estaciones.get():
+                texto+=f"Número de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\n"
+                texto+=f"Cantidad bicicletas estaciones: {self.dic_mapa_calor['cantidades_estaciones'][zona-1]}\n"
+            if self.checkbox_mapa_flotantes.get():
+                texto+=f"Número de bicicletas flotantes:{self.dic_mapa_calor['cantidades_flotantes'][zona-1]}\n"
+            if self.checkbox_mapa_patinetes.get():
+                texto+=f"Número de patinetes:{self.dic_mapa_calor['cantidades_patinetes'][zona-1]}\n"
+            texto+=f"Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
+
         elif self.clasificacion == "Llenado":
             if self.dic_mapa_calor['capacidades'] != 0:
                 texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}: {(100*(self.dic_mapa_calor['cantidades'][zona-1]/self.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
@@ -348,9 +376,10 @@ class FormMapaDesign():
                     add_fijas=False, add_flotantes=False, mostrar_huecos=True)
         else:
             #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, self.df_flotantes, 
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, self.df_flotantes, self.df_patinetes,
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-                    add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_flotantes.get(), mostrar_huecos=False)
+                    add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_flotantes.get(),
+                    add_patinetes=self.checkbox_mapa_patinetes.get(), mostrar_huecos=False)
             
             if self.n == 44: self.alcance = 3
             elif self.n == 54: self.alcance = 5
@@ -379,11 +408,14 @@ class FormMapaDesign():
         for i in range(pow(self.n, 2)):
             if self.clasificacion == 'General':
                 factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
-
-                # Si hay dos medios seleccionados, los rangos son de 0-65 aprox 
-                if self.checkbox_mapa_estaciones.get() == True and self.checkbox_mapa_flotantes.get() == True:
+                contador = sum([self.checkbox_mapa_estaciones.get(),
+                                self.checkbox_mapa_flotantes.get(),
+                                self.checkbox_mapa_patinetes.get()])
+                if contador==3: # Si hay tres medios seleccionados, los rangos son de 0-100 aprox
+                    rangos = [0, 2, 10, 18, 26, 34, 44, 56, 70, 84, 1000]
+                elif contador==2: # Si hay dos medios seleccionados, los rangos son de 0-65 aprox 
                     rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
-                else: # Si hay uno , los rangos son de 0-33 aprox 
+                elif contador==1: # Si hay uno , los rangos son de 0-33 aprox 
                     rangos = [0, 1, 4, 7, 10, 13, 16, 19, 22, 25, 1000]
 
             elif self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
@@ -569,8 +601,8 @@ class FormMapaDesign():
                         if 0 <= ni < self.n and 0 <= nj < self.n:
                             sumatoria += matriz[ni, nj] * matriz_influencia[fi + mitad_alcance, fj + mitad_alcance]
                 matriz_suavizada[i, j] = sumatoria
-        """
-        minimo = np.min(matriz_suavizada)
+        
+        """minimo = np.min(matriz_suavizada)
         maximo = np.max(matriz_suavizada)
         index_min = np.argmin(matriz_suavizada)
         index_max = np.argmax(matriz_suavizada)
@@ -820,6 +852,23 @@ class FormMapaDesign():
                                                 name="Outlier")
             self.poligonos_centroides.append(poligono)
 
+    def pintar_patinetes(self):      
+
+        for i in range(len(self.df_patinetes['id'])):
+
+            coord_patinete = self.df_patinetes['coord'][i]
+            d = 0.00000001
+            #coordinates = [(coord_estacion[0], coord_estacion[1]),
+            #                (coord_estacion[0], coord_estacion[1]+ d),
+            #                (coord_estacion[0] + d, coord_estacion[1] + d),
+            #                (coord_estacion[0] + d, coord_estacion[1])]
+
+            poligono = self.labelMap.set_polygon([coord_patinete],
+                                    outline_color="orange",
+                                    border_width=1,
+                                    name=self.df_patinetes['info'][i])
+            self.poligonos_patinetes.append(poligono)
+
     def boton_flotantes(self, checkbox_flotantes):
         if checkbox_flotantes.get() == True:
             labelCargando = Label(self.labelMap, text="Cargando clusters...", bg="#1F71A9", fg="white", font=("Arial", 14))
@@ -835,6 +884,13 @@ class FormMapaDesign():
             self.pintar_centroides()
         elif checkbox_centroides.get() == False:
             for poligono in self.poligonos_centroides:
+                poligono.delete()
+
+    def boton_patinetes(self, checkbox_patinetes):
+        if checkbox_patinetes.get() == True:
+            self.pintar_patinetes()
+        elif checkbox_patinetes.get() == False:
+            for poligono in self.poligonos_patinetes:
                 poligono.delete()
 
 def anadir_mapa(self):

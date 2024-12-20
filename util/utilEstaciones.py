@@ -61,8 +61,8 @@ def crear_diccionario_zonas_nuevo(estaciones, n, minLon, maxLat, lon_celda, lat_
     # (40.22383835, −3.93884035), (40.22383835, −3.4214)]
     x=0
 
-def crear_diccionario(estaciones, flotantes, n, minLon, maxLat, lon_celda, lat_celda, add_fijas, add_flotantes, mostrar_huecos):
-    print(f'add_fijas: {add_fijas}, add_flotantes: {add_flotantes}')
+def crear_diccionario(estaciones, flotantes, patinetes, n, minLon, maxLat, lon_celda, lat_celda, add_fijas, add_flotantes, add_patinetes, mostrar_huecos):
+    print(f'add_fijas: {add_fijas}, add_flotantes: {add_flotantes}, add_patinetes: {add_patinetes}')
     matriz = [[(maxLat, minLon) for _ in range(n+1)] for _ in range(n+1)]
     #Creo la matriz con las coordenadas para cada extremo de la cuadricula
     for i in range(n+1):
@@ -76,8 +76,9 @@ def crear_diccionario(estaciones, flotantes, n, minLon, maxLat, lon_celda, lat_c
             'cantidades_suavizadas': [],
         }
     diccionario['cantidades'] = [0 for i in range(pow(n,2))]
-    diccionario['cantidades_estaciones'] = [0 for i in range(pow(n,2))]
-    diccionario['cantidades_flotantes'] = [0 for i in range(pow(n,2))]
+    diccionario['cantidades_estaciones'] = [0 for _ in range(pow(n,2))]
+    diccionario['cantidades_flotantes'] = [0 for _ in range(pow(n,2))]
+    diccionario['cantidades_patinetes'] = [0 for _ in range(pow(n,2))]
 
     #Guardo en ids y coordenadas la información sobre las zonas del mapa de calor
     id = 1 
@@ -108,6 +109,14 @@ def crear_diccionario(estaciones, flotantes, n, minLon, maxLat, lon_celda, lat_c
             flotantes['zona'].append(zona)
             diccionario['cantidades'][zona-1] = diccionario['cantidades'][zona-1] + 1
             diccionario['cantidades_flotantes'][zona-1] = diccionario['cantidades_flotantes'][zona-1] + 1
+
+    if add_patinetes and patinetes != None:
+        #Relleno las cantidades para cada zona
+        for id in patinetes['id']:
+            zona = clasificar_punto(n, patinetes['coord'][id-1], lon_celda, lat_celda, minLon, maxLat)
+            patinetes['zona'].append(zona)
+            diccionario['cantidades'][zona-1] = diccionario['cantidades'][zona-1] + 1
+            diccionario['cantidades_patinetes'][zona-1] = diccionario['cantidades_patinetes'][zona-1] + 1
 
     if mostrar_huecos and estaciones != None:
         diccionario['capacidades'] = [0 for i in range(pow(n,2))]
@@ -179,6 +188,26 @@ def generar_flotantes_v2(estaciones, radio):
         data = json.load(archivo)
     #df_flotantes = pd.DataFrame(data)
     #return df_flotantes
+    return data
+
+def generar_patinetes(estaciones, radio):
+    """data = {'id': [], 'coord': [], 'info':[]}
+    id_patinete = 1
+    for id in estaciones:
+        puntos_patinetes = generar_puntos(estaciones[id]['coordinates'], 
+                                            radio, 
+                                            estaciones[id]['bike_bases'])
+        for p in puntos_patinetes:
+            data['id'].append(id_patinete)
+            data['coord'].append(p)
+            data['info'].append('Patinete nº '+ str(id_patinete))
+            id_patinete = id_patinete + 1"""
+    #with open('patinetes.json', "w", encoding="utf-8") as file:
+    #    json.dump(data, file, indent=4)
+    
+    with open("bicicletas_flotantes.json", "r") as archivo:
+        data = json.load(archivo)
+    
     return data
 
 def get_color(valor, rangos, colores):
