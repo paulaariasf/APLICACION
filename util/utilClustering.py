@@ -98,28 +98,50 @@ def indices_combinados(coordenadas):
     calinski_normalized = 10 * (np.array(calinski_scores) - np.min(calinski_scores)) / (np.max(calinski_scores) - np.min(calinski_scores))
     combined_scores = (0.5*silhouette_normalized + 0.5*calinski_normalized)
 
-    """
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    #graficar_resultados(k_values, silhouette_normalized, calinski_normalized, combined_scores)
 
+    optimal_k = k_values[np.argmax(combined_scores)]
+    print(optimal_k)
+    return optimal_k
+
+def graficar_resultados(k_values, silhouette_normalized, calinski_normalized, combined_scores):
+    # Primero, grafiquemos los Silhouette y Calinski-Harabasz Scores en un gráfico
+    fig1, ax1 = plt.subplots(figsize=(10, 6))
+
+    # Graficar Silhouette Score
     ax1.plot(k_values, silhouette_normalized, marker='o', color='b', label='Silhouette Score', linestyle='-')
     ax1.set_xlabel('Número de Clusters')
     ax1.set_ylabel('Silhouette Score', color='b')
     ax1.tick_params(axis='y', labelcolor='b')
 
+    # Crear el segundo eje Y para el Calinski-Harabasz Score
     ax2 = ax1.twinx()  # Crear el segundo eje Y
     ax2.plot(k_values, calinski_normalized, marker='o', color='r', label='Calinski-Harabasz Score', linestyle='-')
     ax2.set_ylabel('Calinski-Harabasz Score', color='r')
     ax2.tick_params(axis='y', labelcolor='r')
 
-    ax1.plot(k_values, combined_scores, marker='o', color='g', label='Combined Score', linestyle='-')
+    # Títulos y leyenda
+    ax1.set_title('Comparativa de Silhouette y Calinski-Harabasz Scores')
+    fig1.tight_layout()  # Ajustar el layout para evitar superposición
+
+    # Mostrar el gráfico
+    plt.show()
+
+    # Ahora, graficamos los Combined Scores en otro gráfico
+    fig2, ax3 = plt.subplots(figsize=(10, 6))
+
+    # Graficar Combined Scores
+    ax3.plot(k_values, combined_scores, marker='o', color='g', label='Combined Score', linestyle='-')
+    ax3.set_xlabel('Número de Clusters')
+    ax3.set_ylabel('Combined Score', color='g')
+    ax3.tick_params(axis='y', labelcolor='g')
 
     # Títulos y leyenda
-    plt.title('Comparativa de Silhouette, Calinski-Harabasz y Combined Scores')
-    fig.tight_layout()  # Ajustar el layout para evitar superposición
-    plt.legend(loc='upper left')
+    ax3.set_title('Comparativa de Combined Scores')
+    fig2.tight_layout()  # Ajustar el layout para evitar superposición
+    #ax3.legend(loc='upper left')
 
-    plt.show()"""
-
-    optimal_k = k_values[np.argmax(combined_scores)]
-    print(optimal_k)
-    return optimal_k
+    # Mostrar el gráfico
+    plt.show()
+    print(k_values[np.argmax(silhouette_normalized)])
+    print(k_values[np.argmax(calinski_normalized)])
