@@ -5,10 +5,14 @@ from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL, COLOR_MENU_CURSOR
 import util.utilEstaciones as utilEstaciones
 import util.utilImagenes as utilImagenes
 import util.utilClustering as utilClustering
+import util.utilInfo as utilInfo
 import tkintermapview
 import numpy as np
 from tkinter import font
 import math
+import os
+from tkinter import filedialog
+import json
 
 class FormMapaDesign():
 
@@ -38,7 +42,11 @@ class FormMapaDesign():
 
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
 
-        self.seleccionado = StringVar()
+        self.seleccionado_metros = StringVar()
+        self.seleccionado_influencia =  StringVar()
+
+        self.cargados_bicicletas = []
+        self.cargados_flotantes = []
 
         self.color_map = {
             0: '#FF0000',   # Rojo
@@ -95,95 +103,356 @@ class FormMapaDesign():
         }
 
         anadir_mapa(self)
-        self.menu_lateral(menuLateral)
+
+        self.menuLateral = menuLateral
+        self.menu_lateral()
 
         #creacion_paneles_info(self, panel_principal)
 
-    def menu_lateral(self, menuLateral):
-        self.menuLateral = menuLateral
+    def anadir_scrollbar(self):
+        #scrollbar = Scrollbar(self.menuLateral, orient=VERTICAL)
+        #scrollbar.pack(side=RIGHT, fill=Y)
 
+        canvas = Canvas(self.menuLateral, 
+                        #yscrollcommand=scrollbar.set, 
+                        yscrollcommand=None,
+                        width=200,
+                        bg=COLOR_MENU_LATERAL)
+        canvas.pack(side=LEFT, fill=BOTH, expand=True)
+
+        #scrollbar.config(command=canvas.yview)
+
+        scrollable_frame = Frame(canvas, bg=COLOR_MENU_LATERAL, width=200)
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+        scrollable_frame.bind("<Configure>", lambda event: self.actualizar_scrollregion(canvas))
+
+        canvas.bind_all("<MouseWheel>", lambda event: self.scroll_canvas(event,canvas))
+
+        return scrollable_frame
+
+    def actualizar_scrollregion(self, canvas):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    def scroll_canvas(self, event, canvas):
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+    def menu_lateral(self):
+        self.scrollable_frame = self.anadir_scrollbar()
         #ya se habia creado el menu anteriormente, se termina la funcion
         if hasattr(self, 'labelTipoTransporte'):
             return
-        #Controles menu lateral
-        fontAwesome=font.Font(family="FontAwesome", size=15)
+        self.submenus = {}
 
+        self.crear_tipo_transporte()
+        self.crear_mapa_calor()
+        self.crear_otras_opciones()
+        self.crear_carga_datos()
+
+
+        """
         #Botones del menu lateral
 
-        self.labelTipoTransporte = Label(self.menuLateral, text="Tipo de transporte", font=fontAwesome)
+        self.labelTipoTransporte = Label(self.scrollable_frame, text="Tipo de transporte", font=fontAwesome)
         self.labelTipoTransporte.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.labelTipoTransporte.pack(side=TOP)
 
         style = Style()
         style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
                         foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+
         checkbox_fijas = BooleanVar()
-        self.buttonEstacionesFijas = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+        self.buttonEstacionesFijas = Checkbutton(self.scrollable_frame, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
                                                  variable=checkbox_fijas, command= lambda : self.boton_fijas(checkbox_fijas))
         self.buttonEstacionesFijas.pack(side=TOP, pady=5)
 
         checkbox_flotantes = BooleanVar()
-        self.buttonBicicletasFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+        self.buttonBicicletasFlotantes = Checkbutton(self.scrollable_frame, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
                                                      variable=checkbox_flotantes, command=lambda: self.boton_flotantes(checkbox_flotantes))
         self.buttonBicicletasFlotantes.pack(side=TOP, pady=5)
 
         checkbox_centroides = BooleanVar()
-        self.buttonCentroides = Checkbutton(self.menuLateral, text=" Estaciones virtuales", style="Custom.TCheckbutton",
+        self.buttonCentroides = Checkbutton(self.scrollable_frame, text=" Estaciones virtuales", style="Custom.TCheckbutton",
                                                     variable=checkbox_centroides, command=lambda: self.boton_centroides(checkbox_centroides))
         self.buttonCentroides.pack(side=TOP, pady=5)
 
         checkbox_patinetes = BooleanVar()
-        self.buttonPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", style="Custom.TCheckbutton",
+        self.buttonPatinetes = Checkbutton(self.scrollable_frame, text=" Patinetes", style="Custom.TCheckbutton",
                                                     variable=checkbox_patinetes, command=lambda: self.boton_patinetes(checkbox_patinetes))
         self.buttonPatinetes.pack(side=TOP, pady=5)
 
-        self.LabelMapaCalor = Label(self.menuLateral, text="Mapa de Calor", font=fontAwesome)
+        self.LabelMapaCalor = Label(self.scrollable_frame, text="Mapa de Calor", font=fontAwesome)
         self.LabelMapaCalor.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.LabelMapaCalor.pack(side=TOP)
 
         self.checkbox_mapa_estaciones = BooleanVar()
-        self.buttonMostrarMapaEstaciones = Checkbutton(self.menuLateral, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+        self.buttonMostrarMapaEstaciones = Checkbutton(self.scrollable_frame, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
                                                        variable=self.checkbox_mapa_estaciones, command=self.mostrar_mapa_general)
         self.buttonMostrarMapaEstaciones.pack(side=TOP, pady=5)
 
         self.checkbox_mapa_flotantes = BooleanVar()
-        self.buttonMostrarMapaFlotantes = Checkbutton(self.menuLateral, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+        self.buttonMostrarMapaFlotantes = Checkbutton(self.scrollable_frame, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
                                                 variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa_general)
         self.buttonMostrarMapaFlotantes.pack(side=TOP, pady=5)
 
         self.checkbox_mapa_patinetes = BooleanVar()
-        self.buttonMostrarMapaPatinetes = Checkbutton(self.menuLateral, text=" Patinetes", style="Custom.TCheckbutton",
+        self.buttonMostrarMapaPatinetes = Checkbutton(self.scrollable_frame, text=" Patinetes", style="Custom.TCheckbutton",
                                                 variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa_general)
         self.buttonMostrarMapaPatinetes.pack(side=TOP, pady=5)
 
-        self.buttonPorcentajeLLenado = Button(self.menuLateral, text=" Mapa porcentaje llenado", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonVecinos = Button(self.scrollable_frame, text=" Cambiar influencia vecinos", font=font.Font(family="FontAwesome", size=10),
+                                                anchor="w", command= self.modificar_influencia)
+        self.buttonVecinos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonVecinos.pack(side=TOP)
+        self.bindHoverEvents(self.buttonVecinos)
+
+        self.buttonPorcentajeLLenado = Button(self.scrollable_frame, text=" Mapa porcentaje llenado", font=font.Font(family="FontAwesome", size=10), 
                                                 anchor="w", command=self.porcentaje_llenado)
         self.buttonPorcentajeLLenado.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonPorcentajeLLenado.pack(side=TOP)
         self.bindHoverEvents(self.buttonPorcentajeLLenado)
 
-        self.buttonMostrarMapaHuecos = Button(self.menuLateral, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonMostrarMapaHuecos = Button(self.scrollable_frame, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
                                                 anchor="w", command=self.mostrar_mapa_huecos)
         self.buttonMostrarMapaHuecos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonMostrarMapaHuecos.pack(side=TOP)
         self.bindHoverEvents(self.buttonMostrarMapaHuecos)
 
-        self.buttonCambiarN = Button(self.menuLateral, text=" Modificar cuadrícula", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonCambiarN = Button(self.scrollable_frame, text=" Cambiar tamaño cuadrícula", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= self.modificar_cuadricula)
+        self.buttonCambiarN.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        #self.buttonCambiarN.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCambiarN)
+
+        self.buttonBorrarMapa = Button(self.scrollable_frame, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= self.borrar_mapacalor)
+        self.buttonBorrarMapa.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        #self.buttonBorrarMapa.pack(side=TOP)
+        self.bindHoverEvents(self.buttonBorrarMapa)
+
+        self.labelCargaDatos = Label(self.scrollable_frame, text="Carga de datos", font=fontAwesome)
+        self.labelCargaDatos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.labelCargaDatos.pack(side=TOP)
+
+        self.buttonCargaDatosBicicletas = Button(self.scrollable_frame, text=" Importar datos bicicletas", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= lambda: self.cargar_archivo('bicicletas'))
+        self.buttonCargaDatosBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCargaDatosBicicletas.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCargaDatosBicicletas)
+
+        self.buttonCargaDatosPatinetes = Button(self.scrollable_frame, text=" Importar datos patinetes", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= lambda: self.cargar_archivo('patinetes'))
+        self.buttonCargaDatosPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCargaDatosPatinetes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCargaDatosPatinetes)
+
+        self.buttonDemanda = Button(self.scrollable_frame, text=" Demanda", font=fontAwesome)
+        self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonDemanda.pack(side=TOP)
+        self.bindHoverEvents(self.buttonDemanda)"""
+
+    def crear_tipo_transporte(self):
+
+        fontAwesome=font.Font(family="FontAwesome", size=12, weight='bold')
+        style = Style()
+        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+
+        frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_opcion.pack(fill=X, pady=2)
+
+        boton_principal = Button(frame_opcion, text='Tipo de Transporte', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=fontAwesome, command=lambda: self.toggle_submenu('Tipo de Transporte'), width=22, height=0)
+        boton_principal.pack(fill=X, expand=True)
+        self.bindHoverEvents(boton_principal)
+
+        frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_submenu.pack(fill=X, padx=10, pady=2)
+        #frame_submenu.pack_forget()
+        
+        checkbox_fijas = BooleanVar()
+        self.buttonEstacionesFijas = Checkbutton(frame_submenu, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+                                                 variable=checkbox_fijas, command= lambda : self.boton_fijas(checkbox_fijas))
+        self.buttonEstacionesFijas.pack(side=TOP, pady=5)
+
+        checkbox_flotantes = BooleanVar()
+        self.buttonBicicletasFlotantes = Checkbutton(frame_submenu, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+                                                     variable=checkbox_flotantes, command=lambda: self.boton_flotantes(checkbox_flotantes))
+        self.buttonBicicletasFlotantes.pack(side=TOP, pady=5)
+
+        checkbox_centroides = BooleanVar()
+        self.buttonCentroides = Checkbutton(frame_submenu, text=" Estaciones virtuales", style="Custom.TCheckbutton",
+                                                    variable=checkbox_centroides, command=lambda: self.boton_centroides(checkbox_centroides))
+        self.buttonCentroides.pack(side=TOP, pady=5)
+
+        checkbox_patinetes = BooleanVar()
+        self.buttonPatinetes = Checkbutton(frame_submenu, text=" Patinetes", style="Custom.TCheckbutton",
+                                                    variable=checkbox_patinetes, command=lambda: self.boton_patinetes(checkbox_patinetes))
+        self.buttonPatinetes.pack(side=TOP, pady=5)
+
+        # Guardar referencias al estado del submenú
+        self.submenus['Tipo de Transporte'] = {"titulo": boton_principal, "frame_opcion": frame_opcion,
+                                               "frame_submenu": frame_submenu, "visible": True}
+
+    def crear_mapa_calor(self):
+        
+        fontAwesome=font.Font(family="FontAwesome", size=12, weight='bold')
+        style = Style()
+        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+
+        frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_opcion.pack(fill=X, pady=2)
+
+        boton_principal = Button(frame_opcion, text='Mapa de Calor', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=fontAwesome, command=lambda: self.toggle_submenu('Mapa de Calor'), width=18, height=0)
+        boton_principal.pack(fill=X)
+        self.bindHoverEvents(boton_principal)
+
+        frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_submenu.pack(fill=X, padx=10, pady=2)
+        #frame_submenu.pack_forget()
+        
+        self.checkbox_mapa_estaciones = BooleanVar()
+        self.buttonMostrarMapaEstaciones = Checkbutton(frame_submenu, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+                                                       variable=self.checkbox_mapa_estaciones, command=self.mostrar_mapa_general)
+        self.buttonMostrarMapaEstaciones.pack(side=TOP, pady=5)
+
+        self.checkbox_mapa_flotantes = BooleanVar()
+        self.buttonMostrarMapaFlotantes = Checkbutton(frame_submenu, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa_general)
+        self.buttonMostrarMapaFlotantes.pack(side=TOP, pady=5)
+
+        self.checkbox_mapa_patinetes = BooleanVar()
+        self.buttonMostrarMapaPatinetes = Checkbutton(frame_submenu, text=" Patinetes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa_general)
+        self.buttonMostrarMapaPatinetes.pack(side=TOP, pady=5)
+
+        self.submenus['Mapa de Calor'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
+                                          "frame_submenu": frame_submenu, "visible": True}
+
+    def crear_otras_opciones(self):
+        
+        fontAwesome=font.Font(family="FontAwesome", size=12, weight='bold')
+        style = Style()
+        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+
+        frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_opcion.pack(fill=X, pady=2)
+
+        boton_principal = Button(frame_opcion, text='Otras opciones', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=fontAwesome, command=lambda: self.toggle_submenu('Otras opciones'), width=22, height=0)
+        boton_principal.pack(fill=X)
+        self.bindHoverEvents(boton_principal)
+
+        frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_submenu.pack(fill=X, padx=10, pady=2)
+        #frame_submenu.pack_forget()
+        
+        self.buttonVecinos = Button(frame_submenu, text=" Cambiar influencia vecinos", font=font.Font(family="FontAwesome", size=10),
+                                                anchor="w", command= self.modificar_influencia)
+        self.buttonVecinos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonVecinos.pack(side=TOP)
+        self.bindHoverEvents(self.buttonVecinos)
+
+        self.buttonPorcentajeLLenado = Button(frame_submenu, text=" Mapa porcentaje llenado", font=font.Font(family="FontAwesome", size=10), 
+                                                anchor="w", command=self.porcentaje_llenado)
+        self.buttonPorcentajeLLenado.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonPorcentajeLLenado.pack(side=TOP)
+        self.bindHoverEvents(self.buttonPorcentajeLLenado)
+
+        self.buttonMostrarMapaHuecos = Button(frame_submenu, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
+                                                anchor="w", command=self.mostrar_mapa_huecos)
+        self.buttonMostrarMapaHuecos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMostrarMapaHuecos.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMostrarMapaHuecos)
+
+        self.buttonCambiarN = Button(frame_submenu, text=" Cambiar tamaño cuadrícula", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= self.modificar_cuadricula)
         self.buttonCambiarN.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonCambiarN.pack(side=TOP)
         self.bindHoverEvents(self.buttonCambiarN)
 
-        self.buttonBorrarMapa = Button(self.menuLateral, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonBorrarMapa = Button(frame_submenu, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= self.borrar_mapacalor)
         self.buttonBorrarMapa.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonBorrarMapa.pack(side=TOP)
         self.bindHoverEvents(self.buttonBorrarMapa)
 
-        self.buttonDemanda = Button(self.menuLateral, text=" Demanda", font=fontAwesome)
-        self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonDemanda.pack(side=TOP)
-        self.bindHoverEvents(self.buttonDemanda)
+        self.submenus['Otras opciones'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
+                                          "frame_submenu": frame_submenu, "visible": True}
+    
+    def crear_carga_datos(self):
+
+        fontAwesome=font.Font(family="FontAwesome", size=12, weight="bold")
+        style = Style()
+        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+
+        frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_opcion.pack(fill=X, pady=2)
+
+        boton_principal = Button(frame_opcion, text='Carga de datos', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=fontAwesome, command=lambda: self.toggle_submenu('Carga de datos'), width=22, height=0)
+        boton_principal.pack(fill=X)
+        self.bindHoverEvents(boton_principal)
+
+        frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_submenu.pack(fill=X, padx=10, pady=2)
+        #frame_submenu.pack_forget()
+
+        self.buttonVerDatosCargados = Button(frame_submenu, text=" Ver datos cargados", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= self.visualizar_datos_cargados)
+        self.buttonVerDatosCargados.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonVerDatosCargados.pack(side=TOP)
+        self.bindHoverEvents(self.buttonVerDatosCargados)
+        
+        self.buttonCargaDatosBicicletas = Button(frame_submenu, text=" Importar datos bicicletas", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= lambda: self.cargar_archivo('bicicletas'))
+        self.buttonCargaDatosBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCargaDatosBicicletas.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCargaDatosBicicletas)
+
+        self.buttonCargaDatosPatinetes = Button(frame_submenu, text=" Importar datos patinetes", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= lambda: self.cargar_archivo('patinetes'))
+        self.buttonCargaDatosPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCargaDatosPatinetes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCargaDatosPatinetes)
+
+        self.submenus['Carga de datos'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
+                                          "frame_submenu": frame_submenu, "visible": True}
+
+
+    def toggle_submenu(self, texto_opcion):
+        submenu = self.submenus[texto_opcion]
+        if submenu["visible"]:
+            submenu["frame_submenu"].pack_forget()
+            submenu["visible"] = False
+            #submenu['titulo'] = submenu['titulo'].config(text="▶" + submenu['titulo'].cget("text"))
+        else:
+            submenu["frame_submenu"].pack(after=submenu["frame_opcion"], fill=X)
+            submenu["visible"] = True
+            #submenu['titulo'] = submenu['titulo'].config(text="▼" + submenu['titulo'].cget("text"))
+    
+    def visualizar_datos_cargados(self):
+        ventana_datos = Toplevel(self.frame_mapa)
+        ventana_datos.title("Entrada de Mapa de Calor")
+
+        ancho_pantalla = ventana_datos.winfo_screenwidth()
+        alto_pantalla = ventana_datos.winfo_screenheight()
+
+        ancho_ventana = 700
+        alto_ventana = 350
+
+        x = (ancho_pantalla // 2) - (ancho_ventana // 2)
+        y = (alto_pantalla // 2) - (alto_ventana // 2)
+
+        ventana_datos.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+
+        
+
+        ventana_datos.protocol("WM_DELETE_WINDOW", ventana_datos.destroy)
 
     def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
@@ -197,162 +466,18 @@ class FormMapaDesign():
     def on_leave(self, event, button):
         #Restaurar estilo al salir el ratón
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
-
-    def close_infozona(self):
-        if self.pol_seleccion is not None:
-            self.pol_seleccion.delete()
-        if hasattr(self, 'infozona_frame'):
-            self.infozona_frame.destroy()
-
-    def show_info_zona(self, coords):
-        self.close_infozona()
-
-        self.infozona_frame = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
-        self.infozona_frame.place(x=825, y=475)
-        
-        zona = utilEstaciones.clasificar_punto(self.n, (coords[0], coords[1]), self.lon_celda, self.lat_celda, self.minLon, self.maxLat)
-
-        """if self.clasificacion == "General" and self.checkbox_mapa_estaciones.get() and self.checkbox_mapa_flotantes.get():  #flotantes y fijas
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\n \
-                    Número de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\n  \
-                    Cantidad total bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]}\n  \
-                    Cantidad bicicletas est: {self.dic_mapa_calor['cantidades_estaciones'][zona-1]}\n  \
-                    Cantidad bicicletas flotantes: {self.dic_mapa_calor['cantidades_flotantes'][zona-1]}\n  \
-                    Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
-        
-        elif self.clasificacion == "General" and self.checkbox_mapa_estaciones.get():#solo fijas
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\n  \
-                    Número de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\n  \
-                    Cantidad de bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]}\n  \
-                    Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
-        
-        elif self.clasificacion == "General" and self.checkbox_mapa_flotantes.get():#solo flotantes
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\n  \
-                    Número de bicicletas flotantes:{self.dic_mapa_calor['cantidades'][zona-1]}\n  \
-                    Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
-        """
-        if self.clasificacion == "General":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\n"
-            if self.checkbox_mapa_estaciones.get():
-                texto+=f"Número de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\n"
-                texto+=f"Cantidad bicicletas estaciones: {self.dic_mapa_calor['cantidades_estaciones'][zona-1]}\n"
-            if self.checkbox_mapa_flotantes.get():
-                texto+=f"Número de bicicletas flotantes:{self.dic_mapa_calor['cantidades_flotantes'][zona-1]}\n"
-            if self.checkbox_mapa_patinetes.get():
-                texto+=f"Número de patinetes:{self.dic_mapa_calor['cantidades_patinetes'][zona-1]}\n"
-            texto+=f"Factor de cobertura: {self.dic_mapa_calor['cantidades_suavizadas'][zona-1]*100/np.max(self.dic_mapa_calor['cantidades_suavizadas']):.2f}%"
-
-        elif self.clasificacion == "Llenado":
-            if self.dic_mapa_calor['capacidades'] != 0:
-                texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de estaciones:{self.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}: {(100*(self.dic_mapa_calor['cantidades'][zona-1]/self.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
-        
-        elif self.clasificacion == "Huecos":
-            texto=f"Zona seleccionada: {zona} de {self.n**2}\nNúmero de huecos libres:{self.dic_mapa_calor['cantidades'][zona-1]} de {self.dic_mapa_calor['capacidades'][zona-1]}"
-        
-        info_label = Label(self.infozona_frame, text=texto, bg="white")
-        info_label.pack(side="left", padx=5, pady=5)
-
-        #Resaltar zona seleccionada
-        self.pol_seleccion =self.labelMap.set_polygon(self.dic_mapa_calor['coordenadas'][zona-1],
-                                    fill_color="#1F71A9",
-                                    outline_color="#1F71A9",
-                                    border_width=3)
-
-        close_button = Button(self.infozona_frame, text="x", command=lambda: self.close_infozona(), bg="white", fg="red", borderwidth=0)
-        close_button.pack(side="right", padx=5, pady=5)
-    """
-    def pintar_mapa_calor(self):
-        if hasattr (self, "frame_leyenda"):
-            self.frame_leyenda.destroy()   
-
-        if not hasattr(self, 'n'):
-            metros = 500
-            lon_objetivo = metros/(111320*math.cos(40.4))
-            lat_objetivo = metros/111320 
-            n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
-            n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
-            self.n = math.ceil(max(n_lon, n_lat))
-       
-        self.lon_celda = (self.maxLon - self.minLon) / self.n
-        self.lat_celda = (self.maxLat - self.minLat) / self.n
-        self.dic_mapa_calor_fijas = utilEstaciones.crear_diccionario(self.estaciones, None,
-                self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-                add_fijas=True, add_flotantes=False, mostrar_huecos=False)
-        #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.4214, -3.93884035, 40.62442815, 40.22383835
-        #self.maxLon, self.minLon, self.maxLat, self.minLat = -3.521772, -3.784628, 40.5157613, 40.330671
-
-        if self.n == 44: self.alcance = 3
-        elif self.n == 54: self.alcance = 5
-        elif self.n == 72: self.alcance = 7
-        elif self.n == 108: self.alcance = 9
-
-        self.dic_mapa_calor_fijas['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor_fijas['cantidades'], self.alcance)
-
-
-        if self.clasificacion == "Estaciones":
-            min_val = min(self.dic_mapa_calor_fijas['cantidades_suavizadas'])
-            max_val = max(self.dic_mapa_calor_fijas['cantidades_suavizadas'])
-            self.dic_mapa_calor_fijas['cantidad_maxima'] = max_val
-            #rangos_flotantes = min_val + (np.linspace(0, 1, 9)**2) * (max_val - min_val)
-            #rangos = sorted(set(np.round(rangos_flotantes).astype(int)))
-
-            rangos = min_val + ((np.arange(9) ** 2) * (max_val - min_val) / 8 ** 2)
-
-            colores = ["#FF3300", "#FF6600", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#00FF00"]
-            ############################       Leyenda     ##############################
-            self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-            self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=168)
-            i=8
-            for color in colores[::-1]:
-                color_label = Label(self.frame_leyenda, width=60, height=1, bg=color, text=f"{rangos[i-1]:.1f}-{rangos[i]:.1f}")
-                color_label.pack()
-                i=i-1
-            ###############################################################################
-
-        elif self.clasificacion == "LLenado":
-            rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-            colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
-            i=10
-            ############################       Leyenda     ##############################
-            self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-            self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210) 
-
-            for color in colores[::-1]:
-                color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
-                color_label.pack()
-                i=i-1
-            ###############################################################################
-        
-
-        for i in range(pow(self.n, 2)):
-            factor_llenado = self.dic_mapa_calor_fijas['cantidades_suavizadas'][i]
-            if factor_llenado != 0: #los que son 0 no pintarlos
-                if self.clasificacion == "Estaciones":
-                    color = utilEstaciones.get_color(factor_llenado, rangos, colores)
-                elif self.clasificacion == "LLenado":
-                    if self.dic_mapa_calor_fijas['capacidades'][i] != 0:
-                        porcentaje = (self.dic_mapa_calor_fijas['cantidades'][i]/self.dic_mapa_calor_fijas['capacidades'][i])*100
-                    else: porcentaje = 0
-                    color = utilEstaciones.get_color(porcentaje, rangos, colores)
-
-                poligono = self.labelMap.set_polygon(self.dic_mapa_calor_fijas['coordenadas'][i],
-                                        fill_color=color,
-                                        outline_color=None,
-                                        #outline_color="grey",
-                                        #border_width=1,
-                                        name=f'Zona {self.dic_mapa_calor_fijas['ids'][i]}')
-                if self.n in self.poligonos_zonas:
-                    self.poligonos_zonas[self.n].append(poligono)
-                else:
-                    self.poligonos_zonas[self.n] = [poligono]
-
-        self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
-                                            command=self.show_info_zona,
-                                            pass_coords=True)"""
         
     def pintar_mapa(self):
+        utilInfo.close_infozona(self)
         if hasattr (self, "frame_leyenda"):
-            self.frame_leyenda.destroy()   
+            self.frame_leyenda.destroy()
+
+        if self.clasificacion == 'General' and self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
+              and self.checkbox_mapa_patinetes.get()==False:
+            return
+        
+        if not hasattr(self, 'influencia'):
+            self.influencia = 'con'
 
         if not hasattr(self, 'n'):
             metros = 500
@@ -367,13 +492,13 @@ class FormMapaDesign():
 
 
         if self.clasificacion == "Llenado":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, None,
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, None, None,
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-                    add_fijas=True, add_flotantes=False, mostrar_huecos=False)
+                    add_fijas=True, add_flotantes=False, add_patinetes=False, mostrar_huecos=False)
         elif self.clasificacion == "Huecos":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, None, 
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, None, None,
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-                    add_fijas=False, add_flotantes=False, mostrar_huecos=True)
+                    add_fijas=False, add_flotantes=False, add_patinetes=False,mostrar_huecos=True)
         else:
             #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
             self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, self.df_flotantes, self.df_patinetes,
@@ -385,28 +510,22 @@ class FormMapaDesign():
             elif self.n == 54: self.alcance = 5
             elif self.n == 72: self.alcance = 7
             elif self.n == 108: self.alcance = 9
-            self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
+            if self.influencia == 'con':
+                self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
 
-
-        ############################       Leyenda     ##############################
-        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210)
-        rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
         colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
-        
-        i=10
-        for color in colores[::-1]:
-            color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}%")
-            color_label.pack()
-            i=i-1
-        ###############################################################################
-        if self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_flotantes.get()==False and \
-        self.checkbox_mapa_patinetes.get()==False:
-            self.frame_leyenda.destroy()
+
+        minimo = np.min(self.dic_mapa_calor['cantidades'])
+        maximo = np.max(self.dic_mapa_calor['cantidades'])
+        index_min = np.argmin(self.dic_mapa_calor['cantidades'])
+        index_max = np.argmax(self.dic_mapa_calor['cantidades'])
+        print(f'Influencia: {self.influencia}')
+        print(f'Min: {minimo}, max: {maximo}')
+        print(f'El indice de la menor es: {index_min} y se trata de la zona {self.dic_mapa_calor['ids'][index_min]}')
+        print(f'El indice de la mayor es: {index_max} y se trata de la zona {self.dic_mapa_calor['ids'][index_max]}')
 
         for i in range(pow(self.n, 2)):
-            if self.clasificacion == 'General':
+            if self.clasificacion == 'General' and self.influencia=='con':
                 factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
                 contador = sum([self.checkbox_mapa_estaciones.get(),
                                 self.checkbox_mapa_flotantes.get(),
@@ -418,7 +537,20 @@ class FormMapaDesign():
                 elif contador==1: # Si hay uno , los rangos son de 0-33 aprox 
                     rangos = [0, 1, 4, 7, 10, 13, 16, 19, 22, 25, 1000]
 
+            elif self.clasificacion == 'General' and self.influencia=='sin':
+                factor_llenado = self.dic_mapa_calor['cantidades'][i]
+                contador = sum([self.checkbox_mapa_estaciones.get(),
+                                self.checkbox_mapa_flotantes.get(),
+                                self.checkbox_mapa_patinetes.get()])
+                if contador==3: # Si hay tres medios seleccionados, los rangos son de ????? aprox
+                    rangos = [0, 8, 20, 34, 48, 64, 82, 100, 120, 142, 1000]
+                elif contador==2: # Si hay dos medios seleccionados, los rangos son de 0-92/106 aprox 
+                    rangos = [0, 4, 12, 20, 28, 38, 48, 60, 72, 84, 1000]
+                elif contador==1: # Si hay uno , los rangos son de 0-61/46 aprox 
+                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
+
             elif self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
+                rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
                 if self.dic_mapa_calor['capacidades'][i] != 0:
                     factor_llenado = (self.dic_mapa_calor['cantidades'][i]/self.dic_mapa_calor['capacidades'][i])*100
                 else: factor_llenado = 0
@@ -435,6 +567,28 @@ class FormMapaDesign():
                     self.poligonos_zonas[self.n].append(poligono)
                 else:
                     self.poligonos_zonas[self.n] = [poligono]
+
+        ############################       Leyenda     ##############################
+        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
+        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=210)
+        
+        i=10
+        for color in colores[::-1]:
+            if self.clasificacion == 'General':
+                rangos[-1]='...'
+                color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
+            else:
+                color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}%")
+            color_label.pack()
+            i=i-1
+
+        if self.checkbox_mapa_estaciones.get()==False and \
+        self.checkbox_mapa_flotantes.get()==False and \
+        self.checkbox_mapa_patinetes.get()==False and self.clasificacion=="General":
+            self.frame_leyenda.destroy()
+        ###############################################################################
+
+        ##################################### BOTONES RIGHT CLICK ##################################
         mostrados=""
         if self.checkbox_mapa_estaciones.get()==True:
             mostrados+="estaciones "
@@ -451,131 +605,36 @@ class FormMapaDesign():
             elif self.n == 108: metros=200
             if self.clasificacion=="General":
                 self.labelMap.add_right_click_menu_command(label=f"Info zona con {metros}m mapa {mostrados}",
-                                            command=self.show_info_zona,
+                                            command=lambda event: utilInfo.show_info_zona(self, coords=(event[0], event[1])),
                                             pass_coords=True)
             else:
                 self.labelMap.add_right_click_menu_command(label=f"Info zona con {metros}m mapa {self.clasificacion}",
                                             command=self.show_info_zona,
                                             pass_coords=True)
-    """   
-    def pintar_mapa_calor_flotantes(self):
-        if hasattr (self, "frame_leyenda"):
-            self.frame_leyenda.destroy()   
+    ###############################################################################################
+    
+    def cargar_archivo(self, tipo):
+        archivo = filedialog.askopenfilename(
+            title="Seleccionar archivo JSON",
+            filetypes=[("Archivos JSON", "*.json")]
+        )
+        if archivo:
+            try:
+                with open(archivo, 'r') as f:
+                    data = json.load(f)
+                
+                if tipo == 'bicicletas':
+                    self.cargados_bicicletas.append(data)
+                elif tipo == 'patinetes':
+                    self.cargados_patinetes.append(data)
 
-        if not hasattr(self, 'n'):
-            metros = 500
-            lon_objetivo = metros/(111320*math.cos(40.4))
-            lat_objetivo = metros/111320 
-            n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
-            n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
-            self.n = math.ceil(max(n_lon, n_lat))
-       
-        self.lon_celda = (self.maxLon - self.minLon) / self.n
-        self.lat_celda = (self.maxLat - self.minLat) / self.n
-        self.dic_mapa_calor_flotantes = utilEstaciones.crear_diccionario(None, self.df_flotantes, 
-                    self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-                    add_fijas=False, add_flotantes=True, mostrar_huecos=False)
-        
-        if self.n == 44: self.alcance = 3
-        elif self.n == 54: self.alcance = 5
-        elif self.n == 72: self.alcance = 7
-        elif self.n == 108: self.alcance = 9
+                nombre_archivo = os.path.basename(archivo)
+                utilInfo.show_info_upload(self, nombre_archivo)
 
-        self.dic_mapa_calor_flotantes['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor_flotantes['cantidades'], self.alcance)
-
-
-        min_val = min(self.dic_mapa_calor_flotantes['cantidades_suavizadas'])
-        max_val = max(self.dic_mapa_calor_flotantes['cantidades_suavizadas'])
-        self.dic_mapa_calor_flotantes['cantidad_maxima'] = max(self.dic_mapa_calor_flotantes['cantidades'])
-
-        rangos = min_val + ((np.arange(9) ** 2) * (max_val - min_val) / 8 ** 2)
-
-        colores = ["#FF3300", "#FF6600", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#00FF00"]
-        ############################       Leyenda     ##############################
-        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=168)
-        i=8
-        for color in colores[::-1]:
-            color_label = Label(self.frame_leyenda, width=60, height=1, bg=color, text=f"{rangos[i-1]:.1f}-{rangos[i]:.1f}")
-            color_label.pack()
-            i=i-1
-        ###############################################################################
-
-        for i in range(pow(self.n, 2)):
-            factor_llenado = self.dic_mapa_calor_flotantes['cantidades_suavizadas'][i]
-            if factor_llenado != 0: #los que son 0 no pintarlos
-                color = utilEstaciones.get_color(factor_llenado, rangos, colores)
-            
-                poligono = self.labelMap.set_polygon(self.dic_mapa_calor_flotantes['coordenadas'][i],
-                                        fill_color=color,
-                                        outline_color=None,
-                                        #outline_color="grey",
-                                        #border_width=1,
-                                        name=f'Zona {self.dic_mapa_calor_flotantes['ids'][i]}')
-                if self.n in self.poligonos_zonas:
-                    self.poligonos_zonas[self.n].append(poligono)
-                else:
-                    self.poligonos_zonas[self.n] = [poligono]
-        self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
-                                            command=self.show_info_zona,
-                                            pass_coords=True)
-    """
-    """
-    def pintar_mapa_calor_huecos(self):
-        if hasattr (self, "frame_leyenda"):
-            self.frame_leyenda.destroy()   
-
-        if not hasattr(self, 'n'):
-            metros = 500
-            lon_objetivo = metros/(111320*math.cos(40.4))
-            lat_objetivo = metros/111320 
-            n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
-            n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
-            self.n = math.ceil(max(n_lon, n_lat))
-       
-        self.lon_celda = (self.maxLon - self.minLon) / self.n
-        self.lat_celda = (self.maxLat - self.minLat) / self.n
-        self.dic_mapa_calor_huecos = utilEstaciones.crear_diccionario(self.estaciones, None, 
-            self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
-            add_fijas=False, add_flotantes=False, mostrar_huecos=True)
-        
-        min_val = min(self.dic_mapa_calor_huecos['cantidades'])
-        max_val = max(self.dic_mapa_calor_huecos['cantidades'])
-        self.dic_mapa_calor_huecos['cantidad_maxima'] = max(self.dic_mapa_calor_huecos['cantidades'])
-
-        rangos = min_val + ((np.arange(9) ** 2) * (max_val - min_val) / 8 ** 2)
-
-        colores = ["#FF3300", "#FF6600", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#00FF00"]
-        ############################       Leyenda     ##############################
-        self.frame_leyenda = Frame(self.panel_principal, width=20, height=100, bg=None)
-        self.frame_leyenda.place(relx=0.9, rely=0.3, width=50, height=168)
-        i=8
-        for color in colores[::-1]:
-            color_label = Label(self.frame_leyenda, width=60, height=1, bg=color, text=f"{rangos[i-1]:.1f}-{rangos[i]:.1f}")
-            color_label.pack()
-            i=i-1
-        ###############################################################################
-
-        for i in range(pow(self.n, 2)):
-            factor_llenado = self.dic_mapa_calor_huecos['cantidades'][i]
-            if factor_llenado != 0: #los que son 0 no pintarlos
-                color = utilEstaciones.get_color(factor_llenado, rangos, colores)
-            
-                poligono = self.labelMap.set_polygon(self.dic_mapa_calor_huecos['coordenadas'][i],
-                                        fill_color=color,
-                                        outline_color=None,
-                                        #outline_color="grey",
-                                        #border_width=1,
-                                        name=f'Zona {self.dic_mapa_calor_huecos['ids'][i]}')
-                if self.n in self.poligonos_zonas:
-                    self.poligonos_zonas[self.n].append(poligono)
-                else:
-                    self.poligonos_zonas[self.n] = [poligono]
-
-        self.labelMap.add_right_click_menu_command(label=f"Info zona con n={self.n}",
-                                            command=self.show_info_zona,
-                                            pass_coords=True)
-    """
+            except Exception as e:
+                print(f"Error al cargar el archivo: {e}")
+                utilInfo.show_info_upload(self, "Error al cargar el archivo")
+   
     def aplicar_gaussiana(self, cantidades, alcance, sigma=1):
         # Convertimos la lista a una matriz
         matriz = np.array(cantidades).reshape(self.n, self.n)
@@ -639,11 +698,10 @@ class FormMapaDesign():
                     poligono.delete()
             self.frame_leyenda.destroy()
     
-
     def modificar_cuadricula(self):
         if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
         self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()):
-            messagebox.showwarning("Advertencia", "Debe seleccionar primero lo que desea incluir en el mapa de calor")
+            messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
             return
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Entrada de Mapa de Calor")
@@ -659,36 +717,68 @@ class FormMapaDesign():
 
         self.ventana_mod.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
 
-        if self.n == 44: self.seleccionado.set(500)
-        elif self.n == 51: self.seleccionado.set(400)
-        elif self.n == 68: self.seleccionado.set(300)
-        elif self.n == 102: self.seleccionado.set(200)
+        if self.n == 44: self.seleccionado_metros.set(500)
+        elif self.n == 51: self.seleccionado_metros.set(400)
+        elif self.n == 68: self.seleccionado_metros.set(300)
+        elif self.n == 102: self.seleccionado_metros.set(200)
 
         # Crear RadioButtons
-        radio500 = Radiobutton(self.ventana_mod, text="500 metros", variable=self.seleccionado, value=500)
+        radio500 = Radiobutton(self.ventana_mod, text="500 metros", variable=self.seleccionado_metros, value=500)
         radio500.pack(anchor=W)
 
-        radio400 = Radiobutton(self.ventana_mod, text="400 metros", variable=self.seleccionado, value=400)
+        radio400 = Radiobutton(self.ventana_mod, text="400 metros", variable=self.seleccionado_metros, value=400)
         radio400.pack(anchor=W)
 
-        radio300 = Radiobutton(self.ventana_mod, text="300 metros", variable=self.seleccionado, value=300)
+        radio300 = Radiobutton(self.ventana_mod, text="300 metros", variable=self.seleccionado_metros, value=300)
         radio300.pack(anchor=W)
 
-        radio200 = Radiobutton(self.ventana_mod, text="200 metros", variable=self.seleccionado, value=200)
+        radio200 = Radiobutton(self.ventana_mod, text="200 metros", variable=self.seleccionado_metros, value=200)
         radio200.pack(anchor=W)
 
-        submit_button = Button(self.ventana_mod, text="Mostrar", command=self.enviar)
+        submit_button = Button(self.ventana_mod, text="Mostrar", command=self.enviar_tamano_cuadricula)
         submit_button.pack(pady=5)
 
         self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
 
+    def modificar_influencia(self):
+        if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
+        self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()):
+            messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
+            return
+        self.ventana_mod = Toplevel(self.frame_mapa)
+        self.ventana_mod.title("Modificación de la Influencia de Zonas Vecinas")
 
-    def enviar(self):        
+        ancho_pantalla = self.ventana_mod.winfo_screenwidth()
+        alto_pantalla = self.ventana_mod.winfo_screenheight()
+
+        ancho_ventana = 300
+        alto_ventana = 100
+
+        x = (ancho_pantalla // 2) - (ancho_ventana // 2)
+        y = (alto_pantalla // 2) - (alto_ventana // 2)
+
+        self.ventana_mod.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+
+        self.seleccionado_influencia.set(self.influencia)
+
+        # Crear RadioButtons
+        radio_con_influencia = Radiobutton(self.ventana_mod, text="Con influencia de vecinos", variable=self.seleccionado_influencia, value='con')
+        radio_con_influencia.pack(anchor=W)
+
+        radio_sin_influencia = Radiobutton(self.ventana_mod, text="Sin influencia de vecinos", variable=self.seleccionado_influencia, value='sin')
+        radio_sin_influencia.pack(anchor=W)
+
+        submit_button = Button(self.ventana_mod, text="Cambiar", command=self.enviar_influencia)
+        submit_button.pack(pady=5)
+
+        self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
+
+    def enviar_tamano_cuadricula(self):        
         self.borrar_mapacalor()
         self.ventana_mod.destroy()
 
         
-        metros = float(self.seleccionado.get())
+        metros = float(self.seleccionado_metros.get())
         lon_objetivo = metros/(111320*math.cos(40.4))
         lat_objetivo = metros/111320 
         n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
@@ -700,58 +790,19 @@ class FormMapaDesign():
 
         self.pintar_mapa()
 
+    def enviar_influencia(self):        
+        self.borrar_mapacalor()
+        self.ventana_mod.destroy()
+
+        if not hasattr(self, 'clasificacion'):
+            self.clasificacion = "General"
+        self.influencia = self.seleccionado_influencia.get()
+        self.pintar_mapa()
+
     def porcentaje_llenado(self):
         self.borrar_mapacalor()
         self.clasificacion = "Llenado"
         self.pintar_mapa()
-
-
-    def close_infoest(self):
-        if self.est_seleccion is not None:
-            self.est_seleccion.delete()
-        if hasattr(self, 'infoest_frame'):
-            self.infoest_frame.destroy()
-
-    def dividir_string_por_longitud(self, texto, longitud_max_linea=25):
-        # Verificar si el string es mayor que 35
-        if len(texto) > 35:
-            palabras = texto.split()
-            lineas = []
-            linea_actual = ""
-
-            for palabra in palabras:
-                # Si cabe en la linea la agrego
-                if len(linea_actual) + len(palabra) + 1 <= longitud_max_linea:
-                    if linea_actual:
-                        linea_actual += " "
-                    linea_actual += palabra
-                else:
-                    # Si no cabe, paso a otra linea
-                    lineas.append(linea_actual)
-                    linea_actual = palabra
-
-            if linea_actual:
-                lineas.append(linea_actual)
-            return "\n".join(lineas)
-        else:
-            # Si no es mayor que 35, devolver el string original
-            return texto
-
-    def show_info_estacion(self, polygon):
-        self.close_infoest()
-
-        self.infoest_frame = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
-        self.infoest_frame.place(x=850, y=400)
-
-        id, coord_estacion = polygon.name
-        texto_mostrar = self.dividir_string_por_longitud(self.estaciones[id]['name'], longitud_max_linea=25)
-        info_label = Label(self.infoest_frame, text=f"Estación seleccionada:\n{texto_mostrar} \n Cantidad de bicicletas: {self.estaciones[id]['bike_bases']}", bg="white")
-        info_label.pack(side="left", padx=5, pady=5)
-
-        #Añadir marcador en la estacion seleccionada
-        self.est_seleccion = self.labelMap.set_marker(coord_estacion[0], coord_estacion[1])
-        close_button = Button(self.infoest_frame, text="x", command=self.close_infoest, bg="white", fg="red", borderwidth=0)
-        close_button.pack(side="right", padx=5, pady=5)
     
     def pintar_estaciones(self):
         strings = []
@@ -763,12 +814,17 @@ class FormMapaDesign():
                            (coord_estacion[0], coord_estacion[1]+ d),
                            (coord_estacion[0] + d, coord_estacion[1] + d),
                            (coord_estacion[0] + d, coord_estacion[1])]
-            poligono = self.labelMap.set_polygon(coordinates,
+            """poligono = self.labelMap.set_polygon(coordinates,
                                     outline_color="blue",
                                     border_width=5,
                                     name=(id, coord_estacion),
                                     command=self.show_info_estacion,
-                                    )
+                                    )"""
+            poligono = self.labelMap.set_polygon(coordinates,
+                                    outline_color="blue",
+                                    border_width=5,
+                                    name=(id, coord_estacion),
+                                    command=lambda event: utilInfo.show_info_estacion(self, event))
             self.poligonos_estaciones.append(poligono)
         longest_string = max(strings, key=len)
         max_len = len(longest_string)
