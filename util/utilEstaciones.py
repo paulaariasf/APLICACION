@@ -30,8 +30,7 @@ def devolver_estaciones():
                 "name": station['name'],
                 "free_bases": station['free_bases'],
                 "bike_bases": station['dock_bikes'],
-                "coordinates": station['geometry']['coordinates'],
-                "zona": -1
+                "coordinates": station['geometry']['coordinates']
             }
     return stations
 

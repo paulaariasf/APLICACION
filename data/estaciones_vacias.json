@@ -1,0 +1,5483 @@
+{
+    "1406": {
+        "name": "2 - Metro Callao",
+        "coordinates": [
+            -3.7056899999999997,
+            40.4204
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1407": {
+        "name": "3 - Plaza Conde Suchil",
+        "coordinates": [
+            -3.7072537000000003,
+            40.4303223
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1409": {
+        "name": "5 - Fuencarral",
+        "coordinates": [
+            -3.7021354,
+            40.4285212
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1410": {
+        "name": "6 - Colegio Arquitectos",
+        "coordinates": [
+            -3.6984469999999994,
+            40.424148
+        ],
+        "bike_bases": 0,
+        "free_bases": 19
+    },
+    "1411": {
+        "name": "7 - Hortaleza",
+        "coordinates": [
+            -3.6977715000000004,
+            40.4251906
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1412": {
+        "name": "8 - Metro Alonso Martínez",
+        "coordinates": [
+            -3.6954403000000005,
+            40.4278682
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1414": {
+        "name": "10 - Marqués de la Ensenada",
+        "coordinates": [
+            -3.6921040000000005,
+            40.425403
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1415": {
+        "name": "11 - Plaza del Dos de Mayo",
+        "coordinates": [
+            -3.7036,
+            40.427
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2152": {
+        "name": "376 - Metro Carpetana",
+        "coordinates": [
+            -3.7405438000000006,
+            40.39229225
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2153": {
+        "name": "377 - Metro Abrantes",
+        "coordinates": [
+            -3.72783615,
+            40.38091762
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2154": {
+        "name": "539 - Mota del Cuervo",
+        "coordinates": [
+            -3.6313571499999995,
+            40.4648762
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2155": {
+        "name": "334 - Metro Campamento",
+        "coordinates": [
+            -3.76815631,
+            40.39497294
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2156": {
+        "name": "335 - Cardaño, 10",
+        "coordinates": [
+            -3.7705754100000006,
+            40.39659757
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2157": {
+        "name": "519 - Troya, 11",
+        "coordinates": [
+            -3.61191521,
+            40.43699597
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2158": {
+        "name": "378 - Eugenia de Montijo, 83",
+        "coordinates": [
+            -3.7509732999999996,
+            40.37562288
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2159": {
+        "name": "379 - Antonia Rodríguez Sacristán - Valeriana",
+        "coordinates": [
+            -3.74765739,
+            40.37313777
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2160": {
+        "name": "495 - Caleruega",
+        "coordinates": [
+            -3.6705880000000004,
+            40.478746
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2161": {
+        "name": "593 - Metro Avenida de la Ilustración",
+        "coordinates": [
+            -3.7186906700000004,
+            40.48027409
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2162": {
+        "name": "594 - Calle Pedro Rico, 49",
+        "coordinates": [
+            -3.7039180000000003,
+            40.48194
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2163": {
+        "name": "595 - Betanzos - Fermín Caballero",
+        "coordinates": [
+            -3.7132206,
+            40.48178815
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2165": {
+        "name": "540 - Estación de tren Fuente de la Mora",
+        "coordinates": [
+            -3.6636484,
+            40.4845596
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2166": {
+        "name": "336 - Calle Oliva de Plasencia, 1",
+        "coordinates": [
+            -3.7791518300000004,
+            40.37850071
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2167": {
+        "name": "337 - Metro Aluche",
+        "coordinates": [
+            -3.7604892299999997,
+            40.38614104
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "2168": {
+        "name": "338 - Guareña - Luis Chamizo",
+        "coordinates": [
+            -3.7653391035306,
+            40.386362337060476
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "2169": {
+        "name": "339 - Estación de tren Las Águilas",
+        "coordinates": [
+            -3.78061952,
+            40.38132642
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2171": {
+        "name": "445 - C. Deportivo Mpal. Juan de Dios Román",
+        "coordinates": [
+            -3.6050356400000005,
+            40.36334587
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2172": {
+        "name": "599 - Instalación Deportiva La Cabrera",
+        "coordinates": [
+            -3.7192044300000004,
+            40.47223267
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2173": {
+        "name": "343 - Metro Aviación Española",
+        "coordinates": [
+            -3.7833930099999997,
+            40.38358975
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2174": {
+        "name": "344 - Ocaña, 103",
+        "coordinates": [
+            -3.75292035,
+            40.38586273
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2175": {
+        "name": "313 - Juan XXIII, 24",
+        "coordinates": [
+            -3.7169358999999997,
+            40.448084
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2176": {
+        "name": "314 - Av. Valladolid - Parque de la Bombilla",
+        "coordinates": [
+            -3.73068,
+            40.42966
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2177": {
+        "name": "315 - Caroli",
+        "coordinates": [
+            -3.784627,
+            40.45862
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2178": {
+        "name": "316 - C. Deportivo Mpal. Ciudad De Los Poetas",
+        "coordinates": [
+            -3.71995383,
+            40.46439687
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "2179": {
+        "name": "317 - Antonio Machado, 30",
+        "coordinates": [
+            -3.7192171199999997,
+            40.46826955
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2180": {
+        "name": "345 - Fuente del Tiro - Avd. de las Águilas",
+        "coordinates": [
+            -3.7798000999999997,
+            40.38308791
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2182": {
+        "name": "449 - Metro Congosto",
+        "coordinates": [
+            -3.6186910599999997,
+            40.37286701
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2183": {
+        "name": "450 - Camino de las Hormigueras, 161",
+        "coordinates": [
+            -3.6370762,
+            40.3762555
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2184": {
+        "name": "294 - Edificio Torres Blancas",
+        "coordinates": [
+            -3.6723389999999996,
+            40.440944
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2185": {
+        "name": "604 - Metro Las Tablas",
+        "coordinates": [
+            -3.6695521499999995,
+            40.50910428
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2186": {
+        "name": "348 - José de Cadalso - Rafael Finat",
+        "coordinates": [
+            -3.7702477799999996,
+            40.37959145
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2187": {
+        "name": "438 - Biblioteca Pública Luis Martín Santos",
+        "coordinates": [
+            -3.6140607000000005,
+            40.3804482
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2188": {
+        "name": "451 -  La Granja de San Ildefonso, 14",
+        "coordinates": [
+            -3.62283116,
+            40.36813427
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2190": {
+        "name": "453 - Metro La Gavia",
+        "coordinates": [
+            -3.61253028,
+            40.37043968
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2191": {
+        "name": "454 - Gran Vía del Sureste - Las Suertes",
+        "coordinates": [
+            -3.5897045000000003,
+            40.3631604
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2205": {
+        "name": "267 - Paseo de la Chopera - Fernando Poo",
+        "coordinates": [
+            -3.700399664723874,
+            40.39500000000003
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2207": {
+        "name": "391 - Junta Municipal Distrito de Usera",
+        "coordinates": [
+            -3.711296220901499,
+            40.3817026328731
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2214": {
+        "name": "580 - Metro Herrera Oria",
+        "coordinates": [
+            -3.7069039999999998,
+            40.48337
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2224": {
+        "name": "150 - Castellana - Hermanos Pinzón",
+        "coordinates": [
+            -3.6908,
+            40.4491
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2225": {
+        "name": "157 - Plaza de Cuzco",
+        "coordinates": [
+            -3.6894151,
+            40.4591366
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2226": {
+        "name": "395 - Guetaria, 84B",
+        "coordinates": [
+            -3.71569102,
+            40.36916772
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2233": {
+        "name": "548 - Eduardo Mazón - Guadalajara",
+        "coordinates": [
+            -3.6154156999999993,
+            40.4521484
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2234": {
+        "name": "293 - Santa Rita - Clara del Rey",
+        "coordinates": [
+            -3.6682881999999997,
+            40.4457928
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2235": {
+        "name": "520 - Niza - Plaza de Grecia",
+        "coordinates": [
+            -3.6081157800000003,
+            40.4342806
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2236": {
+        "name": "509 - Amposta - Arcos de Jalón",
+        "coordinates": [
+            -3.61865045,
+            40.42218951
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2237": {
+        "name": "558 - Biblioteca Pública Mpal. Gloria Fuertes",
+        "coordinates": [
+            -3.5937120000000005,
+            40.461137
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2239": {
+        "name": "562 - Tomillar - Tintín y Milú",
+        "coordinates": [
+            -3.5844145999999997,
+            40.4630993
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2240": {
+        "name": "560 - Playa de Zarauz - Playa de la Caleta",
+        "coordinates": [
+            -3.5906847,
+            40.4731404
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2241": {
+        "name": "568 - IFEMA A",
+        "coordinates": [
+            -3.6178336,
+            40.4632802
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2243": {
+        "name": "405 - Paseo Alberto Palacios, 42",
+        "coordinates": [
+            -3.7129039644180377,
+            40.3449259916087
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2244": {
+        "name": "401 - Estación de tren de Villaverde Bajo",
+        "coordinates": [
+            -3.6831269999999994,
+            40.353285
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2245": {
+        "name": "406 - La Nave de Madrid",
+        "coordinates": [
+            -3.6960817,
+            40.3486
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2246": {
+        "name": "403 - Auñón, 16",
+        "coordinates": [
+            -3.6775241999999997,
+            40.3504944
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2247": {
+        "name": "280 - Ps de los Melancólicos - San Epifanio",
+        "coordinates": [
+            -3.7185689999999996,
+            40.401782
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2248": {
+        "name": "367 - Metro San Francisco",
+        "coordinates": [
+            -3.7398400000000005,
+            40.373972
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2249": {
+        "name": "325 - Ps. Jesuitas - Pza. Cerro Bermejo",
+        "coordinates": [
+            -3.7305543000000005,
+            40.4106918
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2250": {
+        "name": "578 - Sierra de Atapuerca - Viloria de Rioja",
+        "coordinates": [
+            -3.6704248799999997,
+            40.50292982
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2251": {
+        "name": "446 - C. Deportivo Mpal. Miguel Guillén Prim",
+        "coordinates": [
+            -3.6236297000000004,
+            40.373826
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2252": {
+        "name": "382 -Parque Eugenia de Montijo, 2",
+        "coordinates": [
+            -3.7545821999999998,
+            40.3783501
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2254": {
+        "name": "410 - Est. de tren de S. Cristóbal Industrial",
+        "coordinates": [
+            -3.6992665,
+            40.3325463
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2255": {
+        "name": "319 - Valdesangil",
+        "coordinates": [
+            -3.7166729,
+            40.4684218
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2256": {
+        "name": "579 - Maria Tubau - Isabel Colbrand",
+        "coordinates": [
+            -3.671703587033564,
+            40.51399230680476
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2257": {
+        "name": "602 - Monasterio Sobrado - Monasterio Silos",
+        "coordinates": [
+            -3.6928369999999995,
+            40.5093225
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2258": {
+        "name": "600 - Centro Deportivo Municipal La Masó",
+        "coordinates": [
+            -3.7149566,
+            40.4825507
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2259": {
+        "name": "566 - Avenida de Logroño",
+        "coordinates": [
+            -3.5815033,
+            40.4703472
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2260": {
+        "name": "565 - Metro Barajas",
+        "coordinates": [
+            -3.5838869,
+            40.47563573
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2261": {
+        "name": "467 - Univ. Rey Juan Carlos - Facultad  CJS",
+        "coordinates": [
+            -3.6084888,
+            40.4062361
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2262": {
+        "name": "469 - C. Deportivo Mpal Faustina Valladolid",
+        "coordinates": [
+            -3.6229899999999997,
+            40.40343
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2263": {
+        "name": "470 - Avenida Real - Galeote",
+        "coordinates": [
+            -3.6063672000000007,
+            40.4021519
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "2264": {
+        "name": "471 - Molino Viejo - Minerva",
+        "coordinates": [
+            -3.60666,
+            40.396301
+        ],
+        "bike_bases": 1,
+        "free_bases": 17
+    },
+    "2265": {
+        "name": "271 - Amaltea-Meneses",
+        "coordinates": [
+            -3.68317,
+            40.394706
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2266": {
+        "name": "466 - Villablanca - Vereda del Pinar",
+        "coordinates": [
+            -3.6078326500000006,
+            40.40894698
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2267": {
+        "name": "275 - Juan Antonio Vallejo-Nájera Botas, 25",
+        "coordinates": [
+            -3.7082123,
+            40.4020545
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2268": {
+        "name": "475 - Aurora Boreal - Minerva",
+        "coordinates": [
+            -3.603668,
+            40.399236
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2269": {
+        "name": "274 - Estación Sur Méndez Álvaro A",
+        "coordinates": [
+            -3.6813434600000003,
+            40.39675755
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2270": {
+        "name": "605 - Nuria - Peña Sirio",
+        "coordinates": [
+            -3.7048829999999997,
+            40.491644
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2271": {
+        "name": "522 - Metro Estadio Metropolitano",
+        "coordinates": [
+            -3.60097542,
+            40.43333298
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2272": {
+        "name": "521 - Metro Las Rosas",
+        "coordinates": [
+            -3.6048180999999997,
+            40.423893
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2273": {
+        "name": "508 - Metro Canillejas",
+        "coordinates": [
+            -3.609553,
+            40.449095
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2274": {
+        "name": "80A - Estación de Atocha A",
+        "coordinates": [
+            -3.690538,
+            40.407573
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2275": {
+        "name": "80B - Estación de Atocha B",
+        "coordinates": [
+            -3.6904748,
+            40.4075211
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2276": {
+        "name": "447 - Adolfo Bioy Casares - Las Suertes",
+        "coordinates": [
+            -3.5981935,
+            40.3668504
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2278": {
+        "name": "412 - Estación de tren de Puente de Alcocer",
+        "coordinates": [
+            -3.7043083000000006,
+            40.3500291
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2280": {
+        "name": "413 - Doctor Martín Arévalo",
+        "coordinates": [
+            -3.707413,
+            40.345928
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2281": {
+        "name": "545 - Zapatoca, 8",
+        "coordinates": [
+            -3.63335803,
+            40.47285235
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2282": {
+        "name": "567 - Plaza Mayor de Barajas",
+        "coordinates": [
+            -3.5776537,
+            40.4733252
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2283": {
+        "name": "563 - Soto Hidalgo",
+        "coordinates": [
+            -3.5820745,
+            40.4606465
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2286": {
+        "name": "609 - Metro Ronda de la Comunicación",
+        "coordinates": [
+            -3.6626887,
+            40.5157202
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2287": {
+        "name": "408 - Metro San Cristóbal",
+        "coordinates": [
+            -3.692444,
+            40.341725
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2288": {
+        "name": "409 - Eduardo Barreiros, 114",
+        "coordinates": [
+            -3.7046436000000003,
+            40.3553495
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2289": {
+        "name": "606 - Fermín Caballero - Sangenjo",
+        "coordinates": [
+            -3.6984849999999994,
+            40.487363
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2290": {
+        "name": "349 - Huerta de Castañeda 26",
+        "coordinates": [
+            -3.74201882097404,
+            40.40622095698234
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2291": {
+        "name": "544 - Gregorio Sánchez Herráez 14",
+        "coordinates": [
+            -3.6365700000000003,
+            40.477248
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2292": {
+        "name": "551 - Oña",
+        "coordinates": [
+            -3.6658565,
+            40.4891872
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2293": {
+        "name": "552 - Ana de Austria - Ignacio Aldecoa",
+        "coordinates": [
+            -3.6531502,
+            40.4994394
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2294": {
+        "name": "542 - Estación de tren de Valdebebas",
+        "coordinates": [
+            -3.6157178000000005,
+            40.4819961
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2297": {
+        "name": "320 - Metro Lago",
+        "coordinates": [
+            -3.7345247000000006,
+            40.4167792
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "2298": {
+        "name": "608 - Estella - Camino de Santiago",
+        "coordinates": [
+            -3.6743568,
+            40.4968198
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2299": {
+        "name": "278 - Paseo los Pontones - Ps. Melancólicos",
+        "coordinates": [
+            -3.7196,
+            40.4040433
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2300": {
+        "name": "289 - Luis de Salazar - Padre Claret",
+        "coordinates": [
+            -3.6649258000000002,
+            40.4474166
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2301": {
+        "name": "547 - Rafaela Aparicio - Maruja Mallo",
+        "coordinates": [
+            -3.6312178999999998,
+            40.4792396
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2302": {
+        "name": "402 - Berrocal, 9",
+        "coordinates": [
+            -3.67615,
+            40.344115
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2303": {
+        "name": "543 - Tomas Redondo",
+        "coordinates": [
+            -3.6291380199999996,
+            40.47178414
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2304": {
+        "name": "277 - Virgen del Puerto",
+        "coordinates": [
+            -3.7211780000000005,
+            40.411622
+        ],
+        "bike_bases": 2,
+        "free_bases": 13
+    },
+    "2306": {
+        "name": "282 - Parque Retiro - Puerta Reina Mercedes",
+        "coordinates": [
+            -3.6787796,
+            40.4181327
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2308": {
+        "name": "263 - Gran Vía de San Francisco",
+        "coordinates": [
+            -3.712793282384579,
+            40.40833880815136
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2309": {
+        "name": "559 - Calle Babilonia, 19",
+        "coordinates": [
+            -3.5882346999999997,
+            40.4675299
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2311": {
+        "name": "581 - Metro Peñagrande",
+        "coordinates": [
+            -3.7163093000000003,
+            40.4764797
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2312": {
+        "name": "598 - Hospital Ramón y Cajal",
+        "coordinates": [
+            -3.6923396,
+            40.4858012
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2313": {
+        "name": "341 - Escalona - Seseña",
+        "coordinates": [
+            -3.76182259,
+            40.39834576
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2314": {
+        "name": "346 - Metro Empalme",
+        "coordinates": [
+            -3.7664844,
+            40.3907438
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2315": {
+        "name": "347 - Est. tren Mtra Justa Freire-Poli Aluche",
+        "coordinates": [
+            -3.7686029999999997,
+            40.383554
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2316": {
+        "name": "528 - Albelda - Torrelaguna",
+        "coordinates": [
+            -3.6573666,
+            40.4494225
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2317": {
+        "name": "312 - Metro Batán",
+        "coordinates": [
+            -3.7528559,
+            40.4077495
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2318": {
+        "name": "321 - Metro Casa de Campo",
+        "coordinates": [
+            -3.7610509999999997,
+            40.40316
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2319": {
+        "name": "310 - Estación de tren de Aravaca",
+        "coordinates": [
+            -3.7845536000000006,
+            40.4490509
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2320": {
+        "name": "311 - C. Universitaria - F. Geografía e Histo",
+        "coordinates": [
+            -3.7335740000000004,
+            40.448553
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2321": {
+        "name": "283 - Museo Nacional del Prado",
+        "coordinates": [
+            -3.6919057,
+            40.4152082
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2322": {
+        "name": "564 - IFEMA B",
+        "coordinates": [
+            -3.6138669999999995,
+            40.463861
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2323": {
+        "name": "468 - Caños de San Pedro - San Cipriano",
+        "coordinates": [
+            -3.601920499999999,
+            40.4029976
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2324": {
+        "name": "465 - Cordel de Pavones - Bulevar José Prat",
+        "coordinates": [
+            -3.619645,
+            40.397375
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2325": {
+        "name": "414 - Metro Villaverde Bajo-Cruce",
+        "coordinates": [
+            -3.692163,
+            40.350985
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2326": {
+        "name": "380 - Oca",
+        "coordinates": [
+            -3.7335492000000006,
+            40.3894333
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2328": {
+        "name": "354 - Jacinto Verdaguer - Lola de Membrives",
+        "coordinates": [
+            -3.7160526116262793,
+            40.39593854704345
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2329": {
+        "name": "318 - C. Deportivo Mpal. José María Cagigal",
+        "coordinates": [
+            -3.7370276473602226,
+            40.43205131007265
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2330": {
+        "name": "549 - Francisco Pi y Maragall",
+        "coordinates": [
+            -3.6503543999999994,
+            40.4866354
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "2331": {
+        "name": "279 - Paseo de los Melancólicos, 1",
+        "coordinates": [
+            -3.7184815999999996,
+            40.4104448
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2332": {
+        "name": "407 - Carmen de Burgos, 4",
+        "coordinates": [
+            -3.6847883,
+            40.3575459
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2333": {
+        "name": "276 - Paseo de las Yeserías, 15",
+        "coordinates": [
+            -3.7099166,
+            40.39900539
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2334": {
+        "name": "340 - Illescas - Seseña",
+        "coordinates": [
+            -3.7656975999999998,
+            40.3970983
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2335": {
+        "name": "342 - Osa de la Vega - Rafael Finat",
+        "coordinates": [
+            -3.7733810000000005,
+            40.374979
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2337": {
+        "name": "381 - Alfredo Aleix - Mercedes Rodríguez",
+        "coordinates": [
+            -3.7553916,
+            40.3684767
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2339": {
+        "name": "444 - Valderrebollo, 18",
+        "coordinates": [
+            -3.6276352,
+            40.3743481
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2340": {
+        "name": "448 - Metro Las Suertes",
+        "coordinates": [
+            -3.5993520000000006,
+            40.363376
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2341": {
+        "name": "472 - Metro Valdebernardo",
+        "coordinates": [
+            -3.6211484999999994,
+            40.3987974
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2343": {
+        "name": "474 - Estación de tren de Vicálvaro",
+        "coordinates": [
+            -3.596875,
+            40.402255
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2347": {
+        "name": "541 - Metro Pinar del Rey",
+        "coordinates": [
+            -3.6468591,
+            40.4682706
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2348": {
+        "name": "546 - Andorra - Canillas",
+        "coordinates": [
+            -3.6467519000000004,
+            40.4628976
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2349": {
+        "name": "550 - Príncipe Carlos, 54",
+        "coordinates": [
+            -3.6566739999999998,
+            40.4941108
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2350": {
+        "name": "553 - María Portugal - Niceto Alcalá Zamora",
+        "coordinates": [
+            -3.658921,
+            40.499909
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2352": {
+        "name": "603 - Castiello de Jaca, 14",
+        "coordinates": [
+            -3.6782027,
+            40.5091982
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2359": {
+        "name": "607 - Metro Ligero - Palas de Rey",
+        "coordinates": [
+            -3.6641571,
+            40.5051915
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2360": {
+        "name": "610 - Bardegueral",
+        "coordinates": [
+            -3.7719096999999997,
+            40.4501721
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2362": {
+        "name": "237 - Acueducto de Amaniel",
+        "coordinates": [
+            -3.7102736,
+            40.4516819
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2365": {
+        "name": "262 - María de las Mercedes de Borbón B",
+        "coordinates": [
+            -3.620114,
+            40.4928683
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2366": {
+        "name": "611 - María de las Mercedes de Borbón A",
+        "coordinates": [
+            -3.6121068531215528,
+            40.490908297996654
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2134": {
+        "name": "366 - Metro Carabanchel",
+        "coordinates": [
+            -3.7445210000000007,
+            40.387737
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2135": {
+        "name": "291 - Plaza José María Soler",
+        "coordinates": [
+            -3.66790332,
+            40.45866532
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2136": {
+        "name": "292 - Centro Deportivo Municipal Pradillo",
+        "coordinates": [
+            -3.6717937,
+            40.44904126
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2137": {
+        "name": "494 - Metro Pinar de Chamartín",
+        "coordinates": [
+            -3.666529,
+            40.480694
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2138": {
+        "name": "516 - Juan Ignacio Luca Tena - Quinta Molinos",
+        "coordinates": [
+            -3.6311025499999996,
+            40.44796778
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2139": {
+        "name": "368 - Eugenia de Montijo",
+        "coordinates": [
+            -3.7470606799999997,
+            40.3791024
+        ],
+        "bike_bases": 3,
+        "free_bases": 12
+    },
+    "2140": {
+        "name": "369 - Junta Municipal Distrito de Carabanchel",
+        "coordinates": [
+            -3.7415832000000004,
+            40.3802446
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2141": {
+        "name": "370 - Avefría - Plaza de Tarifa",
+        "coordinates": [
+            -3.7308024999999994,
+            40.38386939
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2142": {
+        "name": "590 - Metro Arroyofresno",
+        "coordinates": [
+            -3.72757227,
+            40.49093014
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2143": {
+        "name": "517 - San Mariano - Circe",
+        "coordinates": [
+            -3.61190481,
+            40.44175279
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2144": {
+        "name": "518 - Tampico - Plaza Barbados",
+        "coordinates": [
+            -3.6353449999999996,
+            40.444569
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2146": {
+        "name": "372 - Lonja de la Seda, 33",
+        "coordinates": [
+            -3.76158263,
+            40.36612215
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2147": {
+        "name": "373 - Metro La Peseta",
+        "coordinates": [
+            -3.75787005,
+            40.36277848
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2148": {
+        "name": "374 - Dinero - La Peseta",
+        "coordinates": [
+            -3.7501466,
+            40.3625707
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2149": {
+        "name": "375 - Calderilla, 4",
+        "coordinates": [
+            -3.7386602999999994,
+            40.3651497
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2150": {
+        "name": "591 - Metro Mirasierra",
+        "coordinates": [
+            -3.7162292099999994,
+            40.49108225
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "2151": {
+        "name": "592 - Estación de tren de Pitis",
+        "coordinates": [
+            -3.7249527,
+            40.4956969
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2305": {
+        "name": "272 - Tejo - Parque La Ronda",
+        "coordinates": [
+            -3.679186,
+            40.39663
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2164": {
+        "name": "596 - Metro Lacoma",
+        "coordinates": [
+            -3.72382554,
+            40.48432751
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1408": {
+        "name": "4 - Malasaña",
+        "coordinates": [
+            -3.7025,
+            40.4286259
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2145": {
+        "name": "371 - Joaquin Turina, 49",
+        "coordinates": [
+            -3.7618199999999997,
+            40.372458
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2170": {
+        "name": "597 - Foresta, 8",
+        "coordinates": [
+            -3.66777681,
+            40.49853277
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2327": {
+        "name": "411 - Estación de tren de Villaverde Alto",
+        "coordinates": [
+            -3.7118182999999996,
+            40.3417533
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2189": {
+        "name": "452 - Las Suertes, 15",
+        "coordinates": [
+            -3.6078539000000003,
+            40.3713613
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2285": {
+        "name": "281 - Reina Cristina - Julián Gayarre",
+        "coordinates": [
+            -3.6831862,
+            40.4067247
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1413": {
+        "name": "9 - Plaza de San Miguel",
+        "coordinates": [
+            -3.7095084,
+            40.4156057
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2307": {
+        "name": "1 - Metro Sol",
+        "coordinates": [
+            -3.7054098,
+            40.416465
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2342": {
+        "name": "473 - Villablanca - Parque Forestal Vicálvaro",
+        "coordinates": [
+            -3.59888007,
+            40.40500033
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1416": {
+        "name": "12 - San Hermenegildo",
+        "coordinates": [
+            -3.7061405999999995,
+            40.4284667
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1417": {
+        "name": "13 - Conde Duque",
+        "coordinates": [
+            -3.7104999999999997,
+            40.4273
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1418": {
+        "name": "14 - Ventura Rodríguez",
+        "coordinates": [
+            -3.7133069,
+            40.4260425
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1419": {
+        "name": "15 - Norte",
+        "coordinates": [
+            -3.7074453,
+            40.4262383
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "1420": {
+        "name": "16 - San Bernardo",
+        "coordinates": [
+            -3.7074808485065,
+            40.4229374
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "1421": {
+        "name": "17 - Plaza de Carlos Cambronero",
+        "coordinates": [
+            -3.7041659999999994,
+            40.423126
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1422": {
+        "name": "18 - Plaza de Pedro Zerolo",
+        "coordinates": [
+            -3.6996776,
+            40.4209251
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1423": {
+        "name": "19 - Prim",
+        "coordinates": [
+            -3.6954982999999997,
+            40.4218616
+        ],
+        "bike_bases": 5,
+        "free_bases": 23
+    },
+    "1424": {
+        "name": "20A - Banco de España",
+        "coordinates": [
+            -3.6952465,
+            40.4188076
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1426": {
+        "name": "23 - Santo Domingo",
+        "coordinates": [
+            -3.708249,
+            40.4202595
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1427": {
+        "name": "24 - Palacio de Oriente",
+        "coordinates": [
+            -3.7106495,
+            40.417767
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "1428": {
+        "name": "25A - Plaza de Celenque A",
+        "coordinates": [
+            -3.7057791,
+            40.4173703
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1429": {
+        "name": "25B - Plaza de Celenque B",
+        "coordinates": [
+            -3.7058976,
+            40.4173687
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1430": {
+        "name": "26 - Plaza de las Salesas",
+        "coordinates": [
+            -3.6945,
+            40.4239
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1431": {
+        "name": "27 - Huertas",
+        "coordinates": [
+            -3.6957000000000004,
+            40.4133
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1432": {
+        "name": "28 - Metro Sevilla",
+        "coordinates": [
+            -3.6984583,
+            40.41806
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "1433": {
+        "name": "29 - Marqués de Cubas",
+        "coordinates": [
+            -3.6957434000000005,
+            40.4163838
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1434": {
+        "name": "30 - San Quintín",
+        "coordinates": [
+            -3.711504,
+            40.4192095
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1435": {
+        "name": "31 - Mayor",
+        "coordinates": [
+            -3.7068969,
+            40.4163638
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1436": {
+        "name": "32 - Plaza de la Provincia",
+        "coordinates": [
+            -3.7061032000000003,
+            40.4150099
+        ],
+        "bike_bases": 0,
+        "free_bases": 18
+    },
+    "1437": {
+        "name": "33 - Puerta del Sol",
+        "coordinates": [
+            -3.7033305,
+            40.4165873
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1438": {
+        "name": "34 - Jacinto Benavente",
+        "coordinates": [
+            -3.7036825,
+            40.4146755
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1439": {
+        "name": "35 - Plaza del Cordón",
+        "coordinates": [
+            -3.7103284999999997,
+            40.4141931
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1440": {
+        "name": "36 - Plaza Ramales",
+        "coordinates": [
+            -3.7118300000000004,
+            40.4168
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1441": {
+        "name": "37 - Plaza de San Francisco",
+        "coordinates": [
+            -3.714113,
+            40.4108
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1442": {
+        "name": "38 - Plaza de los Carros",
+        "coordinates": [
+            -3.7115898000000005,
+            40.4113586
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1443": {
+        "name": "39 - Plaza de la Cebada",
+        "coordinates": [
+            -3.7088337,
+            40.4112744
+        ],
+        "bike_bases": 1,
+        "free_bases": 30
+    },
+    "1444": {
+        "name": "40 - Conde de Romanones",
+        "coordinates": [
+            -3.7047949666162405,
+            40.413778406369765
+        ],
+        "bike_bases": 1,
+        "free_bases": 17
+    },
+    "1445": {
+        "name": "41 - Metro Antón Martín",
+        "coordinates": [
+            -3.6991147000000004,
+            40.4122047
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1446": {
+        "name": "42 - Santa Isabel",
+        "coordinates": [
+            -3.6982922,
+            40.4108488
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1447": {
+        "name": "43 - Jesús y María",
+        "coordinates": [
+            -3.7024709999999996,
+            40.4100387
+        ],
+        "bike_bases": 0,
+        "free_bases": 18
+    },
+    "1448": {
+        "name": "44 - Plaza de Nelson Mandela",
+        "coordinates": [
+            -3.7038640533106597,
+            40.40979071254635
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "1449": {
+        "name": "45 - Metro Puerta de Toledo",
+        "coordinates": [
+            -3.7111033999999994,
+            40.4068659
+        ],
+        "bike_bases": 0,
+        "free_bases": 19
+    },
+    "1450": {
+        "name": "46 - Ribera de Curtidores",
+        "coordinates": [
+            -3.7071258999999994,
+            40.4053153
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1451": {
+        "name": "47 - Renfe/Cercanías Embajadores",
+        "coordinates": [
+            -3.7027998,
+            40.4045772
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1452": {
+        "name": "48 - Casa de baños Embajadores",
+        "coordinates": [
+            -3.7020565999999997,
+            40.4054815
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1453": {
+        "name": "49 - Casa Encendida",
+        "coordinates": [
+            -3.6992774,
+            40.4060533
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1455": {
+        "name": "51 - Ronda de Atocha",
+        "coordinates": [
+            -3.6935205000000004,
+            40.4075606
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1456": {
+        "name": "52 - Plaza de Santa Ana",
+        "coordinates": [
+            -3.7007163999999997,
+            40.4144226
+        ],
+        "bike_bases": 1,
+        "free_bases": 14
+    },
+    "1457": {
+        "name": "53 - Plaza de Lavapiés",
+        "coordinates": [
+            -3.700754126389314,
+            40.40830870823806
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1458": {
+        "name": "54 - Metro Tribunal",
+        "coordinates": [
+            -3.700392997553259,
+            40.426599101766264
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1459": {
+        "name": "55 - Plaza de San Ildefonso",
+        "coordinates": [
+            -3.7020842,
+            40.4239757
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1460": {
+        "name": "56 - Plaza del Carmen ",
+        "coordinates": [
+            -3.7032414,
+            40.4184192
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1461": {
+        "name": "57 - Santa Cruz de Marcenado",
+        "coordinates": [
+            -3.7126299,
+            40.4295658
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1462": {
+        "name": "58 - Metro Chueca",
+        "coordinates": [
+            -3.6978583000000005,
+            40.4222783
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "1463": {
+        "name": "59 - Plaza de Juan Pujol",
+        "coordinates": [
+            -3.7043418,
+            40.4255495
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "1464": {
+        "name": "60 - Puerta de Alcalá",
+        "coordinates": [
+            -3.688398,
+            40.419752
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1465": {
+        "name": "61 - O'Donnell - Narváez",
+        "coordinates": [
+            -3.6753139,
+            40.4214551
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1466": {
+        "name": "62 - Hospital M. Infantil Gregorio Marañón",
+        "coordinates": [
+            -3.6724968,
+            40.4213148
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1467": {
+        "name": "63 - Hospital Gral. Uni. Gregorio Marañón",
+        "coordinates": [
+            -3.6708958999999997,
+            40.4179237
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1468": {
+        "name": "65 - Parque del Retiro - Calle Antonio Maura",
+        "coordinates": [
+            -3.6894247979427686,
+            40.4167014469994
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1469": {
+        "name": "67 - CaixaForum Madrid",
+        "coordinates": [
+            -3.693225,
+            40.4108472
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1470": {
+        "name": "68 - Espalter - Ruiz de Alarcón",
+        "coordinates": [
+            -3.6913231999999994,
+            40.4127692
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1471": {
+        "name": "69 - Parque del Retiro - Puerta Ángel Caído",
+        "coordinates": [
+            -3.688822,
+            40.409808
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1472": {
+        "name": "70 - Hospital Uni. Infantil Niño Jesús",
+        "coordinates": [
+            -3.677872542327878,
+            40.415382385574716
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "1473": {
+        "name": "71 - Plaza del Doctor Laguna",
+        "coordinates": [
+            -3.6739,
+            40.4161
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1474": {
+        "name": "72 - Metro Sáinz de Baranda",
+        "coordinates": [
+            -3.6696000000000004,
+            40.4159
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1475": {
+        "name": "73 - Plaza de los Astros",
+        "coordinates": [
+            -3.6687,
+            40.4115
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1476": {
+        "name": "74 - Parque Retiro - Jardines Cecilio Rguez",
+        "coordinates": [
+            -3.6765887637889834,
+            40.41206290978386
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1477": {
+        "name": "75 - Parque del Retiro - Plaza Mariano Cavia",
+        "coordinates": [
+            -3.6784749,
+            40.4082717
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1478": {
+        "name": "76 - Avenida del Mediterráneo, 19",
+        "coordinates": [
+            -3.6751020000000003,
+            40.407271
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1479": {
+        "name": "77 - Plaza del Conde de Casal",
+        "coordinates": [
+            -3.6707132,
+            40.4064784
+        ],
+        "bike_bases": 3,
+        "free_bases": 15
+    },
+    "1480": {
+        "name": "78 - Metro Pacífico",
+        "coordinates": [
+            -3.674524060049444,
+            40.40063747422422
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1481": {
+        "name": "79 - Metro Menéndez Pelayo",
+        "coordinates": [
+            -3.680439824323069,
+            40.405110193977585
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "1484": {
+        "name": "81 - Cuesta de Moyano",
+        "coordinates": [
+            -3.691833220071059,
+            40.40934261188139
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1485": {
+        "name": "82 - Doctor Esquerdo - Metro Conde de Casal",
+        "coordinates": [
+            -3.6697526,
+            40.4084556
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1486": {
+        "name": "83 - Pío Baroja",
+        "coordinates": [
+            -3.6744795,
+            40.4132995
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2351": {
+        "name": "601 - Estación de tren de Fuencarral",
+        "coordinates": [
+            -3.6824686999999994,
+            40.5015588
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1487": {
+        "name": "84 - Biblioteca Pública Elena Fortún",
+        "coordinates": [
+            -3.672481575393678,
+            40.40357156992851
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1488": {
+        "name": "85 - Parque del Retiro - Puerta de O´Donnell",
+        "coordinates": [
+            -3.6798909999999996,
+            40.4213143
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1489": {
+        "name": "86 - Cibeles",
+        "coordinates": [
+            -3.6933498,
+            40.4186516
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1490": {
+        "name": "87 - Ayala - Velázquez",
+        "coordinates": [
+            -3.6832565999999995,
+            40.427736
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1491": {
+        "name": "88 - Velázquez-Padilla",
+        "coordinates": [
+            -3.6838303,
+            40.4313576
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1492": {
+        "name": "89 - Ayala - Conde de Peñalver",
+        "coordinates": [
+            -3.6752024,
+            40.4272582
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1493": {
+        "name": "90 - Metro Velázquez",
+        "coordinates": [
+            -3.6838415999999996,
+            40.4251493
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1494": {
+        "name": "91 - Hermosilla - General Pardiñas",
+        "coordinates": [
+            -3.6786285,
+            40.426049
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1495": {
+        "name": "92 - Claudio Coello - Hermosilla",
+        "coordinates": [
+            -3.6865463,
+            40.4262945
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1496": {
+        "name": "93 - Plaza de Margaret Tatcher",
+        "coordinates": [
+            -3.6893361690338162,
+            40.42575853342561
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1497": {
+        "name": "94 - Estación de tren de Recoletos",
+        "coordinates": [
+            -3.6907560000000004,
+            40.4232153
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1498": {
+        "name": "95 - Claudio Coello - Villanueva",
+        "coordinates": [
+            -3.6869293000000005,
+            40.4225428
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1499": {
+        "name": "96 - Alcalá - Castelló",
+        "coordinates": [
+            -3.682204798770403,
+            40.42201515498424
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1500": {
+        "name": "97 - Metro Príncipe de Vergara",
+        "coordinates": [
+            -3.6802556,
+            40.4225364
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1501": {
+        "name": "98 - Plaza de Felipe II",
+        "coordinates": [
+            -3.6757676,
+            40.4241325
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1502": {
+        "name": "99 - Alcántara - Hermosilla",
+        "coordinates": [
+            -3.6740178,
+            40.4260391
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1503": {
+        "name": "100 - Wizink Center",
+        "coordinates": [
+            -3.6738400000000007,
+            40.42478
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1504": {
+        "name": "101 - Metro O'Donnell",
+        "coordinates": [
+            -3.6696803999999994,
+            40.4230771
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1505": {
+        "name": "102 - Metro Retiro",
+        "coordinates": [
+            -3.6842317,
+            40.4211845
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1506": {
+        "name": "103 - Ortega y Gasset - Serrano",
+        "coordinates": [
+            -3.6867439999999996,
+            40.43053
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1507": {
+        "name": "104 - Castellana - Hermosilla",
+        "coordinates": [
+            -3.6895799999999994,
+            40.42677
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1508": {
+        "name": "105 - Serrano, 46",
+        "coordinates": [
+            -3.6875418000000004,
+            40.4270832
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1510": {
+        "name": "106B - Plaza de Colón B",
+        "coordinates": [
+            -3.6878899999999994,
+            40.424776
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "1511": {
+        "name": "107 - Serrano - Conde de Aranda",
+        "coordinates": [
+            -3.6883841104507464,
+            40.42156087297841
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1512": {
+        "name": "108 - Mártires Concepcionistas - Alcalá",
+        "coordinates": [
+            -3.6706519999999996,
+            40.427402
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1513": {
+        "name": "109 - Marqués de Salamanca",
+        "coordinates": [
+            -3.6814521000000004,
+            40.4301245
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1514": {
+        "name": "110 - Intercambiador de Moncloa",
+        "coordinates": [
+            -3.7201021,
+            40.434745
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1515": {
+        "name": "111A - Metro Moncloa A",
+        "coordinates": [
+            -3.7175248000000005,
+            40.4336027
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1516": {
+        "name": "111B - Metro Moncloa B",
+        "coordinates": [
+            -3.7177433999999994,
+            40.433913
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1517": {
+        "name": "112 - Paseo de Moret - Parque del Oeste",
+        "coordinates": [
+            -3.7247360000000005,
+            40.4326901
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1518": {
+        "name": "113 - Teleférico Madrid - Estación Rosales",
+        "coordinates": [
+            -3.7207263,
+            40.427538
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1519": {
+        "name": "114 - Quintana - Juan Álvarez de Mendizábal",
+        "coordinates": [
+            -3.7174631000000002,
+            40.4278379
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1520": {
+        "name": "115 - Ferraz - Templo de Debod",
+        "coordinates": [
+            -3.7170515055225373,
+            40.42531476841791
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1521": {
+        "name": "116A - Plaza de España - Martín de los Heros",
+        "coordinates": [
+            -3.7130430000000003,
+            40.423679
+        ],
+        "bike_bases": 0,
+        "free_bases": 18
+    },
+    "1522": {
+        "name": "116B - Metro Plaza de España",
+        "coordinates": [
+            -3.71046,
+            40.423684
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "1523": {
+        "name": "117 - Altamirano  - Martín de los Heros",
+        "coordinates": [
+            -3.7188898000000004,
+            40.4309797
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1524": {
+        "name": "118 - OFICINA DEL SER, APR Y BICIREGISTRO",
+        "coordinates": [
+            -3.6882407,
+            40.400781
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1525": {
+        "name": "119 - Méndez Álvaro",
+        "coordinates": [
+            -3.6862652999999996,
+            40.4012905
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1526": {
+        "name": "120 - Metro Palos de la Frontera",
+        "coordinates": [
+            -3.6948251018524214,
+            40.403090451430614
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1527": {
+        "name": "121 - Glorieta de Santa María de la Cabeza",
+        "coordinates": [
+            -3.6986027000000004,
+            40.4017487
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1528": {
+        "name": "122 - Santa Engracia - Zurbarán",
+        "coordinates": [
+            -3.6963659,
+            40.4295362
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1529": {
+        "name": "123 - Metro Argüelles",
+        "coordinates": [
+            -3.7133412,
+            40.4306458
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1530": {
+        "name": "124 - Metro Bilbao",
+        "coordinates": [
+            -3.6993695,
+            40.430969
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1531": {
+        "name": "125 - Fdez. de la Hoz - Gral. Martínez Campos",
+        "coordinates": [
+            -3.6948,
+            40.4353
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1532": {
+        "name": "126 - General Álvarez de Castro",
+        "coordinates": [
+            -3.7018044,
+            40.4345976
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1533": {
+        "name": "127 - Mercado Municipal de Vallehermoso",
+        "coordinates": [
+            -3.708439,
+            40.4338516
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1534": {
+        "name": "128 - Metro Islas Filipinas",
+        "coordinates": [
+            -3.7154,
+            40.4392
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1535": {
+        "name": "129 - Metro Alonso Cano",
+        "coordinates": [
+            -3.6982353,
+            40.4383865
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "1536": {
+        "name": "130 - Metro Ríos Rosas",
+        "coordinates": [
+            -3.7016399999999994,
+            40.44156
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1537": {
+        "name": "131 - Plaza de Juan Zorrilla",
+        "coordinates": [
+            -3.7040312299999996,
+            40.4417884
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1538": {
+        "name": "132 - Glorieta de Cuatro Caminos",
+        "coordinates": [
+            -3.703605250412747,
+            40.446377501314885
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1539": {
+        "name": "133 - Raimundo Fdez. Villaverde - Dulcinea",
+        "coordinates": [
+            -3.7001669,
+            40.447125
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1540": {
+        "name": "134 - María de Guzmán - Agustín de Betancourt",
+        "coordinates": [
+            -3.6955687,
+            40.4441818
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1541": {
+        "name": "135 - Plaza de San Juan de la Cruz",
+        "coordinates": [
+            -3.692734,
+            40.441481
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1542": {
+        "name": "136 - Metro Nuevos Ministerios",
+        "coordinates": [
+            -3.690769,
+            40.4451244
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1544": {
+        "name": "138 - Estación de tren Nuevos Ministerios",
+        "coordinates": [
+            -3.6914063,
+            40.4457414
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1545": {
+        "name": "139 - José Gutiérrez Abascal - Castellana",
+        "coordinates": [
+            -3.690419307270818,
+            40.43939562033124
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1546": {
+        "name": "140 - Velázquez - López de Hoyos",
+        "coordinates": [
+            -3.6830583,
+            40.4387566
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1547": {
+        "name": "141 - Plaza de Emilio Castelar",
+        "coordinates": [
+            -3.6893917,
+            40.4354047
+        ],
+        "bike_bases": 1,
+        "free_bases": 11
+    },
+    "1548": {
+        "name": "142 - Bajo elevado de Eduardo Dato",
+        "coordinates": [
+            -3.6879154,
+            40.4334087
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1549": {
+        "name": "186 - General Pardiñas - Don Ramón de la Cruz",
+        "coordinates": [
+            -3.6783015999999997,
+            40.4289804
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1550": {
+        "name": "144 - Metro Diego de León",
+        "coordinates": [
+            -3.675556,
+            40.4324081
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1551": {
+        "name": "145 - Ortega y Gasset 87",
+        "coordinates": [
+            -3.6712823,
+            40.429887
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1552": {
+        "name": "146 - María Francisca, 3",
+        "coordinates": [
+            -3.6788499,
+            40.4442541
+        ],
+        "bike_bases": 1,
+        "free_bases": 18
+    },
+    "1553": {
+        "name": "147 - Doctor Arce 45",
+        "coordinates": [
+            -3.6794000000000002,
+            40.4484
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1554": {
+        "name": "148 - Serrano 210",
+        "coordinates": [
+            -3.6813971,
+            40.451117
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1555": {
+        "name": "149 - Plaza de Quito",
+        "coordinates": [
+            -3.6879303,
+            40.4498515
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1557": {
+        "name": "151 - Orense 12",
+        "coordinates": [
+            -3.695359265012366,
+            40.44881224951987
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1558": {
+        "name": "152 - General Perón, 4",
+        "coordinates": [
+            -3.6989,
+            40.4525
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1559": {
+        "name": "153 - General Perón - Poeta Joan Maragall",
+        "coordinates": [
+            -3.6935999999999996,
+            40.4523
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1560": {
+        "name": "154 - Orense 36",
+        "coordinates": [
+            -3.6946218,
+            40.4548456
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1561": {
+        "name": "155 - San Germán 57",
+        "coordinates": [
+            -3.700930190178302,
+            40.4573342300643
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1562": {
+        "name": "156 - Sor Ángela de la Cruz-Paseo Castellana",
+        "coordinates": [
+            -3.691533,
+            40.4592351
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1564": {
+        "name": "158 - Alberto Alcocer - Padre Damián",
+        "coordinates": [
+            -3.6846250000000005,
+            40.45869
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1565": {
+        "name": "159 - Paseo de la Habana 63",
+        "coordinates": [
+            -3.6835925999999994,
+            40.4543852
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1566": {
+        "name": "160 - Metro Colombia",
+        "coordinates": [
+            -3.6763439,
+            40.4572466
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1567": {
+        "name": "161 - Intercambiador de Príncipe Pío A",
+        "coordinates": [
+            -3.7220993214090403,
+            40.422192474165534
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1568": {
+        "name": "162 - Metro Pirámides",
+        "coordinates": [
+            -3.7105765,
+            40.4034968
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1569": {
+        "name": "163 - Metro Acacias",
+        "coordinates": [
+            -3.7064450000000004,
+            40.4037586
+        ],
+        "bike_bases": 0,
+        "free_bases": 19
+    },
+    "1570": {
+        "name": "164 - Paseo de las Delicias - Tomás Bretón",
+        "coordinates": [
+            -3.69461,
+            40.39723
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1571": {
+        "name": "165 - Entrada Matadero - Paseo de la Chopera",
+        "coordinates": [
+            -3.697596,
+            40.392888
+        ],
+        "bike_bases": 4,
+        "free_bases": 39
+    },
+    "1572": {
+        "name": "166 - Viaducto de Segovia",
+        "coordinates": [
+            -3.713377023313513,
+            40.41390473235381
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1573": {
+        "name": "167 - Segovia 45",
+        "coordinates": [
+            -3.7174891703237303,
+            40.41374770742206
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1574": {
+        "name": "168 - Santa María Cabeza - Batalla del Salado",
+        "coordinates": [
+            -3.6959,
+            40.4046
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1575": {
+        "name": "169 - Glorieta de Pirámides",
+        "coordinates": [
+            -3.713823,
+            40.401589
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1576": {
+        "name": "170 - Paseo de la Esperanza, 21",
+        "coordinates": [
+            -3.7043956,
+            40.4010554
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1577": {
+        "name": "171 - Embajadores-Cáceres",
+        "coordinates": [
+            -3.6984023000000006,
+            40.3997013
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1578": {
+        "name": "172 - Estación de tren de Delicias",
+        "coordinates": [
+            -3.6934925999999995,
+            40.4008279
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1579": {
+        "name": "173 - Paseo Esperanza - Santa María Cabeza",
+        "coordinates": [
+            -3.7024839,
+            40.3983467
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1580": {
+        "name": "174 - Paseo de las Yeserías, 45",
+        "coordinates": [
+            -3.7065258846557603,
+            40.39742958306358
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1581": {
+        "name": "175 - Jaime el Conquistador - Divino Vallés",
+        "coordinates": [
+            -3.6983445200000005,
+            40.3962264
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "1583": {
+        "name": "177 - Metro Legazpi",
+        "coordinates": [
+            -3.6941876374343896,
+            40.391447085678806
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1584": {
+        "name": "178 - Junta Municipal Distrito de Retiro",
+        "coordinates": [
+            -3.6788343,
+            40.4029202
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1585": {
+        "name": "179 - Metro Puente de Vallecas",
+        "coordinates": [
+            -3.6692724000000005,
+            40.3979273
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1586": {
+        "name": "180 - Estación Sur Méndez Álvaro B",
+        "coordinates": [
+            -3.67589,
+            40.3940423
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1587": {
+        "name": "181 - Ibiza - Narváez",
+        "coordinates": [
+            -3.6764435404754696,
+            40.41816932665331
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1588": {
+        "name": "182 - Parque Roma",
+        "coordinates": [
+            -3.6657776999999996,
+            40.4186666
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1589": {
+        "name": "183 - Hermosilla - Doctor Esquerdo",
+        "coordinates": [
+            -3.6693389999999995,
+            40.425635
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1590": {
+        "name": "184 - Marqués de Zafra, 24",
+        "coordinates": [
+            -3.6653055,
+            40.426
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1591": {
+        "name": "185 - Parque Quinta de la Fuente del Berro",
+        "coordinates": [
+            -3.6615277000000006,
+            40.4250833
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1592": {
+        "name": "143 - Diego de León - General Pardiñas",
+        "coordinates": [
+            -3.6780802000000006,
+            40.434676
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1593": {
+        "name": "187 - Alejandro González - Alcalá",
+        "coordinates": [
+            -3.6638249,
+            40.4301326
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1594": {
+        "name": "188 - Puente de Ventas",
+        "coordinates": [
+            -3.6590286000000005,
+            40.4312562
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1596": {
+        "name": "190 - Velázquez - Diego de León",
+        "coordinates": [
+            -3.6833753,
+            40.4343053
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1597": {
+        "name": "191 - Metro Diego de León",
+        "coordinates": [
+            -3.6740777840614403,
+            40.434569387142616
+        ],
+        "bike_bases": 1,
+        "free_bases": 18
+    },
+    "1598": {
+        "name": "192 - Avda. de los Toreros - Fco. Silvela",
+        "coordinates": [
+            -3.6714677183853106,
+            40.431826464468664
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "1599": {
+        "name": "193 - Plaza de las Ventas",
+        "coordinates": [
+            -3.6655555,
+            40.4324722
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1600": {
+        "name": "194 - Intercambiador de Avenida de América",
+        "coordinates": [
+            -3.6771534999999997,
+            40.4372638
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1601": {
+        "name": "195 - Indalecio Hernández - Mataelpino",
+        "coordinates": [
+            -3.6754444,
+            40.4392222
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1602": {
+        "name": "196 - Metro Prosperidad",
+        "coordinates": [
+            -3.6752218,
+            40.4442237
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1603": {
+        "name": "197 - Parque de Berlín",
+        "coordinates": [
+            -3.677916,
+            40.4516059
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1604": {
+        "name": "198 - Metro Rubén Darío",
+        "coordinates": [
+            -3.6890999999999994,
+            40.432
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1605": {
+        "name": "199 - Fernando el Católico, 61",
+        "coordinates": [
+            -3.7149166,
+            40.4343611
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1606": {
+        "name": "200 - Metro Quevedo",
+        "coordinates": [
+            -3.7045789811585412,
+            40.43375360585919
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1639": {
+        "name": "233 - El dragón de La Elipa",
+        "coordinates": [
+            -3.6555789000000005,
+            40.4229522
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1640": {
+        "name": "234 - Metro La Elipa",
+        "coordinates": [
+            -3.6510917000000003,
+            40.4261278
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1641": {
+        "name": "235 - Sodio - Embajadores",
+        "coordinates": [
+            -3.691076,
+            40.389041
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1642": {
+        "name": "236 - Paseo Imperial",
+        "coordinates": [
+            -3.7170785,
+            40.4075794
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1644": {
+        "name": "238 - San Germán, 5",
+        "coordinates": [
+            -3.6932611,
+            40.4561825
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1645": {
+        "name": "239 - Francos Rodríguez - José Calvo",
+        "coordinates": [
+            -3.7078331000000007,
+            40.4567132
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1646": {
+        "name": "240 - Brasilia - Parque Breogán",
+        "coordinates": [
+            -3.66096,
+            40.43666
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1647": {
+        "name": "241 - Camilo José Cela",
+        "coordinates": [
+            -3.6677899999999997,
+            40.4378
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1648": {
+        "name": "242 - Metro Parque de las Avenidas",
+        "coordinates": [
+            -3.6629280000000004,
+            40.439513
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1649": {
+        "name": "243 - Cartagena",
+        "coordinates": [
+            -3.6701200000000003,
+            40.43503
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1650": {
+        "name": "244 - Hospital Clínico San Carlos",
+        "coordinates": [
+            -3.71757,
+            40.44003
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1651": {
+        "name": "245 - Galileo - Donoso Cortés",
+        "coordinates": [
+            -3.7101381,
+            40.4363637
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "1652": {
+        "name": "246 - Metro Iglesia",
+        "coordinates": [
+            -3.699248472404664,
+            40.43595788149785
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1653": {
+        "name": "247 - Zurbano - José Abascal",
+        "coordinates": [
+            -3.69281,
+            40.43837
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1654": {
+        "name": "248 - Sinesio Delgado - Cuatro Torres ",
+        "coordinates": [
+            -3.6879973,
+            40.4743209
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1655": {
+        "name": "249 - Castellana - Cuatro Torres",
+        "coordinates": [
+            -3.6853186000000004,
+            40.4795018
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1656": {
+        "name": "250 - Serrano - CSIC",
+        "coordinates": [
+            -3.6858096,
+            40.4406491
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1657": {
+        "name": "251 - Santa Hortensia - Corazón de María",
+        "coordinates": [
+            -3.66683,
+            40.44421
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1658": {
+        "name": "252 - Est. tren Chamartín - Clara Campoamor",
+        "coordinates": [
+            -3.6839695,
+            40.4717403
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1659": {
+        "name": "253 - Doctor Fleming - Estadio S. Bernabéu",
+        "coordinates": [
+            -3.6884400000000004,
+            40.45546
+        ],
+        "bike_bases": 0,
+        "free_bases": 19
+    },
+    "1660": {
+        "name": "254 - Plaza del Perú",
+        "coordinates": [
+            -3.6765599999999994,
+            40.461
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1661": {
+        "name": "255 - General López Pozas - Apolonio Morales",
+        "coordinates": [
+            -3.685292,
+            40.46361
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1662": {
+        "name": "256 - Reina Victoria - Beatriz de Bobadilla",
+        "coordinates": [
+            -3.7138299999999997,
+            40.44635
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1663": {
+        "name": "257 - Ciudad Universitaria - INEF",
+        "coordinates": [
+            -3.7305269999999995,
+            40.438873
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1664": {
+        "name": "258 - Metro Ciudad Universitaria A",
+        "coordinates": [
+            -3.7269389999999993,
+            40.444311
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1665": {
+        "name": "259 - Metro Ciudad Universitaria B",
+        "coordinates": [
+            -3.726752004160312,
+            40.44270528449462
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1666": {
+        "name": "260 - Ciudad Universitaria - Fac. de Biología",
+        "coordinates": [
+            -3.7272945,
+            40.4483322
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1667": {
+        "name": "261 - Ciudad Universitaria - Facultad Derecho",
+        "coordinates": [
+            -3.7296756,
+            40.4505516
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1951": {
+        "name": "384 - Metro Usera",
+        "coordinates": [
+            -3.7061449,
+            40.38707469
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1952": {
+        "name": "388 - Estación tren - Hospital 12 de Octubre",
+        "coordinates": [
+            -3.7004147799999996,
+            40.37837955
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1953": {
+        "name": "385 - Estación de tren Orcasitas",
+        "coordinates": [
+            -3.7038867099999995,
+            40.36721104
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1954": {
+        "name": "387 - Isabelita Usera, 44",
+        "coordinates": [
+            -3.7077397199999997,
+            40.38272256
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1955": {
+        "name": "383 - Metro San Fermín-Orcasur",
+        "coordinates": [
+            -3.6939702000000003,
+            40.3700017
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1956": {
+        "name": "386 - Avenida de los Poblados, 130",
+        "coordinates": [
+            -3.7133152099999998,
+            40.37347443
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1957": {
+        "name": "476 - Metro Avenida de la Paz",
+        "coordinates": [
+            -3.662016,
+            40.453493
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1958": {
+        "name": "477 - Metro Ciudad Lineal",
+        "coordinates": [
+            -3.6389040000000006,
+            40.438278
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1959": {
+        "name": "478 - José del Hierro - Misterios",
+        "coordinates": [
+            -3.6410572000000005,
+            40.44152084
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1960": {
+        "name": "479 - Metro Arturo Soria",
+        "coordinates": [
+            -3.655837131282797,
+            40.45478362295884
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1961": {
+        "name": "480 - Vicente Muzas - Arturo Soria",
+        "coordinates": [
+            -3.6604425500000004,
+            40.45903315
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1962": {
+        "name": "481 - Diego Ayllón - Arturo Soria",
+        "coordinates": [
+            -3.6521906299999998,
+            40.45117857
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1963": {
+        "name": "554 - Metro El Capricho",
+        "coordinates": [
+            -3.5940999999999996,
+            40.453
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1964": {
+        "name": "284 - Avenida de Burgos, 17",
+        "coordinates": [
+            -3.6757900294303902,
+            40.473593878889254
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1965": {
+        "name": "482 - Metro Pueblo Nuevo",
+        "coordinates": [
+            -3.6423386,
+            40.4356873
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1966": {
+        "name": "483 - Marcelino Álvarez - Daroca",
+        "coordinates": [
+            -3.6534324,
+            40.4297428
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1967": {
+        "name": "484 - Metro García Noblejas",
+        "coordinates": [
+            -3.6323890000000003,
+            40.42893071
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1968": {
+        "name": "523 - Carretera de Canillas",
+        "coordinates": [
+            -3.65089253,
+            40.4628701
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1969": {
+        "name": "285 - Santa María Magdalena - La Drácena",
+        "coordinates": [
+            -3.6706,
+            40.4631
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1970": {
+        "name": "286 - Plaza Duque de Pastrana ",
+        "coordinates": [
+            -3.6778999999999997,
+            40.4679
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1971": {
+        "name": "287 - Metro Bambú",
+        "coordinates": [
+            -3.6762,
+            40.4765
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1972": {
+        "name": "288 - Caídos de la División Azul",
+        "coordinates": [
+            -3.6723,
+            40.4664
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1973": {
+        "name": "524 - Glorieta Luis Rosales",
+        "coordinates": [
+            -3.6542999999999997,
+            40.4673
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1974": {
+        "name": "460 - Fuente Carrantona - Doctor García Tapia",
+        "coordinates": [
+            -3.63192261,
+            40.4070216
+        ],
+        "bike_bases": 2,
+        "free_bases": 23
+    },
+    "1975": {
+        "name": "455 - Luis de Hoyos Sainz,  198",
+        "coordinates": [
+            -3.6292746499999997,
+            40.400094
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1976": {
+        "name": "456 - Encomienda de Palacios, 8",
+        "coordinates": [
+            -3.6464000000000003,
+            40.4005
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1977": {
+        "name": "416 - Ramírez Tomé",
+        "coordinates": [
+            -3.645973936176305,
+            40.38875618103898
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1978": {
+        "name": "417 - Romeo y Julieta, 12",
+        "coordinates": [
+            -3.6621756300000006,
+            40.37873799
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1979": {
+        "name": "418 - Puerto de Arlabán - San Diego",
+        "coordinates": [
+            -3.6674999999999995,
+            40.3864
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1980": {
+        "name": "496 - Cronos",
+        "coordinates": [
+            -3.6194333,
+            40.4384695
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1981": {
+        "name": "501 - Metro Alsacia",
+        "coordinates": [
+            -3.6241999999999996,
+            40.4191
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1982": {
+        "name": "498 - Metro Torre Arias",
+        "coordinates": [
+            -3.6178316999999995,
+            40.44313349999999
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "1983": {
+        "name": "499 - Biblioteca Pública Municipal Canillejas",
+        "coordinates": [
+            -3.6121996,
+            40.4466561
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1984": {
+        "name": "500 - Aracne, 17",
+        "coordinates": [
+            -3.5895,
+            40.445
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1985": {
+        "name": "497 - Metro Suances",
+        "coordinates": [
+            -3.6274,
+            40.4407
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1986": {
+        "name": "265 - Puerto Serrano - Embajadores",
+        "coordinates": [
+            -3.6884609999999998,
+            40.385412
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1987": {
+        "name": "351 - Comandante Fontanes - General Ricardos",
+        "coordinates": [
+            -3.7211209,
+            40.3951415
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1988": {
+        "name": "350 - Ervigio - Amalarico",
+        "coordinates": [
+            -3.7315,
+            40.3947
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1989": {
+        "name": "389 - Julio Merino - Pilarica",
+        "coordinates": [
+            -3.7032,
+            40.3831
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1990": {
+        "name": "390 - Avena - Mijo",
+        "coordinates": [
+            -3.7159000000000004,
+            40.3773
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1991": {
+        "name": "556 - Cantabria, 6",
+        "coordinates": [
+            -3.5877220100000002,
+            40.45462514
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1992": {
+        "name": "555 - Parque del Capricho",
+        "coordinates": [
+            -3.5981217100000005,
+            40.45476837
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "1993": {
+        "name": "485 - Francisco Villaespesa - Ledesma",
+        "coordinates": [
+            -3.6464629,
+            40.4293263
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1994": {
+        "name": "570 - Uni. Autónoma Madrid - Facul. Medicina",
+        "coordinates": [
+            -3.6938,
+            40.4815
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1995": {
+        "name": "295 - Hernani - Edgar Neville",
+        "coordinates": [
+            -3.6972000000000005,
+            40.4481
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1996": {
+        "name": "296 - Costa Verde",
+        "coordinates": [
+            -3.696862,
+            40.469477
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1997": {
+        "name": "297 - Simancas - Pinos Alta",
+        "coordinates": [
+            -3.6951129800000007,
+            40.4655
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1998": {
+        "name": "323 - Centro Deportivo Municipal Gallur",
+        "coordinates": [
+            -3.7359,
+            40.3984
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1999": {
+        "name": "324 - Metro Lucero",
+        "coordinates": [
+            -3.7450961521148636,
+            40.40457132475174
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2000": {
+        "name": "457 - Hacienda de Pavones, 148",
+        "coordinates": [
+            -3.6419,
+            40.4026
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2001": {
+        "name": "432 - Maquinilla - Tranvía Blanco",
+        "coordinates": [
+            -3.6364842400000006,
+            40.38078101
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2002": {
+        "name": "298 - Marques de Viana - Bellver",
+        "coordinates": [
+            -3.704478,
+            40.463643
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "2003": {
+        "name": "437 - Metro Sierra de Guadalupe",
+        "coordinates": [
+            -3.6237645700000005,
+            40.38135158
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2004": {
+        "name": "358 - Verdad",
+        "coordinates": [
+            -3.7171600000000002,
+            40.391787
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2005": {
+        "name": "352 - Algorta  - General Ricardos",
+        "coordinates": [
+            -3.72745169,
+            40.39162261454714
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2006": {
+        "name": "492 - Metro La Almudena",
+        "coordinates": [
+            -3.6394989099999995,
+            40.42466356
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2007": {
+        "name": "322 - Ps. Jesuitas - Mercado Alto Extremadura",
+        "coordinates": [
+            -3.7350999999999996,
+            40.408
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2008": {
+        "name": "392 - Metro Almendrales",
+        "coordinates": [
+            -3.697856,
+            40.38268
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2009": {
+        "name": "420 - Candilejas, 5",
+        "coordinates": [
+            -3.6630038299999996,
+            40.38263599
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2010": {
+        "name": "419 - Estación de tren de El Pozo",
+        "coordinates": [
+            -3.655868,
+            40.3762374
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2011": {
+        "name": "439 - Cabeza Mesada - Parque de Valdeperdices",
+        "coordinates": [
+            -3.6294129999999996,
+            40.37647902
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2013": {
+        "name": "569 - C. Deportivo Mpal. Vicente del Bosque",
+        "coordinates": [
+            -3.6964999999999995,
+            40.4795
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2014": {
+        "name": "571 - Melchor Fernández Almagro - Plaza Tuy",
+        "coordinates": [
+            -3.710326199999999,
+            40.4756475
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2015": {
+        "name": "304 - Valle de Mena, 5",
+        "coordinates": [
+            -3.7152724500000005,
+            40.46962735
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2017": {
+        "name": "268 - Metro Arganzuela-Planetario",
+        "coordinates": [
+            -3.689031463575172,
+            40.39338327980599
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2019": {
+        "name": "305 - Intercambiador de Príncipe Pío B",
+        "coordinates": [
+            -3.72317757,
+            40.42276114
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2020": {
+        "name": "306 - Centro Deportivo Mpal Fernando Martín",
+        "coordinates": [
+            -3.7121965,
+            40.4617959
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2021": {
+        "name": "486 - Serrano Galvache - Arturo Soria",
+        "coordinates": [
+            -3.6679379,
+            40.471382
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2022": {
+        "name": "502 - Puertollano - Veinticinco de Septiembre",
+        "coordinates": [
+            -3.6237372,
+            40.4425157
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2023": {
+        "name": "462 - Gallegos - Lavadero Viejo",
+        "coordinates": [
+            -3.6102747000000006,
+            40.40240379
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2024": {
+        "name": "421 - Arroyo del Olivar - Buenos Aires",
+        "coordinates": [
+            -3.653269,
+            40.388435
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2025": {
+        "name": "487 - Manuel Uribe - Arturo Soria",
+        "coordinates": [
+            -3.66503419,
+            40.46434131
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2026": {
+        "name": "422 - Travesia de Palomeras, 7",
+        "coordinates": [
+            -3.6705179,
+            40.39017003
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2027": {
+        "name": "423 - Estación de tren Asamblea de Madrid",
+        "coordinates": [
+            -3.6685501300000003,
+            40.38138801
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2028": {
+        "name": "424 - Camino de Valderribas, 47",
+        "coordinates": [
+            -3.663958,
+            40.4002231
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2029": {
+        "name": "425 - Ramón Perez Ayala - Pque. Cerro Tío Pío",
+        "coordinates": [
+            -3.65381017,
+            40.40003472
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2030": {
+        "name": "426 - Humanes - Benjamín Palencia",
+        "coordinates": [
+            -3.64932678,
+            40.3952121
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2031": {
+        "name": "427 - Andaluces, 2",
+        "coordinates": [
+            -3.64148304,
+            40.3914244
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2032": {
+        "name": "428 - Estadio de Vallecas",
+        "coordinates": [
+            -3.6570999999999994,
+            40.3919
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2033": {
+        "name": "393 - Manuel Noya , 29",
+        "coordinates": [
+            -3.7117979,
+            40.3853787
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2034": {
+        "name": "489 - Serrano Galvache - Yerma",
+        "coordinates": [
+            -3.67144504,
+            40.47675257
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2035": {
+        "name": "490 - Hnos.García Noblejas-FcoLargo Caballero",
+        "coordinates": [
+            -3.62888094,
+            40.42427523
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2036": {
+        "name": "488 - Ricardo Ortiz, 33",
+        "coordinates": [
+            -3.6579643900000005,
+            40.42657032
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2037": {
+        "name": "525 - Metro Manoteras",
+        "coordinates": [
+            -3.6626902900000005,
+            40.47675499
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2038": {
+        "name": "504 - Biblioteca Pública Municipal San Blas",
+        "coordinates": [
+            -3.623466935545257,
+            40.42309928573645
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2039": {
+        "name": "503 - Zaldívar - Valdecanillas",
+        "coordinates": [
+            -3.62650373,
+            40.43209033
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2040": {
+        "name": "404 - Junta Municipal Distrito de Villaverde",
+        "coordinates": [
+            -3.7109850000000004,
+            40.349111
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2041": {
+        "name": "353 - Mercedes Arteaga, 21",
+        "coordinates": [
+            -3.7222175704754585,
+            40.39251608002938
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2042": {
+        "name": "355 - Intercambiador de Plaza Elíptica",
+        "coordinates": [
+            -3.7182338,
+            40.3854641
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2043": {
+        "name": "326 - Metro Alto de Extremadura",
+        "coordinates": [
+            -3.739615781020349,
+            40.40937950320982
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2044": {
+        "name": "327 - El Greco, 27 - C. Cultural El Greco",
+        "coordinates": [
+            -3.7472615299999994,
+            40.40741199
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2045": {
+        "name": "458 - Metro Vinateros",
+        "coordinates": [
+            -3.6525660400000004,
+            40.40991083
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2046": {
+        "name": "459 - Moratalaz",
+        "coordinates": [
+            -3.66000272,
+            40.40750626
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2047": {
+        "name": "461 - Plaza Corregidor Ldo. Antonio de Mena",
+        "coordinates": [
+            -3.6408,
+            40.4099
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2048": {
+        "name": "356 - Portalegre - Tinamús",
+        "coordinates": [
+            -3.72364769,
+            40.38937686
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2049": {
+        "name": "572 - Junta Mpal. Dtto. Fuencarral - El Pardo",
+        "coordinates": [
+            -3.70997335,
+            40.47810429
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2050": {
+        "name": "573 - Melchor Fernández Almagro - Villa Marín",
+        "coordinates": [
+            -3.69962571,
+            40.47772776
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2051": {
+        "name": "575 - Metro Barrio del Pilar",
+        "coordinates": [
+            -3.703526,
+            40.47817
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2052": {
+        "name": "574 - Chantada",
+        "coordinates": [
+            -3.7106779999999997,
+            40.472695
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2053": {
+        "name": "440 - Metro Villa de Vallecas",
+        "coordinates": [
+            -3.62144691,
+            40.3795035
+        ],
+        "bike_bases": 0,
+        "free_bases": 18
+    },
+    "2054": {
+        "name": "507 - Seis - Sexta",
+        "coordinates": [
+            -3.5965029500000005,
+            40.44845033
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2055": {
+        "name": "299 - Rosario Pino - Joan Maragall",
+        "coordinates": [
+            -3.6919324599999994,
+            40.46204955
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2056": {
+        "name": "300 - Capitan Blanco Argibay - Alfalfa",
+        "coordinates": [
+            -3.7031881999999996,
+            40.4667435
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2057": {
+        "name": "301 - Muller - Capitan Blanco Argibay",
+        "coordinates": [
+            -3.69837565,
+            40.46518187
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2059": {
+        "name": "396 - Gran Avenida, 27",
+        "coordinates": [
+            -3.70760649,
+            40.36997711
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2060": {
+        "name": "394 - Periana, 24",
+        "coordinates": [
+            -3.6876580500000005,
+            40.36672327
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2061": {
+        "name": "397 - Centro Deportivo Municipal Orcasur",
+        "coordinates": [
+            -3.6983803799999997,
+            40.36809336
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2062": {
+        "name": "399 - Bohemios - Gigantes y Cabezudos",
+        "coordinates": [
+            -3.6939009999999994,
+            40.356536
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2063": {
+        "name": "430 - Torremolinos - Rafael Alberti",
+        "coordinates": [
+            -3.6417899899999995,
+            40.38500948
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2064": {
+        "name": "269 - Ariel, 7 - Parque Enrique Tierno Galván",
+        "coordinates": [
+            -3.6797017663398797,
+            40.393023802369754
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2065": {
+        "name": "491 - Esteban Collantes - José Arcones Gil",
+        "coordinates": [
+            -3.6376629999999994,
+            40.432883
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2066": {
+        "name": "527 - Velacho Alto - Trinquete",
+        "coordinates": [
+            -3.6592688399999997,
+            40.47250314
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2067": {
+        "name": "526 - Plaza del Liceo",
+        "coordinates": [
+            -3.64441924,
+            40.45754368
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2068": {
+        "name": "431 - Puerto Canfranc, 18",
+        "coordinates": [
+            -3.6634,
+            40.3969
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2069": {
+        "name": "429 - Carlos M. Alvarez - Javier de Miguel",
+        "coordinates": [
+            -3.6635,
+            40.3895
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "2070": {
+        "name": "357 - Sorbe - Baleares",
+        "coordinates": [
+            -3.7132091699999994,
+            40.3898701
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2071": {
+        "name": "270 - Teresa L. Valcárcel - Tte. Cnel. Noreña",
+        "coordinates": [
+            -3.69328771,
+            40.38862908
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2072": {
+        "name": "493 - Arturo Soria - San Luis",
+        "coordinates": [
+            -3.6684167,
+            40.47636724
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2073": {
+        "name": "433 - Villalobos, 28",
+        "coordinates": [
+            -3.6507603700000004,
+            40.38161669
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2074": {
+        "name": "436 - Campus Sur UPM",
+        "coordinates": [
+            -3.62713659,
+            40.3901675
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2075": {
+        "name": "434 - Charleroi - Cocherón de la Villa",
+        "coordinates": [
+            -3.6321937200000005,
+            40.38191654
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2076": {
+        "name": "506 - Albarracín - Julián Camarillo",
+        "coordinates": [
+            -3.6325164100000005,
+            40.43397327
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2077": {
+        "name": "505 - Castillo de Uclés, 37",
+        "coordinates": [
+            -3.62306578,
+            40.4315255
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2078": {
+        "name": "435 - San Claudio",
+        "coordinates": [
+            -3.63953994,
+            40.38902883
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2080": {
+        "name": "302 - Ps. Dirección B - Pque A. Rguez Sahagún",
+        "coordinates": [
+            -3.703955,
+            40.4702445774
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2081": {
+        "name": "463 - Casalarreina, 18",
+        "coordinates": [
+            -3.612318798052458,
+            40.40939089860396
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2082": {
+        "name": "464 - Univ. Rey Juan Carlos - Campus Madrid",
+        "coordinates": [
+            -3.61283416,
+            40.40634029
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2083": {
+        "name": "400 - Metro Ciudad de los Ángeles",
+        "coordinates": [
+            -3.69399661,
+            40.36064659
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2084": {
+        "name": "307 - Metro Valdezarza",
+        "coordinates": [
+            -3.71693008,
+            40.46588016
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2085": {
+        "name": "303 - Ps. Dirección A - Pque A. Rguez Sahagún",
+        "coordinates": [
+            -3.7080850848120277,
+            40.46778929738312
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2086": {
+        "name": "576 - El Ferrol, 18",
+        "coordinates": [
+            -3.70510525,
+            40.47431313
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2087": {
+        "name": "577 - Monforte de Lemos - Plaza de Mondariz",
+        "coordinates": [
+            -3.70566914,
+            40.47899993
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2088": {
+        "name": "309 - Ofelia Nieto - Villaamil",
+        "coordinates": [
+            -3.7087339999999998,
+            40.462051
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "2089": {
+        "name": "308 - María Auxiliadora - Francos Rodríguez",
+        "coordinates": [
+            -3.7134614699999995,
+            40.45772941
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2090": {
+        "name": "510 - Metro Avenida de Guadalajara",
+        "coordinates": [
+            -3.6134619899999993,
+            40.42218968
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2091": {
+        "name": "511 - Aquitania 31",
+        "coordinates": [
+            -3.61726728,
+            40.41912347
+        ],
+        "bike_bases": 2,
+        "free_bases": 25
+    },
+    "2092": {
+        "name": "512 - Semilla - Aparejadores",
+        "coordinates": [
+            -3.61537023,
+            40.42667885
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2093": {
+        "name": "513 - Centro Deportivo Mpal. Pepu Hernández",
+        "coordinates": [
+            -3.6064541399999994,
+            40.4271211
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2094": {
+        "name": "514 - María Sevilla Diago",
+        "coordinates": [
+            -3.6109507700000005,
+            40.43283006
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2095": {
+        "name": "515 - Avenida de Hellin, 13",
+        "coordinates": [
+            -3.61579967,
+            40.43091667
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2096": {
+        "name": "359 - El Toboso - Zaida",
+        "coordinates": [
+            -3.7363397,
+            40.3929901
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2097": {
+        "name": "360 - Ntra. Sra. Fátima - Ntra. Sra. de Luz",
+        "coordinates": [
+            -3.7470882000000003,
+            40.3840155
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2098": {
+        "name": "361 - Metro Pan Bendito",
+        "coordinates": [
+            -3.73266666,
+            40.37734672
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2099": {
+        "name": "441 - Estación de tren de Santa Eugenia",
+        "coordinates": [
+            -3.6094815299999996,
+            40.38600753
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2100": {
+        "name": "442 - Santa Eugenia - Zazuar",
+        "coordinates": [
+            -3.60463,
+            40.38305936
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2101": {
+        "name": "443 - Fuentespina, 33",
+        "coordinates": [
+            -3.6072475500000003,
+            40.37941487
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2102": {
+        "name": "362 - Hilario Herranz Establos, 36",
+        "coordinates": [
+            -3.7266379999999995,
+            40.372839
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2103": {
+        "name": "557 - Metro Alameda de Osuna",
+        "coordinates": [
+            -3.5881514300000004,
+            40.45746674
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2104": {
+        "name": "290 - Francisco Suárez - Paseo de La Habana",
+        "coordinates": [
+            -3.6799441599999994,
+            40.46437817
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "2105": {
+        "name": "529 - Lopez de Hoyos , 478",
+        "coordinates": [
+            -3.649843,
+            40.47175
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2106": {
+        "name": "530 - Metro Mar de Cristal",
+        "coordinates": [
+            -3.6378834900000006,
+            40.4685745
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "2107": {
+        "name": "531 - Metro Parque de Santa María",
+        "coordinates": [
+            -3.6450740999999995,
+            40.4768782
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2108": {
+        "name": "532 - Metro San Lorenzo",
+        "coordinates": [
+            -3.6395164,
+            40.47490194
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2109": {
+        "name": "533 - San Luis, 23",
+        "coordinates": [
+            -3.6551145499999995,
+            40.47148748
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2110": {
+        "name": "106A - Plaza de Colón A",
+        "coordinates": [
+            -3.687807,
+            40.424924
+        ],
+        "bike_bases": 0,
+        "free_bases": 19
+    },
+    "2111": {
+        "name": "582 - Isla Graciosa - Isla de Java",
+        "coordinates": [
+            -3.6862657,
+            40.49262243
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2112": {
+        "name": "583 - Ángel Múgica - Marcos de Orueta",
+        "coordinates": [
+            -3.68529048,
+            40.48468297
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2113": {
+        "name": "584 - Metro Montecarmelo",
+        "coordinates": [
+            -3.6960334500000003,
+            40.50501029
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "2114": {
+        "name": "585 - Metro Fuencarral",
+        "coordinates": [
+            -3.69374813,
+            40.4954662
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "2115": {
+        "name": "586 - Caldas Estrach - San Cugat del Vallés",
+        "coordinates": [
+            -3.6974724999999995,
+            40.4963916
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2116": {
+        "name": "534 - Mesena, 102",
+        "coordinates": [
+            -3.6634063399999994,
+            40.46772408
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2117": {
+        "name": "273 - Delicias - General Lacy",
+        "coordinates": [
+            -3.6909183100000003,
+            40.40381914
+        ],
+        "bike_bases": 3,
+        "free_bases": 16
+    },
+    "2118": {
+        "name": "587 - Metro Paco de Lucía",
+        "coordinates": [
+            -3.7086574400000005,
+            40.49892399
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "2119": {
+        "name": "588 - Campo Calatrava - Rda Ingenioso Hidalgo",
+        "coordinates": [
+            -3.69112254,
+            40.50052161
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2120": {
+        "name": "589 - Monast. Silos - Monast. Montesclaros",
+        "coordinates": [
+            -3.70290315,
+            40.50340494
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2121": {
+        "name": "535 - Metro Canillas",
+        "coordinates": [
+            -3.634999,
+            40.463575
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2122": {
+        "name": "328 - Cebreros, 97",
+        "coordinates": [
+            -3.7521916999999996,
+            40.4032379
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2123": {
+        "name": "329 - Metro Laguna",
+        "coordinates": [
+            -3.7444520800000003,
+            40.3988162
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2124": {
+        "name": "330 - Duquesa de Parcent - Marcelino Castillo",
+        "coordinates": [
+            -3.7447281,
+            40.39500224
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2125": {
+        "name": "331 - Valmojado",
+        "coordinates": [
+            -3.75757186,
+            40.39649629
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "2126": {
+        "name": "332 - Los Yébenes, 159",
+        "coordinates": [
+            -3.75181704,
+            40.39302789
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "2127": {
+        "name": "363 - Metro Oporto",
+        "coordinates": [
+            -3.72987333,
+            40.38745087
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2128": {
+        "name": "364 - Metro Opañel",
+        "coordinates": [
+            -3.7237806400000006,
+            40.38550735
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2129": {
+        "name": "536 - Boj",
+        "coordinates": [
+            -3.6180818,
+            40.4560204
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "2130": {
+        "name": "537 - Plaza López de la Plata",
+        "coordinates": [
+            -3.6257943900000003,
+            40.45841466
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2131": {
+        "name": "538 - Haendel, 8",
+        "coordinates": [
+            -3.6253213100000004,
+            40.46275082
+        ],
+        "bike_bases": 5,
+        "free_bases": 22
+    },
+    "2132": {
+        "name": "333 - Illescas - Camarena",
+        "coordinates": [
+            -3.7562323,
+            40.392175
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "2133": {
+        "name": "365 - Palacio Vistalegre Arena",
+        "coordinates": [
+            -3.7372590799999994,
+            40.38537202
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1607": {
+        "name": "201 - Metro Canal",
+        "coordinates": [
+            -3.7038332999999994,
+            40.4386944
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1608": {
+        "name": "202 - Parque de Santander",
+        "coordinates": [
+            -3.7083,
+            40.4413
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1609": {
+        "name": "203 - General Ampudia - San Francisco Sales",
+        "coordinates": [
+            -3.7144722,
+            40.44175
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1611": {
+        "name": "205 - Metro Estrecho",
+        "coordinates": [
+            -3.7032776999999997,
+            40.4535
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1612": {
+        "name": "206 - Metro Tetuán",
+        "coordinates": [
+            -3.698915521426396,
+            40.4607466894426
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1613": {
+        "name": "207 - Plaza de la Remonta",
+        "coordinates": [
+            -3.6973352000000004,
+            40.4630443
+        ],
+        "bike_bases": 2,
+        "free_bases": 17
+    },
+    "1614": {
+        "name": "208 - Intercambiador de Plaza de Castilla",
+        "coordinates": [
+            -3.6890611,
+            40.4662811
+        ],
+        "bike_bases": 0,
+        "free_bases": 18
+    },
+    "1615": {
+        "name": "209 - Plaza de Castilla - Fundación Canal",
+        "coordinates": [
+            -3.6887000000000003,
+            40.4657
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1616": {
+        "name": "210 - Calle de las Tres Cruces - Gran Vía",
+        "coordinates": [
+            -3.7027164000000004,
+            40.4196518
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1617": {
+        "name": "211 - Desengaño - Valverde",
+        "coordinates": [
+            -3.70239,
+            40.42059
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1618": {
+        "name": "212 - Metro Marqués de Vadillo",
+        "coordinates": [
+            -3.7165910000000006,
+            40.398247
+        ],
+        "bike_bases": 4,
+        "free_bases": 23
+    },
+    "1619": {
+        "name": "213 - Glorieta de Cádiz",
+        "coordinates": [
+            -3.7002247,
+            40.3889918
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1620": {
+        "name": "214 - Condesa de Venadito - Albacete",
+        "coordinates": [
+            -3.6569031,
+            40.4434316
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1621": {
+        "name": "215 - Gutierre de Cetina - Ascao",
+        "coordinates": [
+            -3.6408092999999995,
+            40.429588
+        ],
+        "bike_bases": 0,
+        "free_bases": 23
+    },
+    "1622": {
+        "name": "216 - Plaza de Puerta del Ángel",
+        "coordinates": [
+            -3.72897,
+            40.4141
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "1623": {
+        "name": "217 - Hospital Universitario La Paz",
+        "coordinates": [
+            -3.6890757999999995,
+            40.480884
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1624": {
+        "name": "218 - Camino de los Vinateros A",
+        "coordinates": [
+            -3.6572967,
+            40.4105478
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1625": {
+        "name": "219 - Camino de los Vinateros B",
+        "coordinates": [
+            -3.6467337999999994,
+            40.4083593
+        ],
+        "bike_bases": 2,
+        "free_bases": 16
+    },
+    "1626": {
+        "name": "220 - Plaza del Encuentro",
+        "coordinates": [
+            -3.651384,
+            40.406156
+        ],
+        "bike_bases": 2,
+        "free_bases": 22
+    },
+    "1627": {
+        "name": "221 - Metro Pavones",
+        "coordinates": [
+            -3.6347444787322485,
+            40.400492026660594
+        ],
+        "bike_bases": 1,
+        "free_bases": 22
+    },
+    "1628": {
+        "name": "222 - Eugenio Caxes - Antonio López",
+        "coordinates": [
+            -3.7026789,
+            40.3917871
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1630": {
+        "name": "224 - Parque de Caramuel",
+        "coordinates": [
+            -3.7287000000000003,
+            40.409
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1631": {
+        "name": "225 - Sierra Toledana - Doctor Lozano",
+        "coordinates": [
+            -3.660345,
+            40.402506
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1632": {
+        "name": "226 - Sierra Toledana - Camino de Valderribas",
+        "coordinates": [
+            -3.6607768678037744,
+            40.39901531507069
+        ],
+        "bike_bases": 4,
+        "free_bases": 19
+    },
+    "1633": {
+        "name": "227 - Arroyo del Olivar",
+        "coordinates": [
+            -3.665936242935637,
+            40.39382977920336
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1634": {
+        "name": "228 - San Delfín - Antonio López",
+        "coordinates": [
+            -3.7080429728445568,
+            40.39440607959559
+        ],
+        "bike_bases": 3,
+        "free_bases": 15
+    },
+    "1635": {
+        "name": "229 - Centro Deportivo Municipal Concepción",
+        "coordinates": [
+            -3.6486508,
+            40.4369378
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1636": {
+        "name": "230 - Carlota O´Neill - Agastia",
+        "coordinates": [
+            -3.6488254,
+            40.4436792
+        ],
+        "bike_bases": 0,
+        "free_bases": 24
+    },
+    "1637": {
+        "name": "231 - Derechos Humanos - Verdaguer y García",
+        "coordinates": [
+            -3.6557193,
+            40.4398283
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1638": {
+        "name": "232 - José María de Pereda - Alcalá",
+        "coordinates": [
+            -3.6486169000000004,
+            40.4327663
+        ],
+        "bike_bases": 1,
+        "free_bases": 26
+    },
+    "1629": {
+        "name": "223 - Ermita del Santo",
+        "coordinates": [
+            -3.724576,
+            40.406448
+        ],
+        "bike_bases": 0,
+        "free_bases": 27
+    },
+    "2012": {
+        "name": "398 - Orovilla - Felicidad",
+        "coordinates": [
+            -3.6895,
+            40.3587
+        ],
+        "bike_bases": 3,
+        "free_bases": 24
+    },
+    "2238": {
+        "name": "561 - Plaza Nuestra Señora de Loreto",
+        "coordinates": [
+            -3.5857510000000006,
+            40.472048
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    },
+    "1543": {
+        "name": "137 - Plaza de la República Argentina",
+        "coordinates": [
+            -3.6853377000000003,
+            40.4454477
+        ],
+        "bike_bases": 4,
+        "free_bases": 20
+    },
+    "2279": {
+        "name": "415 - Diamante - Delmira Agustini",
+        "coordinates": [
+            -3.6877534,
+            40.3532609
+        ],
+        "bike_bases": 3,
+        "free_bases": 21
+    },
+    "1454": {
+        "name": "50 - Museo Reina Sofía",
+        "coordinates": [
+            -3.6933462999999995,
+            40.4083684
+        ],
+        "bike_bases": 1,
+        "free_bases": 23
+    },
+    "1595": {
+        "name": "189 - Virgen de la Alegría",
+        "coordinates": [
+            -3.6554918000000005,
+            40.4351256
+        ],
+        "bike_bases": 2,
+        "free_bases": 21
+    },
+    "1610": {
+        "name": "204 - Doctor Santero - Bravo Murillo",
+        "coordinates": [
+            -3.7040397,
+            40.4476488
+        ],
+        "bike_bases": 3,
+        "free_bases": 20
+    }
+}

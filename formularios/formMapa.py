@@ -13,6 +13,7 @@ import math
 import os
 from tkinter import filedialog
 import json
+from tkinter.font import Font
 
 class FormMapaDesign():
 
@@ -24,8 +25,8 @@ class FormMapaDesign():
         self.frame_mapa.pack(fill="both")
 
         self.estaciones = utilEstaciones.devolver_estaciones()
-        self.df_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, 0.005)
-        self.df_patinetes = utilEstaciones.generar_patinetes(self.estaciones, 0.005)
+        self.bicicletas_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, 0.005)
+        self.patinetes = utilEstaciones.generar_patinetes(self.estaciones, 0.005)
         
         #Para poder borrar los mapas de calor
         self.poligonos_estaciones = []
@@ -45,8 +46,18 @@ class FormMapaDesign():
         self.seleccionado_metros = StringVar()
         self.seleccionado_influencia =  StringVar()
 
-        self.cargados_bicicletas = []
-        self.cargados_flotantes = []
+        self.cargados_estaciones = {}
+        self.cargados_estaciones['estaciones_abril2024.json'] = (self.estaciones, True)
+        self.selected_archivo_estaciones = StringVar()
+
+        
+        self.cargados_bicicletas = {}
+        self.cargados_bicicletas['bicicletas_generadas_estaciones.json'] = (self.bicicletas_flotantes, True)
+        self.selected_archivo_bicicletas = StringVar()
+
+        self.cargados_patinetes = {}
+        self.cargados_patinetes['patinetes_generados_estaciones.json'] = (self.patinetes, True)
+        self.selected_archivo_patinetes = StringVar()
 
         self.color_map = {
             0: '#FF0000',   # Rojo
@@ -148,7 +159,6 @@ class FormMapaDesign():
         self.crear_mapa_calor()
         self.crear_otras_opciones()
         self.crear_carga_datos()
-
 
         """
         #Botones del menu lateral
@@ -290,7 +300,6 @@ class FormMapaDesign():
                                                     variable=checkbox_patinetes, command=lambda: self.boton_patinetes(checkbox_patinetes))
         self.buttonPatinetes.pack(side=TOP, pady=5)
 
-        # Guardar referencias al estado del submenú
         self.submenus['Tipo de Transporte'] = {"titulo": boton_principal, "frame_opcion": frame_opcion,
                                                "frame_submenu": frame_submenu, "visible": True}
 
@@ -407,6 +416,12 @@ class FormMapaDesign():
         self.buttonVerDatosCargados.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonVerDatosCargados.pack(side=TOP)
         self.bindHoverEvents(self.buttonVerDatosCargados)
+
+        self.buttonCargaDatosEstaciones = Button(frame_submenu, text=" Importar datos estaciones", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= lambda: self.cargar_archivo('estaciones'))
+        self.buttonCargaDatosEstaciones.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonCargaDatosEstaciones.pack(side=TOP)
+        self.bindHoverEvents(self.buttonCargaDatosEstaciones)
         
         self.buttonCargaDatosBicicletas = Button(frame_submenu, text=" Importar datos bicicletas", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= lambda: self.cargar_archivo('bicicletas'))
@@ -422,7 +437,6 @@ class FormMapaDesign():
 
         self.submenus['Carga de datos'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
                                           "frame_submenu": frame_submenu, "visible": True}
-
 
     def toggle_submenu(self, texto_opcion):
         submenu = self.submenus[texto_opcion]
@@ -442,17 +456,127 @@ class FormMapaDesign():
         ancho_pantalla = ventana_datos.winfo_screenwidth()
         alto_pantalla = ventana_datos.winfo_screenheight()
 
-        ancho_ventana = 700
+        ancho_ventana = 900
         alto_ventana = 350
 
         x = (ancho_pantalla // 2) - (ancho_ventana // 2)
         y = (alto_pantalla // 2) - (alto_ventana // 2)
 
         ventana_datos.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
-
-        
-
+        ventana_datos.resizable(False, False)
+        ventana_datos.config(bg=COLOR_MENU_LATERAL)
         ventana_datos.protocol("WM_DELETE_WINDOW", ventana_datos.destroy)
+
+        frame_contenedor = Frame(ventana_datos, bg=COLOR_MENU_LATERAL)
+        frame_contenedor.pack(fill=BOTH, expand=True, padx=20, pady=20)
+
+        titulo_font = Font(family="Arial", size=12, weight="bold")
+
+        ######################## COLUMNA ESTACIONES ######################
+
+        self.selected_archivo_estaciones.set('estaciones_abril2024.json')
+
+        frame_estaciones = Frame(frame_contenedor, bg=COLOR_MENU_LATERAL, width=300)
+        frame_estaciones.pack(side=LEFT, fill=BOTH, expand=True, padx=10)
+
+        Label(frame_estaciones, text='Estaciones', font=titulo_font, anchor=W,bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
+
+        texto_cargados = f'Se han cargado un total de {len(self.cargados_estaciones)}\n archivos de estaciones'
+
+        if len(self.cargados_estaciones) != 0: texto_cargados += '\n\nLos archivos cargados son los siguientes:'
+
+        Label(frame_estaciones, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
+
+        frame_radiobuttons_estaciones = Frame(frame_estaciones, bg=COLOR_MENU_LATERAL)
+        frame_radiobuttons_estaciones.pack(fill=BOTH, expand=True, padx=5, pady=5)
+
+        if len(self.cargados_estaciones) != 0:
+            for id, archivo in self.cargados_estaciones.items():
+                if archivo[1]:
+                    self.selected_archivo_estaciones.set(id)
+                Radiobutton(frame_radiobuttons_estaciones, text=id, variable=self.selected_archivo_estaciones,
+                    value=id, bg=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=LEFT).pack(anchor=W, padx=5, pady=2)
+
+        frame_botones_estaciones = Frame(frame_estaciones, bg=COLOR_MENU_LATERAL)
+        frame_botones_estaciones.pack(side=BOTTOM, fill=X, pady=10)
+
+        Button(frame_botones_estaciones, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white', 
+               command=lambda: self.cargar_archivo('estaciones', visualizador=True)).pack(side=LEFT, fill=X, expand=True, padx=5)
+
+        Button( frame_botones_estaciones, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+            # command=self.aplicar_cambios
+        ).pack(side=LEFT, fill=X, expand=True, padx=5)
+
+        ######################## COLUMNA BICICLETAS ######################
+
+        self.selected_archivo_bicicletas.set('bicicletas_generadas_estaciones.json')
+
+        frame_bicicletas = Frame(frame_contenedor, bg=COLOR_MENU_LATERAL, width=300)
+        frame_bicicletas.pack(side=LEFT, fill=BOTH, expand=True, padx=10)
+
+        Label(frame_bicicletas, text='Bicicletas', font=titulo_font, anchor=W, bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
+
+        texto_cargados = f'Se han cargado un total de {len(self.cargados_bicicletas)}\n archivos de bicicletas'
+
+        if len(self.cargados_bicicletas) != 0: texto_cargados += '\n\nLos archivos cargados son los siguientes:'
+
+        Label(frame_bicicletas, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
+
+        frame_radiobuttons_bicicletas = Frame(frame_bicicletas, bg=COLOR_MENU_LATERAL)
+        frame_radiobuttons_bicicletas.pack(fill=BOTH, expand=True, padx=5, pady=5)
+
+        if len(self.cargados_bicicletas) != 0:
+            for id, archivo in self.cargados_bicicletas.items():
+                if archivo[1]:
+                    self.selected_archivo_bicicletas.set(id)
+                Radiobutton(frame_radiobuttons_bicicletas, text=id, variable=self.selected_archivo_bicicletas,
+                    value=id, bg=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=LEFT).pack(anchor=W, padx=5, pady=2)
+
+        frame_botones_bicicletas = Frame(frame_bicicletas, bg=COLOR_MENU_LATERAL)
+        frame_botones_bicicletas.pack(side=BOTTOM, fill=X, pady=10)
+
+        Button(frame_botones_bicicletas, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+            command=lambda: self.cargar_archivo('bicicletas', visualizador=True)).pack(side=LEFT, fill=X, expand=True, padx=5)
+
+        Button(frame_botones_bicicletas, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+            # command=self.aplicar_cambios
+        ).pack(side=LEFT, fill=X, expand=True, padx=5)
+
+
+        ######################## COLUMNA PATINETES ######################
+
+        self.selected_archivo_patinetes.set('patinetes_generados_estaciones.json')
+
+        frame_patinetes = Frame(frame_contenedor, bg=COLOR_MENU_LATERAL, width=300)
+        frame_patinetes.pack(side=LEFT, fill=BOTH, expand=True, padx=10)
+
+        Label(frame_patinetes, text='Patinetes', font=titulo_font, anchor=W, bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
+
+        texto_cargados = f'Se han cargado un total de {len(self.cargados_patinetes)}\n archivos de patinetes'
+
+        if len(self.cargados_patinetes) != 0: texto_cargados += '\n\nLos archivos cargados son los siguientes:'
+
+        Label(frame_patinetes, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
+
+        frame_radiobuttons_patinetes = Frame(frame_patinetes, bg=COLOR_MENU_LATERAL)
+        frame_radiobuttons_patinetes.pack(fill=BOTH, expand=True, padx=5, pady=5)
+
+        if len(self.cargados_patinetes) != 0:
+            for id, archivo in self.cargados_patinetes.items():
+                if archivo[1]:
+                    self.selected_archivo_patinetes.set(id)
+                Radiobutton(frame_radiobuttons_patinetes, text=id, variable=self.selected_archivo_patinetes, value=id, 
+                    bg=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=LEFT).pack(anchor=W, padx=5, pady=2)
+
+        frame_botones_patinetes = Frame(frame_patinetes, bg=COLOR_MENU_LATERAL)
+        frame_botones_patinetes.pack(side=BOTTOM, fill=X, pady=10)
+
+        Button(frame_botones_patinetes, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+            command=lambda: self.cargar_archivo('patinetes', visualizador=True)).pack(side=LEFT, fill=X, expand=True, padx=5)
+
+        Button(frame_botones_patinetes, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+            # command=self.aplicar_cambios
+        ).pack(side=LEFT, fill=X, expand=True, padx=5)
 
     def bindHoverEvents(self, button):
         #Asociar eventos Enter y Leave con la función dinámica
@@ -501,7 +625,7 @@ class FormMapaDesign():
                     add_fijas=False, add_flotantes=False, add_patinetes=False,mostrar_huecos=True)
         else:
             #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, self.df_flotantes, self.df_patinetes,
+            self.dic_mapa_calor = utilEstaciones.crear_diccionario(self.estaciones, self.bicicletas_flotantes, self.patinetes,
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_flotantes.get(),
                     add_patinetes=self.checkbox_mapa_patinetes.get(), mostrar_huecos=False)
@@ -613,27 +737,37 @@ class FormMapaDesign():
                                             pass_coords=True)
     ###############################################################################################
     
-    def cargar_archivo(self, tipo):
+    def cargar_archivo(self, tipo, visualizador=False):
         archivo = filedialog.askopenfilename(
             title="Seleccionar archivo JSON",
             filetypes=[("Archivos JSON", "*.json")]
         )
         if archivo:
             try:
-                with open(archivo, 'r') as f:
+                with open(archivo, 'r', encoding="utf-8") as f:
                     data = json.load(f)
-                
-                if tipo == 'bicicletas':
-                    self.cargados_bicicletas.append(data)
-                elif tipo == 'patinetes':
-                    self.cargados_patinetes.append(data)
 
                 nombre_archivo = os.path.basename(archivo)
                 utilInfo.show_info_upload(self, nombre_archivo)
 
+                if tipo == 'estaciones':
+                    if nombre_archivo not in self.cargados_estaciones:
+                        self.cargados_estaciones[nombre_archivo] = (data, False)
+                    else: utilInfo.show_info_upload(self, 'El archivo ya estaba cargado')
+                elif tipo == 'bicicletas':
+                    if nombre_archivo not in self.cargados_bicicletas:
+                        self.cargados_bicicletas.append[nombre_archivo] = (data, False)
+                    else: utilInfo.show_info_upload(self, 'El archivo ya estaba cargado')
+                elif tipo == 'patinetes':
+                    if nombre_archivo not in self.cargados_patinetes:
+                        self.cargados_patinetes.append[nombre_archivo] = (data, False)
+                    else: utilInfo.show_info_upload(self, 'El archivo ya estaba cargado')
+
             except Exception as e:
                 print(f"Error al cargar el archivo: {e}")
                 utilInfo.show_info_upload(self, "Error al cargar el archivo")
+        if visualizador:
+            self.buttonVerDatosCargados.invoke()
    
     def aplicar_gaussiana(self, cantidades, alcance, sigma=1):
         # Convertimos la lista a una matriz
@@ -742,7 +876,7 @@ class FormMapaDesign():
 
     def modificar_influencia(self):
         if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()):
+        self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()==False):
             messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
             return
         self.ventana_mod = Toplevel(self.frame_mapa)
@@ -805,6 +939,10 @@ class FormMapaDesign():
         self.pintar_mapa()
     
     def pintar_estaciones(self):
+        """
+        with open('data/estaciones_abril2024.json', 'w', encoding='utf-8') as archivo:
+            json.dump(self.estaciones, archivo, ensure_ascii=False, indent=4)
+        """
         strings = []
         for id in self.estaciones:
             strings.append(self.estaciones[id]['name'])
@@ -829,20 +967,20 @@ class FormMapaDesign():
         longest_string = max(strings, key=len)
         max_len = len(longest_string)
         #print(f'número de estaciones fijas: {len(self.estaciones)}')
+
     def boton_fijas(self, checkbox_fijas):
         if checkbox_fijas.get() == True:
             self.pintar_estaciones()
         elif checkbox_fijas.get() == False:
             for poligono in self.poligonos_estaciones:
                 poligono.delete()
-
       
     def pintar_flotantes(self):
         #cambiar generar_flotantes para usar esto       
 
-        for i in range(len(self.df_flotantes['id'])):
+        for i in range(len(self.bicicletas_flotantes['id'])):
 
-            coord_estacion = self.df_flotantes['coord'][i]
+            coord_estacion = self.bicicletas_flotantes['coord'][i]
             d = 0.00000001
             #coordinates = [(coord_estacion[0], coord_estacion[1]),
             #                (coord_estacion[0], coord_estacion[1]+ d),
@@ -852,12 +990,12 @@ class FormMapaDesign():
             poligono = self.labelMap.set_polygon([coord_estacion],
                                     outline_color="red",
                                     border_width=1,
-                                    name=self.df_flotantes['info'][i])
+                                    name=self.bicicletas_flotantes['info'][i])
             self.poligonos_flotantes.append(poligono)
 
     def pintar_flotantes_clusters_dbscan(self):
 
-        coordenadas = self.df_flotantes['coord']
+        coordenadas = self.bicicletas_flotantes['coord']
         eps = 0.008
 
         # Aplicar el algoritmo de clustering DBSCAN
@@ -879,7 +1017,7 @@ class FormMapaDesign():
     def pintar_flotantes_clusters_kmeans(self):
         
         if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
-            self.coordenadas_flotantes = self.df_flotantes['coord']
+            self.coordenadas_flotantes = self.bicicletas_flotantes['coord']
             self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
 
         for i, coord in enumerate(self.coordenadas_flotantes):
@@ -893,7 +1031,7 @@ class FormMapaDesign():
 
     def pintar_centroides(self):
         if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
-            self.coordenadas_flotantes = self.df_flotantes['coord']
+            self.coordenadas_flotantes = self.bicicletas_flotantes['coord']
             self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
 
         for i, centroide in enumerate(self.centroides):
@@ -910,9 +1048,9 @@ class FormMapaDesign():
 
     def pintar_patinetes(self):      
 
-        for i in range(len(self.df_patinetes['id'])):
+        for i in range(len(self.patinetes['id'])):
 
-            coord_patinete = self.df_patinetes['coord'][i]
+            coord_patinete = self.patinetes['coord'][i]
             d = 0.00000001
             #coordinates = [(coord_estacion[0], coord_estacion[1]),
             #                (coord_estacion[0], coord_estacion[1]+ d),
@@ -922,7 +1060,7 @@ class FormMapaDesign():
             poligono = self.labelMap.set_polygon([coord_patinete],
                                     outline_color="orange",
                                     border_width=1,
-                                    name=self.df_patinetes['info'][i])
+                                    name=self.patinetes['info'][i])
             self.poligonos_patinetes.append(poligono)
 
     def boton_flotantes(self, checkbox_flotantes):
