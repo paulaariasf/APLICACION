@@ -100,7 +100,7 @@ def show_info_estacion(form_mapa, polygon):
 
     id, coord_estacion = polygon.name
     texto_mostrar = dividir_string_por_longitud(form_mapa.estaciones[id]['name'], longitud_max_linea=25)
-    info_label = Label(form_mapa.infoest_frame, text=f"Estación seleccionada:\n{texto_mostrar} \n Cantidad de bicicletas: {form_mapa.estaciones[id]['bike_bases']}", bg="white")
+    info_label = Label(form_mapa.infoest_frame, text=f"Estación seleccionada:\n{texto_mostrar} \n Cantidad de bicicletas: {form_mapa.estaciones[id]['bike_bases']} \n Capacidad total: {form_mapa.estaciones[id]['bike_bases'] + form_mapa.estaciones[id]['free_bases']}", bg="white")
     info_label.pack(side="left", padx=5, pady=5)
 
     #Añadir marcador en la estacion seleccionada
