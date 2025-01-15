@@ -136,10 +136,16 @@ def crear_diccionario(n, minLon, maxLat, lon_celda, lat_celda,
             diccionario['num_estaciones'][zona-1] = diccionario['num_estaciones'][zona-1] + 1
 
     if demanda_bicicletas and estaciones != None and flotantes != None and demanda_bicicletas != None:
-        for solicitud in demanda_bicicletas:
+        for solicitud in demanda_bicicletas['coordenadas']:
             zona = clasificar_punto(n, solicitud, lon_celda, lat_celda, minLon, maxLat)
             demanda_bicicletas['zona'].append(zona)
             diccionario['demanda_bicicletas'][zona-1] = diccionario['demanda_bicicletas'][zona-1]+1
+
+    if demanda_patinetes and patinetes != None and demanda_patinetes != None:
+        for solicitud in demanda_patinetes['coordenadas']:
+            zona = clasificar_punto(n, solicitud, lon_celda, lat_celda, minLon, maxLat)
+            demanda_patinetes['zona'].append(zona)
+            diccionario['demanda_patinetes'][zona-1] = diccionario['demanda_patinetes'][zona-1]+1
 
     return diccionario
 

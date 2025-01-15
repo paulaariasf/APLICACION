@@ -48,6 +48,25 @@ def show_info_zona(form_mapa, coords):
     elif form_mapa.clasificacion == "Huecos":
         texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de huecos libres:{form_mapa.dic_mapa_calor['cantidades'][zona-1]} de {form_mapa.dic_mapa_calor['capacidades'][zona-1]}"
     
+    elif form_mapa.clasificacion == "Demanda Bicicletas":
+        texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
+        texto+=f"Número de bicicletas totales:{form_mapa.dic_mapa_calor['cantidades'][zona-1]}\n"
+        texto+=f"Número de solicitudes: {form_mapa.dic_mapa_calor['demanda_bicicletas'][zona-1]}\n"
+        bicicletas_disponibles = form_mapa.dic_mapa_calor['cantidades'][zona-1]
+        solicitudes =  form_mapa.dic_mapa_calor['demanda_bicicletas'][zona-1]
+        factor_llenado=100*(bicicletas_disponibles-solicitudes)/(bicicletas_disponibles+solicitudes+1)
+        texto+=f"Oferta-demanda bicicletas: {factor_llenado:.2f}"
+    
+    elif form_mapa.clasificacion == "Demanda Patinetes":
+        texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
+        texto+=f"Número de patinetes totales:{form_mapa.dic_mapa_calor['cantidades'][zona-1]}\n"
+        texto+=f"Número de solicitudes: {form_mapa.dic_mapa_calor['demanda_patinetes'][zona-1]}\n"
+        patinetes_disponibles = form_mapa.dic_mapa_calor['cantidades'][zona-1]
+        solicitudes =  form_mapa.dic_mapa_calor['demanda_patinetes'][zona-1]
+        factor_llenado=100*(patinetes_disponibles-solicitudes)/(patinetes_disponibles+solicitudes+1)
+        texto+=f"Oferta-demanda patinetes: {factor_llenado:.2f}"
+
+
     info_label = Label(form_mapa.infozona_frame, text=texto, bg="white")
     info_label.pack(side="left", padx=5, pady=5)
 
