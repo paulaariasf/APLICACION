@@ -173,6 +173,7 @@ def generar_puntos(centro, radio, nPuntos):
     return puntos
 
 def generar_flotantes(estaciones, radio):
+    #no se esta usando
     data = {'id': [], 'lat': [], 'lon': [], 'info':[]}
     id_bici = 1
     for id in estaciones:

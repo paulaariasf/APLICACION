@@ -18,6 +18,8 @@ from tkinter import filedialog
 import json
 from tkinter.font import Font
 import random
+import re
+import requests
 
 class FormMapaDesign():
 
@@ -58,21 +60,28 @@ class FormMapaDesign():
         self.seleccionado_metros = StringVar()
         self.seleccionado_influencia =  StringVar()
 
+        #Inicio sesion api
+        self.sesion_iniciada = False
+        self.token = ''
+
         self.cargados_estaciones = {}
+        self.cargados_estaciones['Tomar datos en tiempo real'] = [None, False]
         self.cargados_estaciones['estaciones_abril2024.json'] = [self.estaciones, True]
         self.selected_archivo_estaciones = StringVar(value='estaciones_abril2024.json')
         self.estaciones_anterior = 'estaciones_abril2024.json'
-
+        self.num_archivos_aleatorios_est = 0
 
         self.cargados_bicicletas = {}
         self.cargados_bicicletas['bicicletas_generadas_estaciones.json'] = [self.bicicletas_flotantes, True]
         self.selected_archivo_bicicletas = StringVar(value='bicicletas_generadas_estaciones.json')
         self.bicicletas_anterior = 'bicicletas_generadas_estaciones.json'
+        self.num_archivos_aleatorios_bic = 0
 
         self.cargados_patinetes = {}
         self.cargados_patinetes['patinetes_generados_estaciones.json'] = [self.patinetes, True]
         self.selected_archivo_patinetes = StringVar(value='patinetes_generados_estaciones.json')
         self.patinetes_anterior = 'patinetes_generados_estaciones.json'
+        self.num_archivos_aleatorios_pat = 0
 
         self.color_map = {
             0: '#FF0000',   # Rojo
@@ -175,107 +184,6 @@ class FormMapaDesign():
         self.crear_otras_opciones()
         self.crear_carga_datos()
         self.crear_demanda()
-
-        """
-        #Botones del menu lateral
-
-        self.labelTipoTransporte = Label(self.scrollable_frame, text="Tipo de transporte", font=fontAwesome)
-        self.labelTipoTransporte.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.labelTipoTransporte.pack(side=TOP)
-
-        style = Style()
-        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
-                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
-
-        checkbox_fijas = BooleanVar()
-        self.buttonEstacionesFijas = Checkbutton(self.scrollable_frame, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
-                                                 variable=checkbox_fijas, command= lambda : self.boton_fijas(checkbox_fijas))
-        self.buttonEstacionesFijas.pack(side=TOP, pady=5)
-
-        checkbox_flotantes = BooleanVar()
-        self.buttonBicicletasFlotantes = Checkbutton(self.scrollable_frame, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
-                                                     variable=checkbox_flotantes, command=lambda: self.boton_flotantes(checkbox_flotantes))
-        self.buttonBicicletasFlotantes.pack(side=TOP, pady=5)
-
-        checkbox_centroides = BooleanVar()
-        self.buttonCentroides = Checkbutton(self.scrollable_frame, text=" Estaciones virtuales", style="Custom.TCheckbutton",
-                                                    variable=checkbox_centroides, command=lambda: self.boton_centroides(checkbox_centroides))
-        self.buttonCentroides.pack(side=TOP, pady=5)
-
-        checkbox_patinetes = BooleanVar()
-        self.buttonPatinetes = Checkbutton(self.scrollable_frame, text=" Patinetes", style="Custom.TCheckbutton",
-                                                    variable=checkbox_patinetes, command=lambda: self.boton_patinetes(checkbox_patinetes))
-        self.buttonPatinetes.pack(side=TOP, pady=5)
-
-        self.LabelMapaCalor = Label(self.scrollable_frame, text="Mapa de Calor", font=fontAwesome)
-        self.LabelMapaCalor.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.LabelMapaCalor.pack(side=TOP)
-
-        self.checkbox_mapa_estaciones = BooleanVar()
-        self.buttonMostrarMapaEstaciones = Checkbutton(self.scrollable_frame, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
-                                                       variable=self.checkbox_mapa_estaciones, command=self.mostrar_mapa_general)
-        self.buttonMostrarMapaEstaciones.pack(side=TOP, pady=5)
-
-        self.checkbox_mapa_flotantes = BooleanVar()
-        self.buttonMostrarMapaFlotantes = Checkbutton(self.scrollable_frame, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
-                                                variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa_general)
-        self.buttonMostrarMapaFlotantes.pack(side=TOP, pady=5)
-
-        self.checkbox_mapa_patinetes = BooleanVar()
-        self.buttonMostrarMapaPatinetes = Checkbutton(self.scrollable_frame, text=" Patinetes", style="Custom.TCheckbutton",
-                                                variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa_general)
-        self.buttonMostrarMapaPatinetes.pack(side=TOP, pady=5)
-
-        self.buttonVecinos = Button(self.scrollable_frame, text=" Cambiar influencia vecinos", font=font.Font(family="FontAwesome", size=10),
-                                                anchor="w", command= self.modificar_influencia)
-        self.buttonVecinos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonVecinos.pack(side=TOP)
-        self.bindHoverEvents(self.buttonVecinos)
-
-        self.buttonPorcentajeLLenado = Button(self.scrollable_frame, text=" Mapa porcentaje llenado", font=font.Font(family="FontAwesome", size=10), 
-                                                anchor="w", command=self.mostrar_mapa_llenado)
-        self.buttonPorcentajeLLenado.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonPorcentajeLLenado.pack(side=TOP)
-        self.bindHoverEvents(self.buttonPorcentajeLLenado)
-
-        self.buttonMostrarMapaHuecos = Button(self.scrollable_frame, text=" Mostrar mapa huecos", font=font.Font(family="FontAwesome", size=10), 
-                                                anchor="w", command=self.mostrar_mapa_huecos)
-        self.buttonMostrarMapaHuecos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonMostrarMapaHuecos.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMostrarMapaHuecos)
-
-        self.buttonCambiarN = Button(self.scrollable_frame, text=" Cambiar tamaño cuadrícula", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.modificar_cuadricula)
-        self.buttonCambiarN.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        #self.buttonCambiarN.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCambiarN)
-
-        self.buttonBorrarMapa = Button(self.scrollable_frame, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.borrar_mapacalor)
-        self.buttonBorrarMapa.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        #self.buttonBorrarMapa.pack(side=TOP)
-        self.bindHoverEvents(self.buttonBorrarMapa)
-
-        self.labelCargaDatos = Label(self.scrollable_frame, text="Carga de datos", font=fontAwesome)
-        self.labelCargaDatos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.labelCargaDatos.pack(side=TOP)
-
-        self.buttonCargaDatosBicicletas = Button(self.scrollable_frame, text=" Importar datos bicicletas", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= lambda: self.cargar_archivo('bicicletas'))
-        self.buttonCargaDatosBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCargaDatosBicicletas.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCargaDatosBicicletas)
-
-        self.buttonCargaDatosPatinetes = Button(self.scrollable_frame, text=" Importar datos patinetes", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= lambda: self.cargar_archivo('patinetes'))
-        self.buttonCargaDatosPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCargaDatosPatinetes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCargaDatosPatinetes)
-
-        self.buttonDemanda = Button(self.scrollable_frame, text=" Demanda", font=fontAwesome)
-        self.buttonDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonDemanda.pack(side=TOP)
-        self.bindHoverEvents(self.buttonDemanda)"""
 
     def crear_tipo_transporte(self):
 
@@ -427,11 +335,11 @@ class FormMapaDesign():
         frame_submenu.pack(fill=X, padx=10, pady=2)
         #frame_submenu.pack_forget()
 
-        self.buttonVerDatosCargados = Button(frame_submenu, text=" Ver datos cargados", font=font.Font(family="FontAwesome", size=10), 
+        self.buttonGestorDatos = Button(frame_submenu, text=" Ver datos cargados", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= self.visualizar_datos_cargados)
-        self.buttonVerDatosCargados.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonVerDatosCargados.pack(side=TOP)
-        self.bindHoverEvents(self.buttonVerDatosCargados)
+        self.buttonGestorDatos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonGestorDatos.pack(side=TOP)
+        self.bindHoverEvents(self.buttonGestorDatos)
 
         self.buttonCargaDatosEstaciones = Button(frame_submenu, text=" Importar datos estaciones", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= lambda: self.cargar_archivo('estaciones'))
@@ -558,7 +466,7 @@ class FormMapaDesign():
         alto_pantalla = self.ventana_datos.winfo_screenheight()
 
         ancho_ventana = 900
-        alto_ventana = 600
+        alto_ventana = 400
 
         x = (ancho_pantalla // 2) - (ancho_ventana // 2)
         y = (alto_pantalla // 2) - (alto_ventana // 2)
@@ -580,11 +488,11 @@ class FormMapaDesign():
 
         Label(frame_estaciones, text='Estaciones', font=titulo_font, anchor=W,bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
 
-        texto_cargados = f'Se han cargado un total de {len(self.cargados_estaciones)}\n archivos de estaciones'
+        texto_cargados = f'Se han cargado un total de {len(self.cargados_estaciones)-1}\n archivos de estaciones'
 
-        if len(self.cargados_estaciones) != 0: texto_cargados += '\n\nLos archivos cargados son los siguientes:'
+        if len(self.cargados_estaciones) != 0: texto_cargados += '\n\nSeleccione la fuente de datos:'
 
-        Label(frame_estaciones, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
+        Label(frame_estaciones, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
 
         frame_radiobuttons_estaciones = Frame(frame_estaciones, bg=COLOR_MENU_LATERAL)
         frame_radiobuttons_estaciones.pack(fill=BOTH, expand=True, padx=5, pady=5)
@@ -599,24 +507,22 @@ class FormMapaDesign():
                     command=self.select_button).pack(anchor=W, padx=5, pady=2)
 
         frame_botones_superior = Frame(frame_estaciones, bg=COLOR_MENU_LATERAL)
-        frame_botones_superior.pack(side=TOP, fill=X, pady=10)
+        frame_botones_superior.pack(side=TOP, fill=X, pady=5)
 
         frame_botones_inferior = Frame(frame_estaciones, bg=COLOR_MENU_LATERAL)
-        frame_botones_inferior.pack(side=TOP, fill=X, pady=10)
+        frame_botones_inferior.pack(side=TOP, fill=X, pady=5)
 
-        Button(frame_botones_superior, text="Cargar Archivos", bg='#A4D4EE', fg=COLOR_MENU_LATERAL, 
+        Button(frame_botones_superior, text="Cargar Archivos", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA, 
                command=lambda: self.cargar_archivo('estaciones', visualizador=True)).pack(side=LEFT, fill=X, expand=True, padx=5)
 
-        Button(frame_botones_superior, text="Importar datos históricos", bg='#A4D4EE', fg=COLOR_MENU_LATERAL,
-            command=lambda: self.selector_fecha()
-        ).pack(side=LEFT, fill=X, expand=True, padx=5)
+        Button(frame_botones_superior, text="Importar datos históricos", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.selector_fecha()).pack(side=LEFT, fill=X, expand=True, padx=5)
 
-        Button(frame_botones_inferior, text="Aplicar Cambios", bg='#A4D4EE', fg=COLOR_MENU_LATERAL,
-            command=lambda: self.aplicar_cambios('estaciones')
-        ).pack(side=LEFT, fill=X, expand=True, padx=5)
+        Button(frame_botones_inferior, text="Aplicar Cambios", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.aplicar_cambios('estaciones')).pack(side=LEFT, fill=X, expand=True, padx=5)
 
-        Button(frame_botones_inferior, text="Generar datos aleatorios", bg='#A4D4EE', fg=COLOR_MENU_LATERAL,
-            #command=lambda: self.datos_aleatorios('estaciones')
+        Button(frame_botones_inferior, text="Generar datos aleatorios", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.ventana_datos_aleatorios('estaciones')
         ).pack(side=LEFT, fill=X, expand=True, padx=5)
 
         ######################## COLUMNA BICICLETAS ######################
@@ -628,7 +534,7 @@ class FormMapaDesign():
 
         texto_cargados = f'Se han cargado un total de {len(self.cargados_bicicletas)}\n archivos de bicicletas'
 
-        if len(self.cargados_bicicletas) != 0: texto_cargados += '\n\nLos archivos cargados son los siguientes:'
+        if len(self.cargados_bicicletas) != 0: texto_cargados += '\n\nSeleccione la fuente de datos:'
 
         Label(frame_bicicletas, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
 
@@ -643,16 +549,22 @@ class FormMapaDesign():
                     value=id, bg=COLOR_MENU_LATERAL, selectcolor=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=LEFT,
                     command=self.select_button).pack(anchor=W, padx=5, pady=2)
 
-        frame_botones_bicicletas = Frame(frame_bicicletas, bg=COLOR_MENU_LATERAL)
-        frame_botones_bicicletas.pack(side=BOTTOM, fill=X, pady=10)
+        frame_botones_superior = Frame(frame_bicicletas, bg=COLOR_MENU_LATERAL)
+        frame_botones_superior.pack(side=TOP, fill=X, pady=5)
 
-        Button(frame_botones_bicicletas, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+        frame_botones_inferior = Frame(frame_bicicletas, bg=COLOR_MENU_LATERAL)
+        frame_botones_inferior.pack(side=TOP, fill=X, pady=5)
+
+        Button(frame_botones_superior, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
             command=lambda: self.cargar_archivo('bicicletas', visualizador=True)).pack(side=LEFT, fill=X, expand=True, padx=5)
 
-        Button(frame_botones_bicicletas, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+        Button(frame_botones_superior, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
             command=lambda: self.aplicar_cambios('bicicletas')
         ).pack(side=LEFT, fill=X, expand=True, padx=5)
 
+        Button(frame_botones_inferior, text="Generar datos aleatorios", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.ventana_datos_aleatorios('bicicletas')
+        ).pack(side=LEFT, fill=X, expand=True, padx=5)
 
         ######################## COLUMNA PATINETES ######################
 
@@ -663,7 +575,7 @@ class FormMapaDesign():
 
         texto_cargados = f'Se han cargado un total de {len(self.cargados_patinetes)}\n archivos de patinetes'
 
-        if len(self.cargados_patinetes) != 0: texto_cargados += '\n\nLos archivos cargados son los siguientes:'
+        if len(self.cargados_patinetes) != 0: texto_cargados += '\n\nSeleccione la fuente de datos:'
 
         Label(frame_patinetes, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
 
@@ -678,14 +590,21 @@ class FormMapaDesign():
                     bg=COLOR_MENU_LATERAL, selectcolor=COLOR_MENU_LATERAL, fg="white", anchor=W, justify=LEFT,
                     command=self.select_button).pack(anchor=W, padx=5, pady=2)
 
-        frame_botones_patinetes = Frame(frame_patinetes, bg=COLOR_MENU_LATERAL)
-        frame_botones_patinetes.pack(side=BOTTOM, fill=X, pady=10)
+        frame_botones_superior = Frame(frame_patinetes, bg=COLOR_MENU_LATERAL)
+        frame_botones_superior.pack(side=TOP, fill=X, pady=5)
 
-        Button(frame_botones_patinetes, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+        frame_botones_inferior = Frame(frame_patinetes, bg=COLOR_MENU_LATERAL)
+        frame_botones_inferior.pack(side=TOP, fill=X, pady=5)
+
+        Button(frame_botones_superior, text="Cargar Archivos", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
             command=lambda: self.cargar_archivo('patinetes', visualizador=True)).pack(side=LEFT, fill=X, expand=True, padx=5)
 
-        Button(frame_botones_patinetes, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
+        Button(frame_botones_superior, text="Aplicar Cambios", bg=COLOR_MENU_CURSOR_ENCIMA, fg='white',
             command=lambda: self.aplicar_cambios('patinetes')
+        ).pack(side=LEFT, fill=X, expand=True, padx=5)
+
+        Button(frame_botones_inferior, text="Generar datos aleatorios", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.ventana_datos_aleatorios('patinetes')
         ).pack(side=LEFT, fill=X, expand=True, padx=5)
 
     def bindHoverEvents(self, button):
@@ -876,9 +795,12 @@ class FormMapaDesign():
         [self.buttonDemandaPatinetes.invoke() for _ in range(2)] if self.checkbox_demanda_patinetes.get() else None
 
     def select_button(self):
-        self.cargados_estaciones[self.estaciones_anterior][1] = False
-        self.cargados_estaciones[self.selected_archivo_estaciones.get()][1] = True
-        self.estaciones_anterior = self.selected_archivo_estaciones.get()
+        if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
+            self.inicio_sesion_api(self.ventana_datos)
+        else:
+            self.cargados_estaciones[self.estaciones_anterior][1] = False
+            self.cargados_estaciones[self.selected_archivo_estaciones.get()][1] = True
+            self.estaciones_anterior = self.selected_archivo_estaciones.get()
 
         self.cargados_bicicletas[self.bicicletas_anterior][1] = False
         self.cargados_bicicletas[self.selected_archivo_bicicletas.get()][1] = True
@@ -939,7 +861,7 @@ class FormMapaDesign():
                 utilInfo.show_info_upload(self, "Error al cargar el archivo")
         if visualizador:
             self.ventana_datos.destroy()
-            self.buttonVerDatosCargados.invoke()
+            self.buttonGestorDatos.invoke()
     
     def generar_datos_demanda_bicicletas(self):
         self.demanda_bicicletas = utilDatos.generar_datos_demanda(self.solicitudes_bicicletas, self.maxLon, self.minLon, self.maxLat, self.minLat)
@@ -948,13 +870,20 @@ class FormMapaDesign():
         self.demanda_patinetes = utilDatos.generar_datos_demanda(self.solicitudes_patinetes, self.maxLon, self.minLon, self.maxLat, self.minLat)
     
     def aplicar_cambios(self, cambiado):
-        if cambiado == 'estaciones':
+        if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
+            self.inicio_sesion_api(self.ventana_datos)
+        elif self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and self.sesion_iniciada:
+            self.select_button()
+            self.datos_estaciones_api()
+        elif cambiado == 'estaciones':
             self.estaciones = self.cargados_estaciones[self.selected_archivo_estaciones.get()][0]
+            self.ventana_informativa()
         elif cambiado == 'bicicletas':
             self.bicicletas_flotantes = self.cargados_bicicletas[self.selected_archivo_bicicletas.get()][0]
+            self.ventana_informativa()
         elif cambiado == 'patinetes':
             self.patinetes = self.cargados_patinetes[self.selected_archivo_patinetes.get()][0]
-        self.ventana_informativa()
+            self.ventana_informativa()
 
     def selector_fecha(self):
         self.ventana_fecha = Toplevel(self.frame_mapa)
@@ -1066,7 +995,7 @@ class FormMapaDesign():
 
         self.ventana_fecha.destroy()
         self.ventana_datos.destroy()
-        self.buttonVerDatosCargados.invoke()
+        self.buttonGestorDatos.invoke()
 
     def ventana_informativa(self):
         ventana_info = Toplevel()
@@ -1076,7 +1005,7 @@ class FormMapaDesign():
         alto_pantalla = ventana_info.winfo_screenheight()
 
         ancho_ventana = 300
-        alto_ventana = 150
+        alto_ventana = 100
 
         x = (ancho_pantalla // 2) - (ancho_ventana // 2)
         y = (alto_pantalla // 2) - (alto_ventana // 2)
@@ -1087,12 +1016,190 @@ class FormMapaDesign():
         ventana_info.protocol("WM_DELETE_WINDOW", ventana_info.destroy)
 
         mensaje = Label(ventana_info, text="Los cambios se han \n aplicado correctamente", bg=COLOR_MENU_LATERAL, fg="white", font=("Helvetica", 12))
-        mensaje.pack(pady=20)
+        mensaje.pack(pady=5)
 
         boton_cerrar = Button(ventana_info, bg= COLOR_MENU_LATERAL, fg='white', text="Cerrar", command=ventana_info.destroy)
-        boton_cerrar.pack(pady=10)
+        boton_cerrar.pack(pady=5)
 
         ventana_info.mainloop()
+
+    def ventana_datos_aleatorios(self, tipo):
+        self.ventana_aleatorios = Toplevel(self.frame_mapa)
+        self.ventana_aleatorios.title("Generación de datos aleatorios")
+
+        ancho_pantalla = self.ventana_aleatorios.winfo_screenwidth()
+        alto_pantalla = self.ventana_aleatorios.winfo_screenheight()
+
+        ancho_ventana = 400
+        alto_ventana = 150
+
+        x = (ancho_pantalla // 2) - (ancho_ventana // 2)
+        y = (alto_pantalla // 2) - (alto_ventana // 2)
+
+        self.ventana_aleatorios.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+
+        if tipo == 'estaciones':
+            seleccionado = StringVar(value='est_num_bicicletas')
+            texto1, value1 = "Generar aleatoriamente el número de bicicletas por estación", 'est_num_bicicletas'
+            texto2, value2 = "Generar la ubicación de las estaciones uniformemente", 'est_uniforme'
+            texto3, value3 = "Generar la ubicación de las estaciones centrada", 'est_centrado'
+        elif tipo == 'bicicletas':
+            seleccionado = StringVar(value='bic_estaciones')
+            texto1, value1 = "Generar las bicicletas flotantes en función de los datos de las estaciones", 'bic_estaciones'
+            texto2, value2 = "Generar la ubicación de las bicicletas uniformemente", 'bic_uniforme'
+            texto3, value3 = "Generar la ubicación de las bicicletas centrada", 'bic_centrado'
+        elif tipo == 'patinetes':
+            seleccionado = StringVar(value='pat_estaciones')
+            texto1, value1 = "Generar los patinetes en función de los datos de las estaciones", 'pat_estaciones'
+            texto2, value2 = "Generar la ubicación de los patinetes uniformemente", 'pat_uniforme'
+            texto3, value3 = "Generar la ubicación de los patinetes centrada", 'pat_centrado'
+        
+        radio1 = Radiobutton(self.ventana_aleatorios, text=texto1, variable=seleccionado, value=value1)
+        radio1.pack(anchor=W)
+
+        radio2 = Radiobutton(self.ventana_aleatorios, text=texto2, variable=seleccionado, value=value2)
+        radio2.pack(anchor=W)
+
+        radio3 = Radiobutton(self.ventana_aleatorios, text=texto3, variable=seleccionado, value=value3)
+        radio3.pack(anchor=W)
+
+        submit_button = Button(self.ventana_aleatorios, text="Generar", command=lambda: self.aceptar_aleatorios(tipo, seleccionado))
+        submit_button.pack(pady=5)
+
+        self.ventana_aleatorios.protocol("WM_DELETE_WINDOW", self.ventana_aleatorios.destroy)
+        
+    def aceptar_aleatorios(self, tipo, seleccionado):
+        if tipo == 'estaciones':
+            nombre_aleatorios = 'estaciones_aleatorios_'
+            if seleccionado.get() == 'est_num_bicicletas':
+                nombre_aleatorios+=f'num_bicicletas_{self.num_archivos_aleatorios_est}'
+                self.num_archivos_aleatorios_est+=1
+                datos = utilDatos.generar_aleatorios_estaciones_num_bicicletas(self.estaciones)
+            elif seleccionado.get() == 'est_uniforme':
+                nombre_aleatorios+=f'uniforme_{self.num_archivos_aleatorios_est}'
+                self.num_archivos_aleatorios_est+=1
+                datos = utilDatos.generar_aleatorios_estaciones_uniformes(len(self.estaciones)-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
+            elif seleccionado.get() == 'est_centrado':
+                nombre_aleatorios+=f'centrado_{self.num_archivos_aleatorios_est}'
+                self.num_archivos_aleatorios_est+=1
+                datos = utilDatos.generar_aleatorios_estaciones_centrados(len(self.estaciones)-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
+            self.cargados_estaciones[nombre_aleatorios] = [datos, False]
+        
+        elif tipo == 'bicicletas':
+            nombre_aleatorios = 'bicicletas_aleatorias_'
+            if seleccionado.get() == 'bic_estaciones':
+                nombre_aleatorios+=f'estaciones_{self.num_archivos_aleatorios_bic}'
+                self.num_archivos_aleatorios_bic+=1
+                datos = utilDatos.generar_aleatorios_flotantes_estaciones(self.estaciones)
+            elif seleccionado.get() == 'bic_uniforme':
+                nombre_aleatorios+=f'uniforme_{self.num_archivos_aleatorios_bic}'
+                self.num_archivos_aleatorios_bic+=1
+                datos = utilDatos.generar_aleatorios_flotantes_uniforme(len(self.bicicletas_flotantes['id'])-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
+            elif seleccionado.get() == 'bic_centrado':
+                nombre_aleatorios+=f'centrado_{self.num_archivos_aleatorios_bic}'
+                self.num_archivos_aleatorios_bic+=1
+                datos = utilDatos.generar_aleatorios_flotantes_centrado(len(self.bicicletas_flotantes['id'])-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
+            self.cargados_bicicletas[nombre_aleatorios] = [datos, False]
+
+        elif tipo == 'patinetes':
+            nombre_aleatorios = 'patinetes_aleatorios_'
+            if seleccionado.get() == 'pat_estaciones':
+                nombre_aleatorios+=f'estaciones_{self.num_archivos_aleatorios_pat}'
+                self.num_archivos_aleatorios_pat+=1
+                datos = utilDatos.generar_aleatorios_flotantes_estaciones(self.estaciones)
+            elif seleccionado.get() == 'pat_uniforme':
+                nombre_aleatorios+=f'uniforme_{self.num_archivos_aleatorios_pat}'
+                self.num_archivos_aleatorios_pat+=1
+                datos = utilDatos.generar_aleatorios_flotantes_uniforme(len(self.patinetes['id'])-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
+            elif seleccionado.get() == 'pat_centrado':
+                nombre_aleatorios+=f'centrado_{self.num_archivos_aleatorios_pat}'
+                self.num_archivos_aleatorios_pat+=1
+                datos = utilDatos.generar_aleatorios_flotantes_centrado(len(self.patinetes['id'])-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
+            self.cargados_patinetes[nombre_aleatorios] = [datos, False]
+
+        self.ventana_aleatorios.destroy()
+        self.ventana_datos.destroy()
+        self.buttonGestorDatos.invoke()
+
+    def verificar_credenciales(self, entry_email, entry_contrasena, ventana):
+        email = entry_email.get()
+        contrasena = entry_contrasena.get()
+
+        patron = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        correcto = re.match(patron, email) is not None
+
+        if not correcto:
+            messagebox.showerror("Error", "Introduzca un formato válido de correo electrónico")
+            ventana.destroy()
+            return
+        
+        ventana.destroy()
+
+        url_login = "https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/"
+        headers_login = {'email': email, 'password': contrasena}
+
+        response_login = requests.get(url_login, headers=headers_login)
+        datos_login = json.loads(response_login.content)
+        if datos_login['code'] == '01':
+            self.token = datos_login['data'][0]['accessToken']
+            self.sesion_iniciada = True
+        else:
+            messagebox.showinfo('Credenciales incorrectas', 'Debe crear una cuenta antes de intentar iniciar sesion')
+            return
+
+        self.datos_estaciones_api()
+
+    def inicio_sesion_api(self, ventana):
+        ventana_inicio_sesion = Toplevel(ventana)
+        ventana_inicio_sesion.title("Generación de datos aleatorios")
+
+        ancho_pantalla = ventana_inicio_sesion.winfo_screenwidth()
+        alto_pantalla = ventana_inicio_sesion.winfo_screenheight()
+
+        ancho_ventana = 400
+        alto_ventana = 150
+
+        x = (ancho_pantalla // 2) - (ancho_ventana // 2)
+        y = (alto_pantalla // 2) - (alto_ventana // 2)
+
+        ventana_inicio_sesion.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+
+        label_email = Label(ventana_inicio_sesion, text="Email:")
+        label_email.pack(pady=5)
+        entry_email = Entry(ventana_inicio_sesion)
+        entry_email.pack(pady=5)
+
+        label_contrasena = Label(ventana_inicio_sesion, text="Contraseña:")
+        label_contrasena.pack(pady=5)
+        entry_contrasena = Entry(ventana_inicio_sesion, show="*")
+        entry_contrasena.pack(pady=5)
+        
+        submit_button = Button(ventana_inicio_sesion, text="Iniciar sesión", 
+                            command=lambda: self.verificar_credenciales(entry_email, entry_contrasena, ventana_inicio_sesion))
+        submit_button.pack(pady=5)
+
+        ventana_inicio_sesion.protocol("WM_DELETE_WINDOW", ventana_inicio_sesion.destroy)
+
+    def datos_estaciones_api(self):
+
+        #Tomo información sobre las estaciones
+
+        url_stations = "http://openapi.emtmadrid.es/v1/transport/bicimad/stations/"
+        headers_stations = {'accessToken': self.token}
+
+        response_stations = requests.get(url_stations, headers=headers_stations)
+        datos_stations = json.loads(response_stations.content)
+
+        stations = {}
+        for station in datos_stations['data']:
+            if station['no_available'] == 0:
+                stations[station['id']] = {
+                    "name": station['name'],
+                    "free_bases": station['free_bases'],
+                    "bike_bases": station['dock_bikes'],
+                    "coordinates": station['geometry']['coordinates']
+                }
+        self.estaciones = stations
 
     def aplicar_gaussiana(self, cantidades, alcance, sigma=1):
         # Convertimos la lista a una matriz
@@ -1274,10 +1381,6 @@ class FormMapaDesign():
         self.pintar_mapa()
     
     def pintar_estaciones(self):
-        """
-        with open('data/estaciones_abril2024.json', 'w', encoding='utf-8') as archivo:
-            json.dump(self.estaciones, archivo, ensure_ascii=False, indent=4)
-        """
         strings = []
         for id in self.estaciones:
             strings.append(self.estaciones[id]['name'])
@@ -1307,6 +1410,7 @@ class FormMapaDesign():
         if checkbox_fijas.get() == True:
             self.pintar_estaciones()
         elif checkbox_fijas.get() == False:
+            utilInfo.close_infoest(self)
             for poligono in self.poligonos_estaciones:
                 poligono.delete()
       
@@ -1315,19 +1419,19 @@ class FormMapaDesign():
 
         for i in range(len(self.bicicletas_flotantes['id'])):
 
-            coord_estacion = self.bicicletas_flotantes['coord'][i]
+            coord_bici = self.bicicletas_flotantes['coord'][i]
             d = 0.00000001
-            #coordinates = [(coord_estacion[0], coord_estacion[1]),
-            #                (coord_estacion[0], coord_estacion[1]+ d),
-            #                (coord_estacion[0] + d, coord_estacion[1] + d),
-            #                (coord_estacion[0] + d, coord_estacion[1])]
+            coordinates = [(coord_bici[0], coord_bici[1]),
+                           (coord_bici[0], coord_bici[1]+ d),
+                           (coord_bici[0] + d, coord_bici[1] + d),
+                           (coord_bici[0] + d, coord_bici[1])]
 
-            poligono = self.labelMap.set_polygon([coord_estacion],
-                                    outline_color="red",
-                                    border_width=1,
-                                    name=self.bicicletas_flotantes['info'][i])
+            poligono = self.labelMap.set_polygon(coordinates,
+                                    outline_color="#991010",
+                                    border_width=5,
+                                    )
             self.poligonos_flotantes.append(poligono)
-
+    """
     def pintar_flotantes_clusters_dbscan(self):
 
         coordenadas = self.bicicletas_flotantes['coord']
@@ -1350,7 +1454,7 @@ class FormMapaDesign():
             self.poligonos_flotantes.append(poligono)
     
     def pintar_flotantes_clusters_kmeans(self):
-        
+
         if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
             self.coordenadas_flotantes = self.bicicletas_flotantes['coord']
             self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
@@ -1363,6 +1467,7 @@ class FormMapaDesign():
                                                 border_width=1.5,
                                                 name="Outlier")
             self.poligonos_flotantes.append(poligono)
+    """
 
     def pintar_centroides(self):
         if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
@@ -1381,21 +1486,22 @@ class FormMapaDesign():
                                                 name="Outlier")
             self.poligonos_centroides.append(poligono)
 
-    def pintar_patinetes(self):      
+    def pintar_patinetes(self):
 
         for i in range(len(self.patinetes['id'])):
 
             coord_patinete = self.patinetes['coord'][i]
             d = 0.00000001
-            #coordinates = [(coord_estacion[0], coord_estacion[1]),
-            #                (coord_estacion[0], coord_estacion[1]+ d),
-            #                (coord_estacion[0] + d, coord_estacion[1] + d),
-            #                (coord_estacion[0] + d, coord_estacion[1])]
+            coordinates = [(coord_patinete[0], coord_patinete[1]),
+                           (coord_patinete[0], coord_patinete[1]+ d),
+                           (coord_patinete[0] + d, coord_patinete[1] + d),
+                           (coord_patinete[0] + d, coord_patinete[1])]
 
-            poligono = self.labelMap.set_polygon([coord_patinete],
+            poligono = self.labelMap.set_polygon(coordinates,
                                     outline_color="orange",
-                                    border_width=1,
-                                    name=self.patinetes['info'][i])
+                                    border_width=5,
+                                    #name=self.patinetes['info'][i]
+                                    )
             self.poligonos_patinetes.append(poligono)
     
     def pintar_demanda_bicicletas(self):
@@ -1432,7 +1538,7 @@ class FormMapaDesign():
         if checkbox_flotantes.get() == True:
             labelCargando = Label(self.labelMap, text="Cargando clusters...", bg="#1F71A9", fg="white", font=("Arial", 14))
             labelCargando.place(relx=0.5, rely=0.5, anchor="center")
-            self.pintar_flotantes_clusters_kmeans()
+            self.pintar_flotantes()
             labelCargando.destroy()
         elif checkbox_flotantes.get() == False:
             for poligono in self.poligonos_flotantes:
