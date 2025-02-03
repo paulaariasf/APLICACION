@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter.ttk import Checkbutton, Style as ttkCheckbutton, Style
 from PIL import ImageTk, Image
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL, COLOR_MENU_CURSOR_ENCIMA
-import util.utilEstaciones as utilEstaciones
+import util.utilTransportes as utilTransportes
 import util.utilImagenes as utilImagenes
 import util.utilClustering as utilClustering
 import util.utilDatos as utilDatos
@@ -20,6 +20,7 @@ from tkinter.font import Font
 import random
 import re
 import requests
+import webbrowser
 
 class FormMapaDesign():
 
@@ -33,9 +34,11 @@ class FormMapaDesign():
         
         #Para poder borrar los mapas de calor
         self.poligonos_estaciones = []
-        self.poligonos_flotantes = []
-        self.poligonos_centroides = []
+        self.poligonos_estaciones_ocupacion = []
+        self.poligonos_bicicletas = []
+        self.poligonos_centroides_bicicletas = []
         self.poligonos_patinetes = []
+        self.poligonos_centroides_patinetes = []
         self.poligonos_demanda_bicicletas = []
         self.poligonos_demanda_patinetes = []
         self.poligonos_zonas = {}
@@ -46,19 +49,26 @@ class FormMapaDesign():
 
         self.botones_anadidos = []
 
-        self.estaciones = utilEstaciones.devolver_estaciones()
+        self.estaciones = utilTransportes.devolver_estaciones()
 
-        self.maxLon, self.minLon, self.maxLat, self.minLat = utilEstaciones.limites(self.estaciones)
+        self.maxLon, self.minLon, self.maxLat, self.minLat = utilTransportes.limites(self.estaciones)
 
-        self.bicicletas_flotantes = utilEstaciones.generar_flotantes_v2(self.estaciones, 0.005)
-        self.patinetes = utilEstaciones.generar_patinetes(self.estaciones, 0.005, self.maxLon, self.minLon, self.maxLat, self.minLat)
+        self.bicicletas_flotantes = utilTransportes.generar_flotantes_v2(self.estaciones, 0.005)
+        self.patinetes = utilTransportes.generar_patinetes(self.estaciones, 0.005, self.maxLon, self.minLon, self.maxLat, self.minLat)
         self.solicitudes_bicicletas = 1000
         self.demanda_bicicletas = utilDatos.generar_datos_demanda(self.solicitudes_bicicletas, self.maxLon, self.minLon, self.maxLat, self.minLat)
         self.solicitudes_patinetes = 500
         self.demanda_patinetes = utilDatos.generar_datos_demanda(self.solicitudes_patinetes, self.maxLon, self.minLon, self.maxLat, self.minLat)
 
+        #Variables radiobutton
         self.seleccionado_metros = StringVar()
         self.seleccionado_influencia =  StringVar()
+        self.tipo_mapa_anterior = 'General'
+        self.tipo_mapa = StringVar(value='General')
+
+        #Clustering
+        self.clustering_bicicletas = {}
+        self.clustering_patinetes = {}
 
         #Inicio sesion api
         self.sesion_iniciada = False
@@ -73,12 +83,14 @@ class FormMapaDesign():
 
         self.cargados_bicicletas = {}
         self.cargados_bicicletas['bicicletas_generadas_estaciones.json'] = [self.bicicletas_flotantes, True]
+        self.clustering_bicicletas['bicicletas_generadas_estaciones.json'] = {'clusters': np.array([]), 'centroides': np.array([])}
         self.selected_archivo_bicicletas = StringVar(value='bicicletas_generadas_estaciones.json')
         self.bicicletas_anterior = 'bicicletas_generadas_estaciones.json'
         self.num_archivos_aleatorios_bic = 0
 
         self.cargados_patinetes = {}
         self.cargados_patinetes['patinetes_generados_estaciones.json'] = [self.patinetes, True]
+        self.clustering_patinetes['patinetes_generados_estaciones.json'] = {'clusters': np.array([]), 'centroides': np.array([])}
         self.selected_archivo_patinetes = StringVar(value='patinetes_generados_estaciones.json')
         self.patinetes_anterior = 'patinetes_generados_estaciones.json'
         self.num_archivos_aleatorios_pat = 0
@@ -136,6 +148,10 @@ class FormMapaDesign():
             49: '#800000',  # Rojo Marrón
             -1: '#000000'   # Ruido en negro
         }
+        
+        #Ajustes por defecto mapa de calor
+        self.influencia = 'con'
+        self.clasificacion = "General"
 
         anadir_mapa(self)
 
@@ -151,13 +167,13 @@ class FormMapaDesign():
         canvas = Canvas(self.menuLateral, 
                         #yscrollcommand=scrollbar.set, 
                         yscrollcommand=None,
-                        width=200,
+                        width=225,
                         bg=COLOR_MENU_LATERAL)
         canvas.pack(side=LEFT, fill=BOTH, expand=True)
 
         #scrollbar.config(command=canvas.yview)
 
-        scrollable_frame = Frame(canvas, bg=COLOR_MENU_LATERAL, width=200)
+        scrollable_frame = Frame(canvas, bg=COLOR_MENU_LATERAL, width=225)
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
         scrollable_frame.bind("<Configure>", lambda event: self.actualizar_scrollregion(canvas))
@@ -179,11 +195,25 @@ class FormMapaDesign():
             return
         self.submenus = {}
 
+        self.crear_carga_datos()
         self.crear_tipo_transporte()
         self.crear_mapa_calor()
-        self.crear_otras_opciones()
-        self.crear_carga_datos()
+        #self.crear_otras_opciones()
         self.crear_demanda()
+
+    def crear_carga_datos(self):
+        fontAwesome=font.Font(family="FontAwesome", size=12, weight="bold")
+        style = Style()
+        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+
+        frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
+        frame_opcion.pack(fill=X, pady=4)
+
+        boton_principal = Button(frame_opcion, text='Gestor de datos', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=fontAwesome, command=lambda: self.visualizar_datos_cargados(), width=22, height=0)
+        boton_principal.pack(fill=X)
+        self.bindHoverEvents(boton_principal)
 
     def crear_tipo_transporte(self):
 
@@ -195,7 +225,7 @@ class FormMapaDesign():
         frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
         frame_opcion.pack(fill=X, pady=2)
 
-        boton_principal = Button(frame_opcion, text='Tipo de Transporte', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+        boton_principal = Button(frame_opcion, text='Visualización Transportes', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
                                 font=fontAwesome, command=lambda: self.toggle_submenu('Tipo de Transporte'), width=22, height=0)
         boton_principal.pack(fill=X, expand=True)
         self.bindHoverEvents(boton_principal)
@@ -203,26 +233,82 @@ class FormMapaDesign():
         frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
         frame_submenu.pack(fill=X, padx=10, pady=2)
         #frame_submenu.pack_forget()
+
+        frame_submenu_fijas = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_submenu_fijas.pack(fill=X, padx=10, pady=1)
+
+        frame_subopciones_fijas = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_subopciones_fijas.pack(fill=X, padx=10, pady=2)
         
         self.checkbox_fijas = BooleanVar()
-        self.buttonEstacionesFijas = Checkbutton(frame_submenu, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+        self.buttonEstacionesFijas = Checkbutton(frame_submenu_fijas, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
                                                  variable=self.checkbox_fijas, command= lambda : self.boton_fijas(self.checkbox_fijas))
-        self.buttonEstacionesFijas.pack(side=TOP, pady=5)
+        self.buttonEstacionesFijas.pack(side=LEFT, pady=5)
 
-        self.checkbox_flotantes = BooleanVar()
-        self.buttonBicicletasFlotantes = Checkbutton(frame_submenu, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
-                                                     variable=self.checkbox_flotantes, command=lambda: self.boton_flotantes(self.checkbox_flotantes))
-        self.buttonBicicletasFlotantes.pack(side=TOP, pady=5)
+        self.checkbox_ocupacion = BooleanVar()
+        self.buttonEstacionesOcupacion = Checkbutton(frame_subopciones_fijas, text="Nivel de ocupación", 
+            style="Custom.TCheckbutton", variable=self.checkbox_ocupacion, 
+            command=lambda: self.boton_fijas_ocupacion(self.checkbox_ocupacion))
+        self.buttonEstacionesOcupacion.pack(side=TOP, pady=5)
 
-        self.checkbox_centroides = BooleanVar()
-        self.buttonCentroides = Checkbutton(frame_submenu, text=" Estaciones virtuales", style="Custom.TCheckbutton",
-                                                    variable=self.checkbox_centroides, command=lambda: self.boton_centroides(self.checkbox_centroides))
-        self.buttonCentroides.pack(side=TOP, pady=5)
+        frame_submenu_bicicletas = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_submenu_bicicletas.pack(fill=X, padx=10, pady=2)
+
+        frame_subopciones_bicicletas = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_subopciones_bicicletas.pack(fill=X, padx=10, pady=2)
+
+        self.checkbox_bicicletas = BooleanVar()
+        self.buttonBicicletasFlotantes = Checkbutton(frame_submenu_bicicletas, text=" Bicicletas flotantes", 
+            style="Custom.TCheckbutton", variable=self.checkbox_bicicletas, 
+            command=lambda: self.boton_bicicletas(self.checkbox_bicicletas, clusters=False))
+        self.buttonBicicletasFlotantes.pack(side=LEFT, pady=5)
+
+        frame_agruparB = Frame(frame_subopciones_bicicletas, bg=COLOR_MENU_LATERAL)
+        frame_agruparB.pack(fill=X, side=TOP)
+
+        frame_centroidesB = Frame(frame_subopciones_bicicletas, bg=COLOR_MENU_LATERAL)
+        frame_centroidesB.pack(fill=X, side=TOP)
+
+        self.checkbox_agrupar_bicicletas = BooleanVar()
+        self.buttonAgruparBicicletas = Checkbutton(frame_agruparB, text="Agrupar en clusters",
+            style="Custom.TCheckbutton",variable=self.checkbox_agrupar_bicicletas,
+            command=lambda: self.boton_bicicletas(self.checkbox_agrupar_bicicletas, clusters=True))
+        self.buttonAgruparBicicletas.pack(side=TOP, pady=5)
+
+        self.checkbox_centroides_bicicletas = BooleanVar()
+        self.buttonCentroidesBicicletas = Checkbutton(frame_centroidesB, text="Estaciones virtuales",
+            style="Custom.TCheckbutton",variable=self.checkbox_centroides_bicicletas,
+            command=lambda: self.boton_centroides_bicicletas(self.checkbox_centroides_bicicletas))
+        self.buttonCentroidesBicicletas.pack(side=TOP, pady=5)
+
+        frame_submenu_patinetes = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_submenu_patinetes.pack(fill=X, padx=10, pady=2)
+
+        frame_subopciones_patinetes = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_subopciones_patinetes.pack(fill=X, padx=10, pady=2)
 
         self.checkbox_patinetes = BooleanVar()
-        self.buttonPatinetes = Checkbutton(frame_submenu, text=" Patinetes", style="Custom.TCheckbutton",
-                                                    variable=self.checkbox_patinetes, command=lambda: self.boton_patinetes(self.checkbox_patinetes))
-        self.buttonPatinetes.pack(side=TOP, pady=5)
+        self.buttonPatinetes = Checkbutton(frame_submenu_patinetes, text=" Patinetes", style="Custom.TCheckbutton",
+                                                    variable=self.checkbox_patinetes, command=lambda: self.boton_patinetes(self.checkbox_patinetes, clusters=False))
+        self.buttonPatinetes.pack(side=LEFT, pady=5)
+
+        frame_agruparP = Frame(frame_subopciones_patinetes, bg=COLOR_MENU_LATERAL)
+        frame_agruparP.pack(fill=X, side=TOP)
+
+        frame_centroidesP = Frame(frame_subopciones_patinetes, bg=COLOR_MENU_LATERAL)
+        frame_centroidesP.pack(fill=X, side=TOP)
+
+        self.checkbox_agrupar_patinetes = BooleanVar()
+        self.buttonAgruparPatinetes = Checkbutton(frame_agruparP, text="Agrupar en clusters",
+            style="Custom.TCheckbutton",variable=self.checkbox_agrupar_patinetes,
+            command=lambda: self.boton_patinetes(self.checkbox_agrupar_patinetes, clusters=True))
+        self.buttonAgruparPatinetes.pack(side=TOP, pady=5)
+
+        self.checkbox_centroides_patinetes = BooleanVar()
+        self.buttonCentroidesPatinetes = Checkbutton(frame_centroidesP, text="Estaciones virtuales",
+            style="Custom.TCheckbutton",variable=self.checkbox_centroides_patinetes,
+            command=lambda: self.boton_centroides_patinetes(self.checkbox_centroides_patinetes))
+        self.buttonCentroidesPatinetes.pack(side=TOP, pady=5)
 
         self.submenus['Tipo de Transporte'] = {"titulo": boton_principal, "frame_opcion": frame_opcion,
                                                "frame_submenu": frame_submenu, "visible": True}
@@ -239,31 +325,137 @@ class FormMapaDesign():
 
         boton_principal = Button(frame_opcion, text='Mapa de Calor', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
                                 font=fontAwesome, command=lambda: self.toggle_submenu('Mapa de Calor'), width=18, height=0)
-        boton_principal.pack(fill=X)
+        boton_principal.pack(fill=X, side=LEFT)
         self.bindHoverEvents(boton_principal)
 
         frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
         frame_submenu.pack(fill=X, padx=10, pady=2)
         #frame_submenu.pack_forget()
+
         
+        self.frame_mostrar_mapa_estaciones = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        self.frame_mostrar_mapa_estaciones.pack(fill=X, padx=10, pady=2, side=TOP)
         self.checkbox_mapa_estaciones = BooleanVar()
-        self.buttonMostrarMapaEstaciones = Checkbutton(frame_submenu, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
-                                                       variable=self.checkbox_mapa_estaciones, command=self.mostrar_mapa_general)
-        self.buttonMostrarMapaEstaciones.pack(side=TOP, pady=5)
+        self.buttonMostrarMapaEstaciones = Checkbutton(self.frame_mostrar_mapa_estaciones, text="\uf3c5 Estaciones fijas", style="Custom.TCheckbutton",
+                                                       variable=self.checkbox_mapa_estaciones, command=self.mostrar_mapa)
+        self.buttonMostrarMapaEstaciones.pack(side=LEFT, pady=5)
 
+        self.frame_mostrar_mapa_bicicletas = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        self.frame_mostrar_mapa_bicicletas.pack(fill=X, padx=10, pady=2, side=TOP)
         self.checkbox_mapa_flotantes = BooleanVar()
-        self.buttonMostrarMapaFlotantes = Checkbutton(frame_submenu, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
-                                                variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa_general)
-        self.buttonMostrarMapaFlotantes.pack(side=TOP, pady=5)
+        self.buttonMostrarMapaFlotantes = Checkbutton(self.frame_mostrar_mapa_bicicletas, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa)
+        self.buttonMostrarMapaFlotantes.pack(side=LEFT, pady=5)
 
+        self.frame_mostrar_mapa_patinetes = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        self.frame_mostrar_mapa_patinetes.pack(fill=X, padx=10, pady=2, side=TOP)
         self.checkbox_mapa_patinetes = BooleanVar()
-        self.buttonMostrarMapaPatinetes = Checkbutton(frame_submenu, text=" Patinetes", style="Custom.TCheckbutton",
-                                                variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa_general)
-        self.buttonMostrarMapaPatinetes.pack(side=TOP, pady=5)
+        self.buttonMostrarMapaPatinetes = Checkbutton(self.frame_mostrar_mapa_patinetes, text=" Patinetes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa)
+        self.buttonMostrarMapaPatinetes.pack(side=LEFT, pady=5)
 
         self.submenus['Mapa de Calor'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
                                           "frame_submenu": frame_submenu, "visible": True}
 
+        frame_opcion = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_opcion.pack(fill=X, pady=2)
+
+        boton_principal = Button(frame_opcion, text='Tipo de Mapa', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=font.Font(family="FontAwesome", size=11, weight='bold'), command=lambda: self.toggle_submenu('Tipo de Mapa'), width=18, height=0)
+        boton_principal.pack(fill=X)
+        self.bindHoverEvents(boton_principal)
+
+        frame_tipos = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_tipos.pack(fill=X, padx=10, pady=2)
+        #frame_tipos.pack_forget()
+
+        ################################## Mapa General ######################################
+
+        frame_general_titulo = Frame(frame_tipos, bg=COLOR_MENU_LATERAL)
+        frame_general_titulo.pack(fill=X, padx=5, pady=2)
+
+        frame_general_subopciones = Frame(frame_tipos, bg=COLOR_MENU_LATERAL)
+        frame_general_subopciones.pack(fill=X, padx=5, pady=2)
+
+        radiobutton_general = Radiobutton(frame_general_titulo, text="Mapa General", variable=self.tipo_mapa,
+            value="General", font=("FontAwesome", 10), background=COLOR_MENU_LATERAL, foreground="white",
+            selectcolor=COLOR_MENU_LATERAL, fg='white', anchor=W, justify=LEFT, command=lambda: self.cambiar_tipo())
+        radiobutton_general.pack(anchor="w", padx=5, pady=2)
+
+        frame_general_cambios = Frame(frame_general_subopciones, bg=COLOR_MENU_LATERAL)
+        frame_general_cambios.pack(fill=X, padx=5, pady=2, side=TOP)
+
+        Button(frame_general_cambios, text="Modificar influencia", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.modificar_influencia()).pack(side=RIGHT, expand=True, padx=5)
+        
+        frame_general_cambios = Frame(frame_general_subopciones, bg=COLOR_MENU_LATERAL)
+        frame_general_cambios.pack(fill=X, padx=5, pady=2, side=TOP)
+        
+        Button(frame_general_cambios, text="Modificar cuadrícula", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.modificar_cuadricula()).pack(side=RIGHT, expand=True, padx=5)
+        
+        self.submenus['Mapa General'] = {"titulo": radiobutton_general, "frame_opcion": frame_general_titulo, 
+                                          "frame_submenu": frame_general_subopciones, "visible": True}
+
+        ################################## Mapa Porcentaje Llenado ######################################
+
+        frame_llenado_titulo = Frame(frame_tipos, bg=COLOR_MENU_LATERAL)
+        frame_llenado_titulo.pack(fill=X, padx=5, pady=2)
+
+        frame_llenado_subopciones = Frame(frame_tipos, bg=COLOR_MENU_LATERAL)
+        frame_llenado_subopciones.pack(fill=X, padx=5, pady=2)
+        frame_llenado_subopciones.pack_forget()
+
+        radiobutton_llenado = Radiobutton(frame_llenado_titulo, text="Mapa Porcentaje Llenado", variable=self.tipo_mapa, 
+            value="Llenado", font=("FontAwesome", 10), background=COLOR_MENU_LATERAL, foreground="white",
+            selectcolor=COLOR_MENU_LATERAL, fg='white', anchor=W, justify=LEFT, command=lambda: self.cambiar_tipo())
+        radiobutton_llenado.pack(anchor="w", padx=5, pady=2)
+        
+        frame_llenado_cambios1 = Frame(frame_llenado_subopciones, bg=COLOR_MENU_LATERAL)
+        frame_llenado_cambios1.pack(fill=X, padx=5, pady=2, side=TOP)
+        
+        Button(frame_llenado_cambios1, text="Modificar cuadrícula", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.modificar_cuadricula()).pack(side=RIGHT, expand=True, padx=5)
+        
+        self.submenus['Mapa Llenado'] = {"titulo": radiobutton_llenado, "frame_opcion": frame_llenado_titulo, 
+                                          "frame_submenu": frame_llenado_subopciones, "visible": False}
+
+        ################################## Mapa Huecos ######################################
+
+        frame_huecos_titulo = Frame(frame_tipos, bg=COLOR_MENU_LATERAL)
+        frame_huecos_titulo.pack(fill=X, padx=5, pady=2)
+
+        frame_huecos_subopciones = Frame(frame_tipos, bg=COLOR_MENU_LATERAL)
+        frame_huecos_subopciones.pack(fill=X, padx=5, pady=2)
+        frame_huecos_subopciones.pack_forget()
+
+        radiobutton_huecos = Radiobutton(frame_huecos_titulo, text="Mapa de Huecos", variable=self.tipo_mapa, 
+            value="Huecos", font=("FontAwesome", 10), background=COLOR_MENU_LATERAL, foreground="white",
+            selectcolor=COLOR_MENU_LATERAL, fg='white', anchor=W, justify=LEFT, command=lambda: self.cambiar_tipo())
+        radiobutton_huecos.pack(anchor="w", padx=5, pady=2)
+
+        frame_huecos_cambios = Frame(frame_huecos_subopciones, bg=COLOR_MENU_LATERAL)
+        frame_huecos_cambios.pack(fill=X, padx=5, pady=2, side=TOP)
+
+        Button(frame_huecos_cambios, text="Modificar influencia", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.modificar_influencia()).pack(side=RIGHT, expand=True, padx=5)
+        
+        frame_huecos_cambios = Frame(frame_huecos_subopciones, bg=COLOR_MENU_LATERAL)
+        frame_huecos_cambios.pack(fill=X, padx=5, pady=2, side=TOP)
+        
+        Button(frame_huecos_cambios, text="Modificar cuadrícula", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA,
+            command=lambda: self.modificar_cuadricula()).pack(side=RIGHT, expand=True, padx=5)
+        
+        self.submenus['Mapa Huecos'] = {"titulo": radiobutton_huecos, "frame_opcion": frame_huecos_titulo, 
+                                          "frame_submenu": frame_huecos_subopciones, "visible": False}
+
+        self.submenus['Tipo de Mapa'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
+                                          "frame_submenu": frame_tipos, "visible": True}
+        
+        Button(frame_tipos, text="Confirmar", fg='white', bg=COLOR_MENU_CURSOR_ENCIMA, 
+               command=lambda: self.confirmar_tipo()).pack(expand=True, padx=5)
+
+    """
     def crear_otras_opciones(self):
         
         fontAwesome=font.Font(family="FontAwesome", size=12, weight='bold')
@@ -315,58 +507,12 @@ class FormMapaDesign():
 
         self.submenus['Otras opciones'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
                                           "frame_submenu": frame_submenu, "visible": True}
-    
-    def crear_carga_datos(self):
-
-        fontAwesome=font.Font(family="FontAwesome", size=12, weight="bold")
-        style = Style()
-        style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
-                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
-
-        frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
-        frame_opcion.pack(fill=X, pady=2)
-
-        boton_principal = Button(frame_opcion, text='Carga de datos', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
-                                font=fontAwesome, command=lambda: self.toggle_submenu('Carga de datos'), width=22, height=0)
-        boton_principal.pack(fill=X)
-        self.bindHoverEvents(boton_principal)
-
-        frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
-        frame_submenu.pack(fill=X, padx=10, pady=2)
-        #frame_submenu.pack_forget()
-
-        self.buttonGestorDatos = Button(frame_submenu, text=" Ver datos cargados", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= self.visualizar_datos_cargados)
-        self.buttonGestorDatos.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonGestorDatos.pack(side=TOP)
-        self.bindHoverEvents(self.buttonGestorDatos)
-
-        self.buttonCargaDatosEstaciones = Button(frame_submenu, text=" Importar datos estaciones", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= lambda: self.cargar_archivo('estaciones'))
-        self.buttonCargaDatosEstaciones.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCargaDatosEstaciones.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCargaDatosEstaciones)
-        
-        self.buttonCargaDatosBicicletas = Button(frame_submenu, text=" Importar datos bicicletas", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= lambda: self.cargar_archivo('bicicletas'))
-        self.buttonCargaDatosBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCargaDatosBicicletas.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCargaDatosBicicletas)
-
-        self.buttonCargaDatosPatinetes = Button(frame_submenu, text=" Importar datos patinetes", font=font.Font(family="FontAwesome", size=10), 
-                                                 anchor="w", command= lambda: self.cargar_archivo('patinetes'))
-        self.buttonCargaDatosPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonCargaDatosPatinetes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonCargaDatosPatinetes)
-
-        self.submenus['Carga de datos'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
-                                          "frame_submenu": frame_submenu, "visible": True}
-
+    """
     def crear_demanda(self):
         fontAwesome=font.Font(family="FontAwesome", size=12, weight="bold")
         style = Style()
         style.configure("Custom.TCheckbutton", font=("FontAwesome", 10), anchor="w", background=COLOR_MENU_LATERAL,
-                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2, indicatorcolor="green")
+                        foreground="white", bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=23, height=2, indicatorcolor="green")
 
         frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
         frame_opcion.pack(fill=X, pady=2)
@@ -380,44 +526,78 @@ class FormMapaDesign():
         frame_submenu.pack(fill=X, padx=10, pady=2)
         #frame_submenu.pack_forget()
 
+        self.submenus['Demanda'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
+                                          "frame_submenu": frame_submenu, "visible": True}
+
+        frame_solicitudes= Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_solicitudes.pack(side=TOP, fill=X, pady=2)
+
+        self.buttonSolicitudes = Button(frame_solicitudes, text="Solicitudes", font=font.Font(family="FontAwesome", size=11, weight="bold"),
+                                    command=lambda: self.toggle_submenu('Solicitudes'))
+        self.buttonSolicitudes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonSolicitudes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonSolicitudes)
+
+        frame_submenu_solicitudes = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_submenu_solicitudes.pack(fill=X, pady=2)
+
+        frame_bicicletas = Frame(frame_submenu_solicitudes, bg=COLOR_MENU_LATERAL)
+        frame_bicicletas.pack(pady=0)
+
         self.checkbox_demanda_bicicletas = BooleanVar()
-        self.buttonDemandaBicicletas = Checkbutton(frame_submenu, text=" Demanda bicicletas", style="Custom.TCheckbutton",
+        self.buttonDemandaBicicletas = Checkbutton(frame_bicicletas, text=" Solicitudes de Bicicletas", style="Custom.TCheckbutton",
                                                     variable=self.checkbox_demanda_bicicletas, 
                                                     command=lambda: self.boton_demanda_bicicletas(self.checkbox_demanda_bicicletas))
-        self.buttonDemandaBicicletas.pack(side=TOP, pady=5)
+        self.buttonDemandaBicicletas.pack(side=LEFT, padx=2, pady=0, anchor=CENTER)
+
+        self.buttonGenerarDemandaBicicletas = Button(frame_bicicletas, text="", font=font.Font(family="FontAwesome", size=10),
+                                    anchor='w', command=self.generar_datos_demanda_bicicletas)
+        self.buttonGenerarDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=2, height=2)
+        self.buttonGenerarDemandaBicicletas.pack(side=LEFT, padx=2, pady=0, anchor=CENTER)
+
+        frame_patinetes = Frame(frame_submenu_solicitudes, bg=COLOR_MENU_LATERAL)
+        frame_patinetes.pack(pady=0)
 
         self.checkbox_demanda_patinetes = BooleanVar()
-        self.buttonDemandaPatinetes = Checkbutton(frame_submenu, text=" Demanda patinetes", style="Custom.TCheckbutton",
+        self.buttonDemandaPatinetes = Checkbutton(frame_patinetes, text=" Solicitudes de Patinetes", style="Custom.TCheckbutton",
                                                     variable=self.checkbox_demanda_patinetes, 
                                                     command=lambda: self.boton_demanda_patinetes(self.checkbox_demanda_patinetes))
-        self.buttonDemandaPatinetes.pack(side=TOP, pady=5)
+        self.buttonDemandaPatinetes.pack(side=LEFT, padx=2, pady=0, anchor=CENTER)
 
-        self.buttonMapaCalorDemandaBicicletas = Button(frame_submenu, text=" Oferta-demanda bicicletas", font=font.Font(family="FontAwesome", size=10),
+        self.buttonGenerarDemandaPatinetes = Button(frame_patinetes, text="", font=font.Font(family="FontAwesome", size=10),
+                                    anchor='w', command=self.generar_datos_demanda_patinetes)
+        self.buttonGenerarDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=2, height=2)
+        self.buttonGenerarDemandaPatinetes.pack(side=LEFT, padx=2, pady=0, anchor=CENTER)
+
+        self.submenus['Solicitudes'] = {"titulo": self.buttonSolicitudes, "frame_opcion": frame_solicitudes, 
+                                          "frame_submenu": frame_submenu_solicitudes, "visible": True}
+        
+        frame_ofertademanda = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_ofertademanda.pack(side=TOP, fill=X, pady=2)
+
+        self.buttonOfertaDemanda = Button(frame_ofertademanda, text="Mapa de oferta-demanda", font=font.Font(family="FontAwesome", size=11, weight="bold"),
+                                    anchor='w', command=lambda: self.toggle_submenu('Oferta Demanda'))
+        self.buttonOfertaDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonOfertaDemanda.pack(side=TOP)
+        self.bindHoverEvents(self.buttonOfertaDemanda)
+
+        frame_opciones_ofertademanda = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_opciones_ofertademanda.pack(side=TOP, fill=X, pady=2)
+
+        self.buttonMapaCalorDemandaBicicletas = Button(frame_opciones_ofertademanda, text=" Oferta-demanda bicicletas", font=font.Font(family="FontAwesome", size=10),
                                     anchor='w', command=self.mostrar_mapa_demanda_bicicletas)
-        self.buttonMapaCalorDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMapaCalorDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
         self.buttonMapaCalorDemandaBicicletas.pack(side=TOP)
         self.bindHoverEvents(self.buttonMapaCalorDemandaBicicletas)
 
-        self.buttonMapaCalorDemandaPatinetes = Button(frame_submenu, text=" Oferta-demanda patinetes", font=font.Font(family="FontAwesome", size=10),
+        self.buttonMapaCalorDemandaPatinetes = Button(frame_opciones_ofertademanda, text=" Oferta-demanda patinetes", font=font.Font(family="FontAwesome", size=10),
                                     anchor='w', command=self.mostrar_mapa_demanda_patinetes)
-        self.buttonMapaCalorDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMapaCalorDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
         self.buttonMapaCalorDemandaPatinetes.pack(side=TOP)
         self.bindHoverEvents(self.buttonMapaCalorDemandaPatinetes)
 
-        self.buttonGenerarDemandaBicicletas = Button(frame_submenu, text=" Nuevos datos bicicletas", font=font.Font(family="FontAwesome", size=10),
-                                    anchor='w', command=self.generar_datos_demanda_bicicletas)
-        self.buttonGenerarDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonGenerarDemandaBicicletas.pack(side=TOP)
-        self.bindHoverEvents(self.buttonGenerarDemandaBicicletas)
-
-        self.buttonGenerarDemandaPatinetes = Button(frame_submenu, text=" Nuevos datos patinetes", font=font.Font(family="FontAwesome", size=10),
-                                    anchor='w', command=self.generar_datos_demanda_patinetes)
-        self.buttonGenerarDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
-        self.buttonGenerarDemandaPatinetes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonGenerarDemandaPatinetes)
-
-        self.submenus['Demanda'] = {"titulo": boton_principal, "frame_opcion": frame_opcion, 
-                                          "frame_submenu": frame_submenu, "visible": True}
+        self.submenus['Oferta Demanda'] = {"titulo": self.buttonOfertaDemanda, "frame_opcion": frame_ofertademanda, 
+                                          "frame_submenu": frame_opciones_ofertademanda, "visible": True}
 
     def toggle_submenu(self, texto_opcion):
         submenu = self.submenus[texto_opcion]
@@ -625,8 +805,9 @@ class FormMapaDesign():
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()
 
-        if self.clasificacion == 'General' and self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
-              and self.checkbox_mapa_patinetes.get()==False:
+        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
+            and self.checkbox_mapa_patinetes.get()==False \
+            and self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
             return
         
         if not hasattr(self, 'influencia'):
@@ -645,28 +826,28 @@ class FormMapaDesign():
 
 
         if self.clasificacion == "Llenado":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(
+            self.dic_mapa_calor = utilTransportes.crear_diccionario(
                 self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                 estaciones=self.estaciones, add_fijas=True)
         elif self.clasificacion == "Huecos":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(
+            self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     estaciones=self.estaciones,mostrar_huecos=True)
         elif self.clasificacion == "Demanda Bicicletas":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(
+            self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     estaciones=self.estaciones,flotantes= self.bicicletas_flotantes,
                     demanda_bicicletas=self.demanda_bicicletas, demanda_patinetes=self.demanda_patinetes,
                     mostrar_demanda_bicicletas=True, add_fijas=True, add_flotantes=True)
         elif self.clasificacion == "Demanda Patinetes":
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(
+            self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     patinetes=self.patinetes,
                     demanda_bicicletas=self.demanda_bicicletas, demanda_patinetes=self.demanda_patinetes,
                     mostrar_demanda_patinetes=True, add_patinetes=True)
         else:
             #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
-            self.dic_mapa_calor = utilEstaciones.crear_diccionario(
+            self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda,
                     estaciones=self.estaciones, flotantes=self.bicicletas_flotantes, patinetes=self.patinetes,
                     add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_flotantes.get(),
@@ -731,9 +912,9 @@ class FormMapaDesign():
                 patinetes_disponibles = self.dic_mapa_calor['cantidades'][i]
                 solicitudes =  self.dic_mapa_calor['demanda_patinetes'][i]
                 factor_llenado=100*(patinetes_disponibles-solicitudes)/(patinetes_disponibles+solicitudes+5)
-            color = utilEstaciones.get_color(factor_llenado, rangos, colores)
+            color = utilTransportes.get_color(factor_llenado, rangos, colores)
             
-            if factor_llenado != 0: #los que son 0 no pintarlos
+            if factor_llenado != 0 and (not self.clasificacion == 'Llenado' or self.checkbox_mapa_estaciones.get()): #los que son 0 no pintarlos
                 poligono = self.labelMap.set_polygon(self.dic_mapa_calor['coordenadas'][i],
                                         fill_color=color,
                                         outline_color=None,
@@ -761,7 +942,8 @@ class FormMapaDesign():
 
         if self.checkbox_mapa_estaciones.get()==False and \
         self.checkbox_mapa_flotantes.get()==False and \
-        self.checkbox_mapa_patinetes.get()==False and self.clasificacion=="General":
+        self.checkbox_mapa_patinetes.get()==False and \
+        self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
             self.frame_leyenda.destroy()
         ###############################################################################
 
@@ -788,9 +970,12 @@ class FormMapaDesign():
         ###############################################################################################
         #Reestablecer transporte por encima del mapa
         [self.buttonEstacionesFijas.invoke() for _ in range(2)] if self.checkbox_fijas.get() else None
-        [self.buttonBicicletasFlotantes.invoke() for _ in range(2)] if self.checkbox_flotantes.get() else None
-        [self.buttonCentroides.invoke() for _ in range(2)] if self.checkbox_centroides.get() else None
+        [self.buttonBicicletasFlotantes.invoke() for _ in range(2)] if self.checkbox_bicicletas.get() else None
+        [self.buttonAgruparBicicletas.invoke() for _ in range(2)] if self.checkbox_agrupar_bicicletas.get() else None
+        [self.buttonCentroidesBicicletas.invoke() for _ in range(2)] if self.checkbox_centroides_bicicletas.get() else None
         [self.buttonPatinetes.invoke() for _ in range(2)] if self.checkbox_patinetes.get() else None
+        [self.buttonAgruparPatinetes.invoke() for _ in range(2)] if self.checkbox_agrupar_patinetes.get() else None
+        [self.buttonCentroidesPatinetes.invoke() for _ in range(2)] if self.checkbox_centroides_patinetes.get() else None
         [self.buttonDemandaBicicletas.invoke() for _ in range(2)] if self.checkbox_demanda_bicicletas.get() else None
         [self.buttonDemandaPatinetes.invoke() for _ in range(2)] if self.checkbox_demanda_patinetes.get() else None
 
@@ -847,12 +1032,16 @@ class FormMapaDesign():
                     if nombre_archivo[:10] == 'bicicletas':
                         if nombre_archivo not in self.cargados_bicicletas:
                             self.cargados_bicicletas[nombre_archivo] = [data, False]
+                        if nombre_archivo not in self.clustering_bicicletas:
+                            self.clustering_bicicletas[nombre_archivo] = {'clusters': np.array([]), 'centroides': np.array([])}
                         else: utilInfo.show_info_upload(self, 'El archivo ya estaba cargado')
                     else: utilInfo.show_info_upload(self, 'Debe introducir un archivo de bicicletas')
                 elif tipo == 'patinetes':
                     if nombre_archivo[:9] == 'patinetes':
                         if nombre_archivo not in self.cargados_patinetes:
                             self.cargados_patinetes[nombre_archivo] = [data, False]
+                        if nombre_archivo not in self.clustering_patinetes:
+                            self.clustering_patinetes[nombre_archivo] = {'clusters': np.array([]), 'centroides': np.array([])}
                         else: utilInfo.show_info_upload(self, 'El archivo ya estaba cargado')
                     else: utilInfo.show_info_upload(self, 'Debe introducir un archivo de patinetes')
 
@@ -861,13 +1050,17 @@ class FormMapaDesign():
                 utilInfo.show_info_upload(self, "Error al cargar el archivo")
         if visualizador:
             self.ventana_datos.destroy()
-            self.buttonGestorDatos.invoke()
+            self.visualizar_datos_cargados()
     
     def generar_datos_demanda_bicicletas(self):
         self.demanda_bicicletas = utilDatos.generar_datos_demanda(self.solicitudes_bicicletas, self.maxLon, self.minLon, self.maxLat, self.minLat)
+        if self.checkbox_demanda_bicicletas.get():
+            self.boton_demanda_bicicletas(self.checkbox_demanda_bicicletas)
     
     def generar_datos_demanda_patinetes(self):
         self.demanda_patinetes = utilDatos.generar_datos_demanda(self.solicitudes_patinetes, self.maxLon, self.minLon, self.maxLat, self.minLat)
+        if self.checkbox_demanda_patinetes.get():
+            self.boton_demanda_patinetes(self.checkbox_demanda_patinetes)
     
     def aplicar_cambios(self, cambiado):
         if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
@@ -995,7 +1188,7 @@ class FormMapaDesign():
 
         self.ventana_fecha.destroy()
         self.ventana_datos.destroy()
-        self.buttonGestorDatos.invoke()
+        self.visualizar_datos_cargados()
 
     def ventana_informativa(self):
         ventana_info = Toplevel()
@@ -1015,7 +1208,7 @@ class FormMapaDesign():
         ventana_info.config(bg=COLOR_MENU_LATERAL)
         ventana_info.protocol("WM_DELETE_WINDOW", ventana_info.destroy)
 
-        mensaje = Label(ventana_info, text="Los cambios se han \n aplicado correctamente", bg=COLOR_MENU_LATERAL, fg="white", font=("Helvetica", 12))
+        mensaje = Label(ventana_info, text="Los cambios se han \n aplicado correctamente", bg=COLOR_MENU_LATERAL, fg="white", font=("Arial", 12))
         mensaje.pack(pady=5)
 
         boton_cerrar = Button(ventana_info, bg= COLOR_MENU_LATERAL, fg='white', text="Cerrar", command=ventana_info.destroy)
@@ -1100,6 +1293,7 @@ class FormMapaDesign():
                 self.num_archivos_aleatorios_bic+=1
                 datos = utilDatos.generar_aleatorios_flotantes_centrado(len(self.bicicletas_flotantes['id'])-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
             self.cargados_bicicletas[nombre_aleatorios] = [datos, False]
+            self.clustering_bicicletas[nombre_aleatorios] = {'clusters': np.array([]), 'centroides': np.array([])}
 
         elif tipo == 'patinetes':
             nombre_aleatorios = 'patinetes_aleatorios_'
@@ -1116,10 +1310,11 @@ class FormMapaDesign():
                 self.num_archivos_aleatorios_pat+=1
                 datos = utilDatos.generar_aleatorios_flotantes_centrado(len(self.patinetes['id'])-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
             self.cargados_patinetes[nombre_aleatorios] = [datos, False]
+            self.clustering_patinetes[nombre_aleatorios] = {'clusters': np.array([]), 'centroides': np.array([])}
 
         self.ventana_aleatorios.destroy()
         self.ventana_datos.destroy()
-        self.buttonGestorDatos.invoke()
+        self.visualizar_datos_cargados()
 
     def verificar_credenciales(self, entry_email, entry_contrasena, ventana):
         email = entry_email.get()
@@ -1149,36 +1344,53 @@ class FormMapaDesign():
 
         self.datos_estaciones_api()
 
-    def inicio_sesion_api(self, ventana):
-        ventana_inicio_sesion = Toplevel(ventana)
-        ventana_inicio_sesion.title("Generación de datos aleatorios")
-
-        ancho_pantalla = ventana_inicio_sesion.winfo_screenwidth()
-        alto_pantalla = ventana_inicio_sesion.winfo_screenheight()
-
-        ancho_ventana = 400
-        alto_ventana = 150
-
-        x = (ancho_pantalla // 2) - (ancho_ventana // 2)
-        y = (alto_pantalla // 2) - (alto_ventana // 2)
-
-        ventana_inicio_sesion.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
-
-        label_email = Label(ventana_inicio_sesion, text="Email:")
-        label_email.pack(pady=5)
-        entry_email = Entry(ventana_inicio_sesion)
-        entry_email.pack(pady=5)
-
-        label_contrasena = Label(ventana_inicio_sesion, text="Contraseña:")
-        label_contrasena.pack(pady=5)
-        entry_contrasena = Entry(ventana_inicio_sesion, show="*")
-        entry_contrasena.pack(pady=5)
+    def inicio_sesion_api(self, ventana):        
+        ventana_login = Toplevel(ventana)
+        ventana_login.title("Inicio de Sesión")
         
-        submit_button = Button(ventana_inicio_sesion, text="Iniciar sesión", 
-                            command=lambda: self.verificar_credenciales(entry_email, entry_contrasena, ventana_inicio_sesion))
+        ancho_ventana, alto_ventana = 400, 250
+        x = (ventana_login.winfo_screenwidth() // 2) - (ancho_ventana // 2)
+        y = (ventana_login.winfo_screenheight() // 2) - (alto_ventana // 2)
+        ventana_login.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+        
+        # Colores
+        color_entrada = "#EAF2F8"
+        
+        ventana_login.configure(bg=COLOR_MENU_LATERAL)
+        
+        # Marco para centrar elementos
+        frame = Frame(ventana_login, bg=COLOR_MENU_LATERAL)
+        frame.pack(expand=True)
+        
+        # Email
+        label_email = Label(frame, text="Email:", bg=COLOR_MENU_LATERAL, fg="white", font=("Arial", 12, "bold"))
+        label_email.pack(pady=5)
+        entry_email = Entry(frame, width=25, bg=color_entrada, fg=COLOR_MENU_LATERAL, font=("Arial", 11))
+        entry_email.pack(pady=5, ipady=3)
+
+        # Contraseña
+        label_contrasena = Label(frame, text="Contraseña:", bg=COLOR_MENU_LATERAL, fg="white", font=("Arial", 12, "bold"))
+        label_contrasena.pack(pady=5)
+        entry_contrasena = Entry(frame, show="*", width=25, bg=color_entrada, fg=COLOR_MENU_LATERAL, font=("Arial", 11))
+        entry_contrasena.pack(pady=5, ipady=3)
+
+        # Botón de Iniciar Sesión
+        submit_button = Button(frame, text="Iniciar Sesión", bg=COLOR_MENU_LATERAL, fg="white", font=("Arial", 9, "bold"), 
+                                width=12, height=1, command=lambda: self.verificar_credenciales(entry_email, entry_contrasena, ventana_login))
         submit_button.pack(pady=5)
 
-        ventana_inicio_sesion.protocol("WM_DELETE_WINDOW", ventana_inicio_sesion.destroy)
+        # Botón de Registro
+        register_button = Button(frame, text="Registrarse", bg=COLOR_MENU_LATERAL, fg="white", font=("Arial", 9, "bold"), 
+                                    width=12, height=1, command=lambda: self.registrarse())
+        register_button.pack(pady=5)
+        
+        # Manejo de cierre de ventana
+        ventana_login.protocol("WM_DELETE_WINDOW", ventana_login.destroy)
+        
+        ventana_login.mainloop()
+    
+    def registrarse(self):
+        webbrowser.open("https://mobilitylabs.emtmadrid.es/sip/es/oauth/register?client_id=f2f08cad-4c18-4538-ae18-11da67819299&redirect_uri=https://mobilitylabs.emtmadrid.es/desa/es/login/registerOk")
 
     def datos_estaciones_api(self):
 
@@ -1245,12 +1457,10 @@ class FormMapaDesign():
 
         return matriz_suavizada_normalizada.flatten().tolist()
 
-    def mostrar_mapa_general(self):
+    def mostrar_mapa(self):
         self.borrar_mapacalor()
-        self.clasificacion = "General"
-        #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
         self.pintar_mapa()
-    
+    """
     def mostrar_mapa_huecos(self):
         self.borrar_mapacalor()
         self.clasificacion = "Huecos"
@@ -1259,7 +1469,25 @@ class FormMapaDesign():
     def mostrar_mapa_llenado(self):
         self.borrar_mapacalor()
         self.clasificacion = "Llenado"
+        self.pintar_mapa()"""
+
+    def confirmar_tipo(self):        
+        self.borrar_mapacalor()
+        self.clasificacion = self.tipo_mapa.get()
+        if self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
+            self.frame_mostrar_mapa_bicicletas.pack_forget()
+            self.frame_mostrar_mapa_patinetes.pack_forget()
+        if self.clasificacion == 'General':
+            self.frame_mostrar_mapa_bicicletas.pack(after=self.frame_mostrar_mapa_estaciones, fill=X, padx=10, pady=2, side=TOP)
+            self.frame_mostrar_mapa_patinetes.pack(after=self.frame_mostrar_mapa_bicicletas, fill=X, padx=10, pady=2, side=TOP)
         self.pintar_mapa()
+        utilInfo.show_info_cambio_tipo(self)
+        self.tipo_mapa_anterior == self.tipo_mapa.get()
+
+    def cambiar_tipo(self):
+        self.toggle_submenu(f'Mapa {self.tipo_mapa_anterior}')
+        self.toggle_submenu(f'Mapa {self.tipo_mapa.get()}')
+        self.tipo_mapa_anterior = self.tipo_mapa.get()
 
     def mostrar_mapa_demanda_bicicletas(self):
         self.borrar_mapacalor()
@@ -1280,10 +1508,10 @@ class FormMapaDesign():
             self.frame_leyenda.destroy()
     
     def modificar_cuadricula(self):
-        if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
+        """if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
         self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()):
             messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
-            return
+            return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Entrada de Mapa de Calor")
 
@@ -1322,10 +1550,10 @@ class FormMapaDesign():
         self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
 
     def modificar_influencia(self):
-        if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
+        """if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
         self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()==False):
             messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
-            return
+            return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Modificación de la Influencia de Zonas Vecinas")
 
@@ -1380,9 +1608,19 @@ class FormMapaDesign():
         self.influencia = self.seleccionado_influencia.get()
         self.pintar_mapa()
     
-    def pintar_estaciones(self):
+    def pintar_estaciones(self, ocupacion=False):
+        if ocupacion and self.checkbox_fijas.get():
+            self.buttonEstacionesFijas.invoke()
+        if not ocupacion and self.checkbox_ocupacion.get():
+            self.buttonEstacionesOcupacion.invoke()
         strings = []
         for id in self.estaciones:
+            if ocupacion:
+                if self.estaciones[id]['light'] == 0: color = "red"
+                elif self.estaciones[id]['light'] == 1: color = "#68ca3d"
+                elif self.estaciones[id]['light'] == 2: color = "orange"
+                elif self.estaciones[id]['light'] == 3: color = "black"
+            else: color = "blue"
             strings.append(self.estaciones[id]['name'])
             coord_estacion = tuple(self.estaciones[id]['coordinates'][::-1])
             d = 0.00000001
@@ -1397,11 +1635,12 @@ class FormMapaDesign():
                                     command=self.show_info_estacion,
                                     )"""
             poligono = self.labelMap.set_polygon(coordinates,
-                                    outline_color="blue",
+                                    outline_color=color,
                                     border_width=5,
                                     name=(id, coord_estacion),
                                     command=lambda event: utilInfo.show_info_estacion(self, event))
-            self.poligonos_estaciones.append(poligono)
+            if ocupacion: self.poligonos_estaciones_ocupacion.append(poligono)
+            else: self.poligonos_estaciones.append(poligono)
         longest_string = max(strings, key=len)
         max_len = len(longest_string)
         #print(f'número de estaciones fijas: {len(self.estaciones)}')
@@ -1415,8 +1654,6 @@ class FormMapaDesign():
                 poligono.delete()
       
     def pintar_flotantes(self):
-        #cambiar generar_flotantes para usar esto       
-
         for i in range(len(self.bicicletas_flotantes['id'])):
 
             coord_bici = self.bicicletas_flotantes['coord'][i]
@@ -1430,7 +1667,7 @@ class FormMapaDesign():
                                     outline_color="#991010",
                                     border_width=5,
                                     )
-            self.poligonos_flotantes.append(poligono)
+            self.poligonos_bicicletas.append(poligono)
     """
     def pintar_flotantes_clusters_dbscan(self):
 
@@ -1451,30 +1688,31 @@ class FormMapaDesign():
                                             outline_color=color,
                                             border_width=1,
                                             name="Outlier")
-            self.poligonos_flotantes.append(poligono)
-    
-    def pintar_flotantes_clusters_kmeans(self):
+            self.poligonos_bicicletas.append(poligono)
+    """
+    def pintar_bicicletas_clusters_kmeans(self):
 
-        if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
-            self.coordenadas_flotantes = self.bicicletas_flotantes['coord']
-            self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
+        if self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['clusters'].size == 0 and \
+            self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['centroides'].size == 0:
 
-        for i, coord in enumerate(self.coordenadas_flotantes):
-            cluster_id = self.clusters[i]
+            self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['clusters'], self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['centroides'] = utilClustering.clusters_kmeans(self.bicicletas_flotantes['coord'])
+
+        for i, coord in enumerate(self.bicicletas_flotantes['coord']):
+            cluster_id = self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['clusters'][i]
             color = self.color_map.get(cluster_id%50, 'black')
             poligono = self.labelMap.set_polygon([coord],
                                                 outline_color=color,
                                                 border_width=1.5,
                                                 name="Outlier")
-            self.poligonos_flotantes.append(poligono)
-    """
+            self.poligonos_bicicletas.append(poligono)
+    
+    def pintar_centroides_bicicletas(self):
+        if self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['clusters'].size == 0 and \
+            self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['centroides'].size == 0:
+            
+            self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['clusters'], self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['centroides'] = utilClustering.clusters_kmeans(self.bicicletas_flotantes['coord'])
 
-    def pintar_centroides(self):
-        if not hasattr(self, 'clusters') and not hasattr(self, 'centroides'):
-            self.coordenadas_flotantes = self.bicicletas_flotantes['coord']
-            self.clusters, self.centroides = utilClustering.clusters_kmeans(self.coordenadas_flotantes)
-
-        for i, centroide in enumerate(self.centroides):
+        for i, centroide in enumerate(self.clustering_bicicletas[self.selected_archivo_bicicletas.get()]['centroides']):
             d = 0.00000001
             coordinates = [(centroide[0], centroide[1]),
                            (centroide[0], centroide[1]+ d),
@@ -1484,7 +1722,40 @@ class FormMapaDesign():
                                                 outline_color="#ff005d",
                                                 border_width=5,
                                                 name="Outlier")
-            self.poligonos_centroides.append(poligono)
+            self.poligonos_centroides_bicicletas.append(poligono)
+
+    def pintar_patinetes_clusters_kmeans(self):
+        if self.clustering_patinetes[self.selected_archivo_patinetes.get()]['clusters'].size == 0 and \
+            self.clustering_patinetes[self.selected_archivo_patinetes.get()]['centroides'].size == 0:
+
+            self.clustering_patinetes[self.selected_archivo_patinetes.get()]['clusters'], self.clustering_patinetes[self.selected_archivo_patinetes.get()]['centroides'] = utilClustering.clusters_kmeans(self.patinetes['coord'])
+        
+        for i, coord in enumerate(self.patinetes['coord']):
+            cluster_id = self.clustering_patinetes[self.selected_archivo_patinetes.get()]['clusters'][i]
+            color = self.color_map.get(cluster_id%50, 'black')
+            poligono = self.labelMap.set_polygon([coord],
+                                                outline_color=color,
+                                                border_width=1.5,
+                                                name="Outlier")
+            self.poligonos_patinetes.append(poligono)
+    
+    def pintar_centroides_patinetes(self):
+        if self.clustering_patinetes[self.selected_archivo_patinetes.get()]['clusters'].size == 0 and \
+            self.clustering_patinetes[self.selected_archivo_patinetes.get()]['centroides'].size == 0:
+            
+            self.clustering_patinetes[self.selected_archivo_patinetes.get()]['clusters'], self.clustering_patinetes[self.selected_archivo_patinetes.get()]['centroides'] = utilClustering.clusters_kmeans(self.patinetes_flotantes['coord'])
+
+        for i, centroide in enumerate(self.clustering_patinetes[self.selected_archivo_patinetes.get()]['centroides']):
+            d = 0.00000001
+            coordinates = [(centroide[0], centroide[1]),
+                           (centroide[0], centroide[1]+ d),
+                           (centroide[0] + d, centroide[1] + d),
+                           (centroide[0] + d, centroide[1])]
+            poligono = self.labelMap.set_polygon(coordinates,
+                                                outline_color="#ff005d",
+                                                border_width=5,
+                                                name="Outlier")
+            self.poligonos_centroides_patinetes.append(poligono)
 
     def pintar_patinetes(self):
 
@@ -1505,6 +1776,7 @@ class FormMapaDesign():
             self.poligonos_patinetes.append(poligono)
     
     def pintar_demanda_bicicletas(self):
+        self.borrar_demanda_bicicletas()
         """
         current_path = os.path.join(os.path.dirname(os.path.abspath(__file__)))
         bycicle_img = ImageTk.PhotoImage(Image.open("bycicle.png").resize((15, 15)))
@@ -1521,8 +1793,14 @@ class FormMapaDesign():
                                                 outline_color="#27ae60",
                                                 border_width=5)
             self.poligonos_demanda_bicicletas.append(poligono)
+    
+    def borrar_demanda_bicicletas(self):
+        if self.poligonos_demanda_bicicletas != []:
+            for poligono in self.poligonos_demanda_bicicletas:
+                poligono.delete()
 
     def pintar_demanda_patinetes(self):
+        self.borrar_demanda_patinetes()
         for punto in self.demanda_patinetes['coordenadas']:
             d = 0.00000001
             coordinates = [(punto[0], punto[1]),
@@ -1534,44 +1812,62 @@ class FormMapaDesign():
                                                 border_width=5)
             self.poligonos_demanda_patinetes.append(poligono)
 
-    def boton_flotantes(self, checkbox_flotantes):
-        if checkbox_flotantes.get() == True:
-            labelCargando = Label(self.labelMap, text="Cargando clusters...", bg="#1F71A9", fg="white", font=("Arial", 14))
-            labelCargando.place(relx=0.5, rely=0.5, anchor="center")
+    def borrar_demanda_patinetes(self):
+        if self.poligonos_demanda_patinetes != []:
+            for poligono in self.poligonos_demanda_patinetes:
+                poligono.delete()
+
+    def boton_bicicletas(self, checkbox_bicicletas, clusters=False):
+        if checkbox_bicicletas.get() and not clusters:
             self.pintar_flotantes()
-            labelCargando.destroy()
-        elif checkbox_flotantes.get() == False:
-            for poligono in self.poligonos_flotantes:
+        elif checkbox_bicicletas.get() and clusters:
+            self.pintar_bicicletas_clusters_kmeans()
+        elif not checkbox_bicicletas.get():
+            for poligono in self.poligonos_bicicletas:
                 poligono.delete()
-
-    def boton_centroides(self, checkbox_centroides):
+    
+    def boton_fijas_ocupacion(self, checkbox_ocupacion):
+        if checkbox_ocupacion.get() == True:
+            self.pintar_estaciones(ocupacion=True)
+        elif checkbox_ocupacion.get() == False:
+            utilInfo.close_infoest(self)
+            for poligono in self.poligonos_estaciones_ocupacion:
+                poligono.delete()
+    
+    def boton_centroides_bicicletas(self, checkbox_centroides):
         if checkbox_centroides.get() == True:
-            self.pintar_centroides()
+            self.pintar_centroides_bicicletas()
         elif checkbox_centroides.get() == False:
-            for poligono in self.poligonos_centroides:
+            for poligono in self.poligonos_centroides_bicicletas:
                 poligono.delete()
 
-    def boton_patinetes(self, checkbox_patinetes):
-        if checkbox_patinetes.get() == True:
+    def boton_patinetes(self, checkbox_patinetes, clusters=False):
+        if checkbox_patinetes.get() and not clusters:
             self.pintar_patinetes()
-        elif checkbox_patinetes.get() == False:
+        elif checkbox_patinetes.get() and clusters:
+            self.pintar_patinetes_clusters_kmeans()
+        elif not checkbox_patinetes.get():
             for poligono in self.poligonos_patinetes:
+                poligono.delete()
+
+    def boton_centroides_patinetes(self, checkbox_centroides):
+        if checkbox_centroides.get() == True:
+            self.pintar_centroides_patinetes()
+        elif checkbox_centroides.get() == False:
+            for poligono in self.poligonos_centroides_patinetes:
                 poligono.delete()
 
     def boton_demanda_bicicletas(self, checkbox_demanda_bicicletas):
         if checkbox_demanda_bicicletas.get() == True:
             self.pintar_demanda_bicicletas()
         elif checkbox_demanda_bicicletas.get() == False:
-            for poligono in self.poligonos_demanda_bicicletas:
-                poligono.delete()
+            self.borrar_demanda_bicicletas()
     
     def boton_demanda_patinetes(self, checkbox_demanda_patinetes):
         if checkbox_demanda_patinetes.get() == True:
             self.pintar_demanda_patinetes()
         elif checkbox_demanda_patinetes.get() == False:
-            for poligono in self.poligonos_demanda_patinetes:
-                poligono.delete()
-
+            self.borrar_demanda_patinetes()
 def anadir_mapa(self):
     self.labelMap=tkintermapview.TkinterMapView(self.frame_mapa, width=900, height=700, corner_radius=0)
     self.labelMap.pack(fill="both")

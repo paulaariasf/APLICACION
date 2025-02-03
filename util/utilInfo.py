@@ -1,5 +1,5 @@
 
-import util.utilEstaciones as utilEstaciones 
+import util.utilTransportes as utilTransportes 
 from tkinter import *
 import numpy as np
 
@@ -15,7 +15,7 @@ def show_info_zona(form_mapa, coords):
     form_mapa.infozona_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
     form_mapa.infozona_frame.place(x=825, y=475)
     
-    zona = utilEstaciones.clasificar_punto(form_mapa.n, (coords[0], coords[1]), form_mapa.lon_celda, form_mapa.lat_celda, form_mapa.minLon, form_mapa.maxLat)
+    zona = utilTransportes.clasificar_punto(form_mapa.n, (coords[0], coords[1]), form_mapa.lon_celda, form_mapa.lat_celda, form_mapa.minLon, form_mapa.maxLat)
 
     if form_mapa.clasificacion == "General" and form_mapa.influencia =='con':
         texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
@@ -144,5 +144,23 @@ def show_info_upload(form_mapa, ruta):
     close_button.pack(side="right", padx=5, pady=5)
 
     form_mapa.infoupload_frame.after(5000, form_mapa.infoupload_frame.destroy)
+
+def close_info_tipo(form_mapa):
+    if hasattr(form_mapa, 'infotipo_frame'):
+        form_mapa.infotipo_frame.destroy()
+
+def show_info_cambio_tipo(form_mapa):
+    close_info_tipo(form_mapa)
+
+    form_mapa.infotipo_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
+    form_mapa.infotipo_frame.place(x=850, y=25)
+
+    info_label = Label(form_mapa.infotipo_frame, text=f"Se ha cambiado con éxito \nel tipo de mapa a {form_mapa.clasificacion}", bg="white")
+    info_label.pack(side="left", padx=5, pady=5)
+
+    close_button = Button(form_mapa.infotipo_frame, text="x", command=lambda: close_info_upload(form_mapa), bg="white", fg="red", borderwidth=0)
+    close_button.pack(side="right", padx=5, pady=5)
+
+    form_mapa.infotipo_frame.after(5000, form_mapa.infotipo_frame.destroy)
 
 

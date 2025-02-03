@@ -1,6 +1,6 @@
 from tkinter import *
 from config import COLOR_CUERPO_PRINCIPAL, COLOR_BARRA_SUPERIOR
-import util.utilEstaciones as utilEstaciones
+import util.utilTransportes as utilTransportes
 import tkintermapview
 import tkinter as tk
 
@@ -30,9 +30,9 @@ class FormBicicletasFlotantesDesign():
 
         self.labelMap.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)  # google normal
 
-        estaciones = utilEstaciones.devolver_estaciones()
+        estaciones = utilTransportes.devolver_estaciones()
         radio = 0.005 #es un valor definido, posteriormente se parametrizará
-        df_flotantes = utilEstaciones.generar_flotantes_v2(estaciones, radio)
+        df_flotantes = utilTransportes.generar_flotantes_v2(estaciones, radio)
 
 
         for i in range(len(df_flotantes['id'])):
