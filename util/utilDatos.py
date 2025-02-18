@@ -5,7 +5,7 @@ import json
 import numpy as np
 import requests
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 
 def generar_datos_demanda(num_points, max_lon, min_lon, max_lat, min_lat):
     diccionario = {'coordenadas': [], 'zona' : [0] * num_points}
@@ -38,7 +38,7 @@ def cargar_datos(ano, mes, dia, hora):
             estaciones = data[key]
             break
 
-    nombre = f'estaciones_{str(dia).zfill(2)}-{str(mes).zfill(2)}-{ano}_{str(hora).zfill(2)}:00'
+    nombre = f'estaciones_{str(dia).zfill(2)}-{str(mes).zfill(2)}-{ano}_{str(hora).zfill(2)}h'
     return nombre, estaciones
 
 def generar_aleatorios_estaciones_num_bicicletas(estaciones):
@@ -107,6 +107,7 @@ def generar_aleatorios_flotantes_estaciones(estaciones, radio=0.005):
             data['coord'].append(p)
             data['info'].append('Flotante nº '+ str(id_flot))
             id_flot+=1
+    print(id_flot)
     return data
 
 def generar_puntos(centro, radio, nPuntos):
@@ -124,7 +125,7 @@ def generar_puntos(centro, radio, nPuntos):
 
 def generar_aleatorios_flotantes_uniforme(n, max_lon, min_lon, max_lat, min_lat):
     data = {'id': [], 'coord': [], 'info':[], 'zona': []}
-    for i in range(n):
+    for i in range(n.get()):
         data['id'].append(i+1)
         data['coord'].append([random.uniform(min_lat, max_lat),
                               random.uniform(min_lon, max_lon)])
@@ -141,7 +142,7 @@ def generar_aleatorios_flotantes_centrado(n, max_lon, min_lon, max_lat, min_lat)
     data = {'id': [], 'coord': [], 'info':[], 'zona': []}
     id = 1
     
-    for _ in range(n):
+    for _ in range(n.get()):
         while True:
             lon = random.gauss(center_lon, std_dev_lon)
             lat = random.gauss(center_lat, std_dev_lat)
@@ -151,3 +152,19 @@ def generar_aleatorios_flotantes_centrado(n, max_lon, min_lon, max_lat, min_lat)
                 data['coord'].append([lat, lon])
                 break
     return data
+
+def guardar_json(nombre, data):
+    ruta_archivo = filedialog.asksaveasfilename(
+        defaultextension=".json",
+        filetypes=[("Archivos JSON", "*.json")],
+        title="Guardar archivo JSON",
+        initialfile=f"{nombre}"
+    )
+
+    if ruta_archivo:
+        try:
+            with open(ruta_archivo, "w", encoding="utf-8") as archivo:
+                json.dump(data, archivo, indent=4, ensure_ascii=False)
+            messagebox.showinfo("Éxito", f"Archivo guardado correctamente:\n{ruta_archivo}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo guardar el archivo: {e}")
