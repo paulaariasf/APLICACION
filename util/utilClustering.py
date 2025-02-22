@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tkinter import *
 from tkinter import ttk
+from collections import Counter
 
 def clusters_dbscan(eps, coordenadas):
     # Aplicar el algoritmo de clustering DBSCAN
@@ -19,7 +20,7 @@ def clusters_kmeans(coordenadas):
     centroides = kmeans.cluster_centers_
     sil_score = silhouette_score(coordenadas, clusters)
     cal_score = calinski_harabasz_score(coordenadas, clusters)
-    print(f'Nº de clusters: 670\nSilhouette score: {sil_score}\nCalinski Score: {cal_score}')
+    #print(f'Nº de clusters: 670\nSilhouette score: {sil_score}\nCalinski Score: {cal_score}')
     if sil_score < 0 or cal_score < 5000:
         optimal_k = indices_combinados(coordenadas)
         kmeans = KMeans(n_clusters=optimal_k, init='k-means++',random_state=42)

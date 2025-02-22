@@ -2,6 +2,7 @@
 import util.utilTransportes as utilTransportes 
 from tkinter import *
 import numpy as np
+from collections import Counter
 
 def close_infozona(form_mapa):
     if form_mapa.pol_seleccion is not None:
@@ -79,7 +80,6 @@ def show_info_zona(form_mapa, coords):
     close_button = Button(form_mapa.infozona_frame, text="x", command=lambda: close_infozona(form_mapa), bg="white", fg="red", borderwidth=0)
     close_button.pack(side="right", padx=5, pady=5)
 
-
 def close_infoest(form_mapa):
     if form_mapa.est_seleccion is not None:
         form_mapa.est_seleccion.delete()
@@ -127,6 +127,28 @@ def show_info_estacion(form_mapa, polygon):
     close_button = Button(form_mapa.infoest_frame, text="x", command=lambda: close_infoest(form_mapa), bg="white", fg="red", borderwidth=0)
     close_button.pack(side="right", padx=5, pady=5)
 
+def close_infocentroide(form_mapa):
+    if form_mapa.centroide_seleccion is not None:
+        form_mapa.centroide_seleccion.delete()
+    if hasattr(form_mapa, 'infocentroide_frame'):
+        form_mapa.infocentroide_frame.destroy()
+
+def show_info_centroide(form_mapa, id, centroide):
+    cluster_counts = dict(Counter(form_mapa.clustering_bicicletas[form_mapa.selected_archivo_bicicletas.get()]['clusters']))
+
+    close_infocentroide(form_mapa)
+
+    form_mapa.infocentroide_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
+    form_mapa.infocentroide_frame.place(x=800, y=550)
+    
+    info_label = Label(form_mapa.infocentroide_frame, text=f"Cantidad de bicicletas en el cluster: {cluster_counts[id]}", bg="white")
+    info_label.pack(side="left", padx=5, pady=5)
+
+    #Añadir marcador en el clúster seleccionado
+    form_mapa.centroide_seleccion = form_mapa.labelMap.set_marker(centroide[0], centroide[1])
+    close_button = Button(form_mapa.infocentroide_frame, text="x", command=lambda: close_infocentroide(form_mapa), bg="white", fg="red", borderwidth=0)
+    close_button.pack(side="right", padx=5, pady=5)
+
 def close_info_upload(form_mapa):
     if hasattr(form_mapa, 'infoupload_frame'):
         form_mapa.infoupload_frame.destroy()
@@ -163,4 +185,19 @@ def show_info_cambio_tipo(form_mapa):
 
     form_mapa.infotipo_frame.after(5000, form_mapa.infotipo_frame.destroy)
 
+def show_leyenda(frame_leyenda, texts, colors):
+    for i in range(len(texts)):
+        row_frame = Frame(frame_leyenda, bg='white')
+        row_frame.pack(anchor="w", pady=0)
 
+        symbol_label = Label(row_frame, text="•", font=("", 16, 'bold'), bg="white", fg=colors[i])
+        symbol_label.pack(side="left", padx=5)
+
+        text_label = Label(row_frame, text=texts[i], font=("", 10, 'bold'), bg="white", fg="black")
+        text_label.pack(side="left")
+
+"""form_mapa.frame_leyenda_colores = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
+    form_mapa.frame_leyenda_colores.place(x=30, y=430)
+
+    texts = ['Estaciones fijas', 'Bicicletas', 'Estaciones virtuales bicicletas', 'Patinetes', 'Estaciones virtuales patinetes']
+    colors = ['blue', '#fe1a1a', '#991010', 'orange', '#d87900']"""

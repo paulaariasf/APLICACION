@@ -17,9 +17,9 @@ class FormularioGeneral(Tk):
         #self.logo=utilImagenes.leer_imagen("C:/Users/paula/OneDrive/Escritorio/5CARRERA/TFG/INFORMATICA/APLICACION/imagenes/logo_bicimad.png", (560, 136))
         self.logoURJC = utilImagenes.leer_imagen("./imagenes/URJC_logo.png", (80, 40))
         self.imagenPortada = utilImagenes.leer_imagen("./imagenes/fotoPortada.png", (260, 260))
-        self.imagenConstruccion = utilImagenes.leer_imagen("./imagenes/construccion.png", (270, 270))
-        self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/estacion.png", (500, 250))
-        self.imagenBicicletaFlotante = utilImagenes.leer_imagen("./imagenes/bicicletaFlotante.png", (500, 300))
+        #self.imagenConstruccion = utilImagenes.leer_imagen("./imagenes/construccion.png", (270, 270))
+        #self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/estacion.png", (500, 250))
+        #self.imagenBicicletaFlotante = utilImagenes.leer_imagen("./imagenes/bicicletaFlotante.png", (500, 300))
         self.config_window()
         self.paneles()
         self.mapa = None
@@ -56,15 +56,15 @@ class FormularioGeneral(Tk):
         self.buttonMenuLateral.pack(side=LEFT)
 
         #Boton inicio
-        self.buttonTitulo = Button(self.barraSuperior, text="Aplicación de Transporte", command=self.abrir_panel_inicio)
-        self.buttonTitulo.config(fg = "#fff", font=("Roboto", 15), bg=COLOR_BARRA_SUPERIOR, width=25, borderwidth=0)
-        self.buttonTitulo.pack(side=LEFT)
+        buttonTitulo = Button(self.barraSuperior, text="Aplicación de Transporte", command=self.abrir_panel_inicio)
+        buttonTitulo.config(fg = "#fff", font=("Roboto", 15), bg=COLOR_BARRA_SUPERIOR, width=25, borderwidth=0)
+        buttonTitulo.pack(side=LEFT)
 
         
         #Etiqueta de informacion
-        self.labelInfo = Label(self.barraSuperior, text="Universidad Rey Juan Carlos")
-        self.labelInfo.config(fg="#fff", font=("Roboto", 12), bg=COLOR_BARRA_SUPERIOR, padx=10)
-        self.labelInfo.pack(side=RIGHT)
+        labelInfo = Label(self.barraSuperior, text="Universidad Rey Juan Carlos")
+        labelInfo.config(fg="#fff", font=("Roboto", 12), bg=COLOR_BARRA_SUPERIOR, padx=10)
+        labelInfo.pack(side=RIGHT)
         
         
         #Logo URJC
@@ -160,9 +160,9 @@ class FormularioGeneral(Tk):
         self.abrir_panel_inicio()
 
 
-    def abrir_panel_construccion(self):
+    """def abrir_panel_construccion(self):
         self.limpiar_panel(self.cuerpoPrincipal)
-        FormConstruccionDesign(self.cuerpoPrincipal, self.imagenConstruccion)
+        FormConstruccionDesign(self.cuerpoPrincipal, self.imagenConstruccion)"""
 
 
     def limpiar_panel(self, panel):
@@ -174,7 +174,7 @@ class FormularioGeneral(Tk):
         self.inicio = FormInicioDesign(self.cuerpoPrincipal, self.imagenPortada, self.aplicacion_ancho, self.buttonMenuLateral, self.menuLateral)
         self.mapa = self.inicio.get_mapa()
 
-    def abrir_panel_mapa(self):
+    """def abrir_panel_mapa(self):
         self.limpiar_panel(self.cuerpoPrincipal)
         self.mapa = FormMapaDesign(self.cuerpoPrincipal, self.menuLateral)
 
@@ -186,4 +186,4 @@ class FormularioGeneral(Tk):
         if checkbox_fijas.get() == True:
             self.mapa.pintar_estaciones()
         elif checkbox_fijas.get() == False:
-            self.mapa.borrar_estaciones()
+            self.mapa.borrar_estaciones()"""
