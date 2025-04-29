@@ -20,36 +20,54 @@
 
 ## Instalación y puesta en marcha
 
-Sigue los siguientes pasos para descargar e iniciar la aplicación en tu máquina local:
+Sigue los siguientes pasos para descargar e iniciar la aplicación en la máquina local:
 
 ### 1. Clonar el repositorio
 
-Primero, clona el repositorio y asegúrate de estar en la rama `main`:
+Primero, hay que el repositorio y asegurarse de estar en la rama `main`:
 
 ```bash
-git clone https://github.com/tu_usuario/link-my-city.git
-cd link-my-city
+git clone https://github.com/paulaariasf/APLICACION.git
+cd APLICACION
 git checkout main
+```
 
-Asegúrate de estar en la rama `main`, donde se encuentra la última versión estable.
+Es importante estar en la rama `main`, donde se encuentra la última versión estable.
 
-### 2. Crear un entorno virtual (recomendado)
-Crear un entorno virtual ayuda a gestionar las dependencias del proyecto y evitar conflictos en caso de tener otras versiones instaladas en el equipo
+### 2. Instalar las dependencias
+
+Para instalar las librerías necesarias hay que ejecutar:
+
 ```bash
-python -m venv env
+pip install numpy pandas scikit-learn requests tkintermapview
+```
+
+### 3. Ejecutar la aplicación
+
+Finalmente, hay que lanzar la aplicación con:
+```bash
+python main.py
+```
+Esto abrirá la interfaz gráfica de Link My City, donde podrás visualizar el mapa, gestionar datos y generar mapas de calor interactivos.
 
 
+## Estructura del proyecto
+
+APLICACION/
+│
+├── main.py             # Archivo principal para ejecutar la aplicación
+├── README.md           # Manual de usuario y guía de instalación
+├── /data/              # Carpeta para archivos JSON de estaciones, bicicletas, patinetes
+├── /imagenes/          # Imágenes, iconos y otros recursos gráficos
+├── /util/              # Archivos con funciones auxiliares que apoyan a la estructura de formularios
+└── /formularios/       # Páginas de la aplicación donde se encuentra la estructura principal de la interfaz
 
 
-###
+## Notas adicionales
+- La aplicación requiere conexión a Internet para cargar los mapas de OpenStreetMap.
+
+- Puedes importar datos históricos o trabajar con datos simulados si lo prefieres. Hay que tener en cuenta que los datos deben tener el formato adecuado.
+
+- El sistema soporta actualización de estaciones fijas en tiempo real mediante APIs como BiciMAD.
 
 
-
-###
-
-
-###
-
-
-
-###
