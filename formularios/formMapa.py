@@ -658,10 +658,6 @@ class FormMapaDesign():
 
         Label(frame_estaciones, text='Estaciones', font=titulo_font, anchor=W,bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
 
-        texto_cargados = 'Seleccione la fuente de datos:'
-
-        Label(frame_estaciones, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
-
         frame_radiobuttons_estaciones = Frame(frame_estaciones, bg=COLOR_MENU_LATERAL)
         frame_radiobuttons_estaciones.pack(fill=BOTH, expand=True, padx=5, pady=5)
         #frame_radiobuttons_estaciones = self.anadir_scrollbar_estaciones(frame_radiobuttons_estaciones)
@@ -737,10 +733,6 @@ class FormMapaDesign():
 
         Label(frame_bicicletas, text='Bicicletas', font=titulo_font, anchor=W, bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
 
-        texto_cargados = 'Seleccione la fuente de datos:'
-
-        Label(frame_bicicletas, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
-
         frame_radiobuttons_bicicletas = Frame(frame_bicicletas, bg=COLOR_MENU_LATERAL)
         frame_radiobuttons_bicicletas.pack(fill=BOTH, expand=True, padx=5, pady=5)
 
@@ -810,10 +802,6 @@ class FormMapaDesign():
         titulo_font = Font(family="Arial", size=12, weight="bold")
 
         Label(frame_patinetes, text='Patinetes', font=titulo_font, anchor=W, bg=COLOR_MENU_LATERAL, fg="white").pack(anchor=CENTER, pady=(0, 10))
-
-        texto_cargados = '\n\nSeleccione la fuente de datos:'
-
-        Label(frame_patinetes, text=texto_cargados, bg=COLOR_MENU_LATERAL, fg="white", anchor=CENTER, justify=CENTER).pack(fill=BOTH, padx=5, pady=5)
 
         frame_radiobuttons_patinetes = Frame(frame_patinetes, bg=COLOR_MENU_LATERAL)
         frame_radiobuttons_patinetes.pack(fill=BOTH, expand=True, padx=5, pady=5)
