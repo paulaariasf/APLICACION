@@ -52,7 +52,7 @@ Esto abrirá la interfaz gráfica de Link My City, donde podrás visualizar el m
 
 
 ## Estructura del proyecto
-
+```
 APLICACION/
 │
 ├── main.py             # Archivo principal para ejecutar la aplicación
@@ -61,12 +61,12 @@ APLICACION/
 ├── /imagenes/          # Imágenes, iconos y otros recursos gráficos
 ├── /util/              # Archivos con funciones auxiliares que apoyan a la estructura de formularios
 └── /formularios/       # Páginas de la aplicación donde se encuentra la estructura principal de la interfaz
-
+```
 
 ## Notas adicionales
 - La aplicación requiere conexión a Internet para cargar los mapas de OpenStreetMap.
 
-- Puedes importar datos históricos o trabajar con datos simulados si lo prefieres. Hay que tener en cuenta que los datos deben tener el formato adecuado.
+- Se pueden importar datos históricos o trabajar con datos simulados. Hay que tener en cuenta que los datos deben tener el formato adecuado.
 
 - El sistema soporta actualización de estaciones fijas en tiempo real mediante APIs como BiciMAD.
 
