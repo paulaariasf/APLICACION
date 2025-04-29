@@ -8,7 +8,7 @@ from tkinter import *
 from tkinter import messagebox, filedialog
 
 def generar_datos_demanda(num_points, max_lon, min_lon, max_lat, min_lat):
-    diccionario = {'coordenadas': [], 'zona' : [0] * num_points}
+    diccionario = {'coordenadas': [], 'zona' : []}
     #coordenadas de la plaza del sol
     center_lon = -3.703339
     center_lat = 40.416729
@@ -96,7 +96,7 @@ def generar_aleatorios_estaciones_centrados(n, max_lon, min_lon, max_lat, min_la
     return datos_generados
 
 def generar_aleatorios_flotantes_estaciones(estaciones, radio=0.005):
-    data = {'id': [], 'coord': [], 'info':[], 'zona': []}
+    data = {'id': [], 'coord': [], 'zona': []}
     id_flot = 1
     for id in estaciones:
         puntos_flotantes = generar_puntos(estaciones[id]['coordinates'], 
@@ -105,9 +105,7 @@ def generar_aleatorios_flotantes_estaciones(estaciones, radio=0.005):
         for p in puntos_flotantes:
             data['id'].append(id_flot)
             data['coord'].append(p)
-            data['info'].append('Flotante nº '+ str(id_flot))
             id_flot+=1
-    print(id_flot)
     return data
 
 def generar_puntos(centro, radio, nPuntos):
@@ -124,7 +122,7 @@ def generar_puntos(centro, radio, nPuntos):
     return puntos
 
 def generar_aleatorios_flotantes_uniforme(n, max_lon, min_lon, max_lat, min_lat):
-    data = {'id': [], 'coord': [], 'info':[], 'zona': []}
+    data = {'id': [], 'coord': [], 'zona': []}
     for i in range(n.get()):
         data['id'].append(i+1)
         data['coord'].append([random.uniform(min_lat, max_lat),
@@ -139,7 +137,7 @@ def generar_aleatorios_flotantes_centrado(n, max_lon, min_lon, max_lat, min_lat)
     std_dev_lon = (max_lon - min_lon) / 10
     std_dev_lat = (max_lat - min_lat) / 10
     
-    data = {'id': [], 'coord': [], 'info':[], 'zona': []}
+    data = {'id': [], 'coord': [], 'zona': []}
     id = 1
     
     for _ in range(n.get()):

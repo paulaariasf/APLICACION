@@ -14,7 +14,7 @@ def show_info_zona(form_mapa, coords):
     close_infozona(form_mapa)
 
     form_mapa.infozona_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
-    form_mapa.infozona_frame.place(x=825, y=475)
+    form_mapa.infozona_frame.place(x=815, y=475)
     
     zona = utilTransportes.clasificar_punto(form_mapa.n, (coords[0], coords[1]), form_mapa.lon_celda, form_mapa.lat_celda, form_mapa.minLon, form_mapa.maxLat)
 
@@ -44,7 +44,7 @@ def show_info_zona(form_mapa, coords):
 
     elif form_mapa.clasificacion == "Llenado":
         if form_mapa.dic_mapa_calor['capacidades'] != 0:
-            texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de estaciones:{form_mapa.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {form_mapa.dic_mapa_calor['cantidades'][zona-1]} de {form_mapa.dic_mapa_calor['capacidades'][zona-1]}: {(100*(form_mapa.dic_mapa_calor['cantidades'][zona-1]/form_mapa.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
+            texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de estaciones:{form_mapa.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {form_mapa.dic_mapa_calor['cantidades'][zona-1]}/{form_mapa.dic_mapa_calor['capacidades'][zona-1]}: {(100*(form_mapa.dic_mapa_calor['cantidades'][zona-1]/form_mapa.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
     
     elif form_mapa.clasificacion == "Huecos":
         texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de huecos libres:{form_mapa.dic_mapa_calor['cantidades'][zona-1]} de {form_mapa.dic_mapa_calor['capacidades'][zona-1]}"
@@ -185,7 +185,36 @@ def show_info_cambio_tipo(form_mapa):
 
     form_mapa.infotipo_frame.after(5000, form_mapa.infotipo_frame.destroy)
 
-def show_leyenda(frame_leyenda, texts, colors):
+def show_leyenda(frame_leyenda, fijas=False, bicis=False, virtuales_bicis=False, pats=False, virtuales_pats=False, demanda_bicis=False, demanda_pats=False, ocupacion=False):
+    colors, texts = [], []
+
+    if ocupacion:
+        texts = ['Ocupación baja', 'Ocupación media', 'Ocupación alta']
+        colors = ['red', 'orange', '#68ca3d']
+    else:
+        if fijas:
+            texts.append('Estaciones fijas')
+            colors.append('blue')
+        if bicis: 
+            texts.append('Bicicletas')
+            colors.append('#fe1a1a')
+        if virtuales_bicis:
+            texts.append('Estaciones virtuales bicicletas')
+            colors.append('#991010')
+        if pats:
+            texts.append('Patinetes')
+            colors.append('orange')
+        if virtuales_pats:
+            texts.append('Estaciones virtuales patinetes')
+            colors.append('#d87900')
+        if demanda_bicis:
+            texts.append('Demanda bicicletas')
+            colors.append('#ae4fda')
+        if demanda_pats:
+            texts.append('Demanda patinetes')
+            colors.append('#37921c')
+    
+
     for i in range(len(texts)):
         row_frame = Frame(frame_leyenda, bg='white')
         row_frame.pack(anchor="w", pady=0)

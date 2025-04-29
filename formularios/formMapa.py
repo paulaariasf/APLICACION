@@ -17,6 +17,8 @@ from tkinter import filedialog
 import json
 from tkinter.font import Font
 import requests
+import uuid
+from PIL import Image, ImageTk
 
 class FormMapaDesign():
 
@@ -1120,18 +1122,20 @@ class FormMapaDesign():
                     factor_llenado = (self.dic_mapa_calor['cantidades'][i]/self.dic_mapa_calor['capacidades'][i])*100
                 else: factor_llenado = 0
             elif self.clasificacion == 'Demanda Bicicletas':
-                rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+                rangos = [-100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100]
                 bicicletas_disponibles = self.dic_mapa_calor['cantidades'][i]
                 solicitudes =  self.dic_mapa_calor['demanda_bicicletas'][i]
-                factor_llenado=100*(bicicletas_disponibles-solicitudes)/(bicicletas_disponibles+solicitudes+5)
+                factor_llenado=100*(bicicletas_disponibles-solicitudes)/(bicicletas_disponibles+solicitudes+1)
             elif self.clasificacion == 'Demanda Patinetes':
-                rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+                rangos = [-100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100]
                 patinetes_disponibles = self.dic_mapa_calor['cantidades'][i]
                 solicitudes =  self.dic_mapa_calor['demanda_patinetes'][i]
-                factor_llenado=100*(patinetes_disponibles-solicitudes)/(patinetes_disponibles+solicitudes+5)
+                factor_llenado=100*(patinetes_disponibles-solicitudes)/(patinetes_disponibles+solicitudes+1)
             color = utilTransportes.get_color(factor_llenado, rangos, colores)
             
-            if factor_llenado != 0 and (not self.clasificacion == 'Llenado' or self.checkbox_mapa_estaciones.get()): #los que son 0 no pintarlos
+            if factor_llenado != 0 and (not self.clasificacion == 'Llenado' or self.checkbox_mapa_estaciones.get()) \
+                or (self.clasificacion == 'Demanda Bicicletas' and factor_llenado == 0) \
+                or (self.clasificacion == 'Demanda Patinetes' and factor_llenado == 0): #los que son 0 no pintarlos
                 poligono = self.labelMap.set_polygon(self.dic_mapa_calor['coordenadas'][i],
                                         fill_color=color,
                                         outline_color=None,
@@ -1200,23 +1204,28 @@ class FormMapaDesign():
         if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
             self.verificar_credenciales()
         else:
-            self.cargados_estaciones[self.estaciones_anterior][1] = False
+            if self.estaciones_anterior in self.cargados_estaciones:
+                self.cargados_estaciones[self.estaciones_anterior][1] = False
             self.cargados_estaciones[self.selected_archivo_estaciones.get()][1] = True
             self.estaciones_anterior = self.selected_archivo_estaciones.get()
 
-        self.cargados_bicicletas[self.bicicletas_anterior][1] = False
+        if self.bicicletas_anterior in self.cargados_bicicletas:
+            self.cargados_bicicletas[self.bicicletas_anterior][1] = False
         self.cargados_bicicletas[self.selected_archivo_bicicletas.get()][1] = True
         self.bicicletas_anterior = self.selected_archivo_bicicletas.get()
 
-        self.cargados_patinetes[self.patinetes_anterior][1] = False
+        if self.patinetes_anterior in self.cargados_patinetes:
+            self.cargados_patinetes[self.patinetes_anterior][1] = False
         self.cargados_patinetes[self.selected_archivo_patinetes.get()][1] = True
         self.patinetes_anterior = self.selected_archivo_patinetes.get()
 
-        self.cargados_demanda_bicicletas[self.bicicletas_solicitudes_anterior][1] = False
+        if self.bicicletas_solicitudes_anterior in self.cargados_demanda_bicicletas:
+            self.cargados_demanda_bicicletas[self.bicicletas_solicitudes_anterior][1] = False
         self.cargados_demanda_bicicletas[self.selected_archivo_solicitudes_bicicletas.get()][1] = True
         self.bicicletas_solicitudes_anterior = self.selected_archivo_solicitudes_bicicletas.get()
 
-        self.cargados_demanda_patinetes[self.patinetes_solicitudes_anterior][1] = False
+        if self.patinetes_solicitudes_anterior in self.cargados_demanda_patinetes:
+            self.cargados_demanda_patinetes[self.patinetes_solicitudes_anterior][1] = False
         self.cargados_demanda_patinetes[self.selected_archivo_solicitudes_patinetes.get()][1] = True
         self.patinetes_solicitudes_anterior = self.selected_archivo_solicitudes_patinetes.get()
 
@@ -1269,7 +1278,7 @@ class FormMapaDesign():
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de demanda de bicicletas",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
-        elif tipo == 'demanda_patinetes':
+        elif tipo == 'demanda patinetes':
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de demanda de bicicletas",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
@@ -1341,7 +1350,7 @@ class FormMapaDesign():
             return False
         
         for clave, valor in diccionario.items():
-            if not isinstance(clave, str) or not clave.isdigit():
+            if not isinstance(str(clave), str) and not clave.isdigit():
                 return False
             if not isinstance(valor, dict):
                 return False
@@ -1403,9 +1412,6 @@ class FormMapaDesign():
         if not isinstance(diccionario["zona"], list) or not all(isinstance(z, (int, float)) for z in diccionario["zona"]):
             return False
 
-        if len(diccionario["coordenadas"]) != len(diccionario["zona"]):
-            return False
-
         return True
 
     def generar_datos_demanda_bicicletas(self):
@@ -1418,6 +1424,7 @@ class FormMapaDesign():
     def generar_datos_demanda_patinetes(self):
         self.solicitudes_patinetes = simpledialog.askinteger("Entrada", "Introduce un número:")
         data =  utilDatos.generar_datos_demanda(self.solicitudes_patinetes, self.maxLon, self.minLon, self.maxLat, self.minLat)
+        print(len(data['coordenadas']), len(data['zona']))
         self.cargados_demanda_patinetes[f'solicitudes_{self.solicitudes_patinetes}_patinetes.json'] = [data, False]
         self.ventana_gestor_demanda_patinetes.destroy()
         self.gestor_demanda_patinetes()
@@ -1949,10 +1956,8 @@ class FormMapaDesign():
         if ocupacion:
             self.frame_leyenda_ocupacion = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
             self.frame_leyenda_ocupacion.place(x=30, y=475)
-
-            texts = ['Ocupación baja', 'Ocupación media', 'Ocupación alta']
-            colors = ['red', 'orange', '#68ca3d']
-            utilInfo.show_leyenda(self.frame_leyenda_ocupacion, texts, colors)
+            
+            utilInfo.show_leyenda(self.frame_leyenda_ocupacion, ocupacion=True)
         if ocupacion and self.checkbox_fijas.get():
             self.buttonEstacionesFijas.invoke()
         if not ocupacion and self.checkbox_ocupacion.get():
@@ -1961,7 +1966,7 @@ class FormMapaDesign():
         for id in self.estaciones:
             if ocupacion:
                 if self.estaciones[id]['light'] == 0: color = "red"
-                elif self.estaciones[id]['light'] == 1: color = "#68ca3d"
+                elif self.estaciones[id]['light'] == 1: color = "#5fb82c"
                 elif self.estaciones[id]['light'] == 2: color = "orange"
                 elif self.estaciones[id]['light'] == 3: color = "black"
             else: color = "blue"
@@ -1989,9 +1994,9 @@ class FormMapaDesign():
     def boton_fijas(self, checkbox_fijas):
         if checkbox_fijas.get() == True:
             self.pintar_estaciones()
-            self.pintar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
         elif checkbox_fijas.get() == False:
-            self.borrar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
             utilInfo.close_infoest(self)
             for poligono in self.poligonos_estaciones:
                 poligono.delete()
@@ -2010,7 +2015,7 @@ class FormMapaDesign():
 
             poligono = self.labelMap.set_polygon(coordinates,
                                     outline_color="#fe1a1a",
-                                    border_width=5,
+                                    border_width=4,
                                     )
             self.poligonos_bicicletas.append(poligono)
     
@@ -2107,11 +2112,14 @@ class FormMapaDesign():
     def pintar_demanda_bicicletas(self):
         self.borrar_demanda_bicicletas()
         """
-        current_path = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-        bycicle_img = ImageTk.PhotoImage(Image.open("bycicle.png").resize((15, 15)))
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(current_path, "..", "imagenes", "solicitud_bicicleta.png")
+        bycicle_img = ImageTk.PhotoImage(Image.open(image_path).resize((15, 15)))
+        
         for punto in self.demanda_bicicletas:
             marcador = self.labelMap.set_marker(punto[0], punto[1], icon=bycicle_img, image_zoom_visibility = (14, 15))
-            self.poligonos_demanda_bicicletas.append(marcador)"""
+            self.poligonos_demanda_bicicletas.append(marcador)
+        """
         for punto in self.demanda_bicicletas['coordenadas']:
             d = 0.00000001
             coordinates = [(punto[0], punto[1]),
@@ -2119,25 +2127,43 @@ class FormMapaDesign():
                            (punto[0] + d, punto[1] + d),
                            (punto[0] + d, punto[1])]
             poligono = self.labelMap.set_polygon(coordinates,
-                                                outline_color="#27ae60",
-                                                border_width=5)
+                                                outline_color="#ae4fda",
+                                                border_width=4)
             self.poligonos_demanda_bicicletas.append(poligono)
     
-    def pintar_leyenda_transportes(self):
+    def actualizar_leyenda_transportes(self):
+        if not self.checkbox_fijas.get() and not self.checkbox_bicicletas.get() and \
+            not self.checkbox_patinetes.get() and not self.checkbox_centroides_bicicletas.get() \
+            and not self.checkbox_centroides_patinetes.get() and not self.checkbox_demanda_bicicletas.get() \
+            and not self.checkbox_demanda_patinetes.get() and hasattr(self, 'frame_leyenda_transportes'):
+            self.frame_leyenda_transportes.destroy()
+            delattr(self, 'frame_leyenda_transportes')
+            return
+
         if not hasattr(self, 'frame_leyenda_transportes'):
             self.frame_leyenda_transportes = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
             self.frame_leyenda_transportes.place(x=30, y=430)
+        else:
+            for widget in self.frame_leyenda_transportes.winfo_children():
+                widget.destroy()
+        
+        utilInfo.show_leyenda(self.frame_leyenda_transportes, self.checkbox_fijas.get(), self.checkbox_bicicletas.get(), 
+                self.checkbox_centroides_bicicletas.get(), self.checkbox_patinetes.get(), self.checkbox_centroides_patinetes.get(),
+                self.checkbox_demanda_bicicletas.get(), self.checkbox_demanda_patinetes.get())
+        
+        cantidad_transportes = sum([self.checkbox_fijas.get(), self.checkbox_bicicletas.get(), 
+                self.checkbox_centroides_bicicletas.get(), self.checkbox_patinetes.get(), self.checkbox_centroides_patinetes.get(),
+                self.checkbox_demanda_bicicletas.get(), self.checkbox_demanda_patinetes.get()])
+        
+        if cantidad_transportes == 1: height = 550
+        elif cantidad_transportes == 2: height = 520
+        elif cantidad_transportes == 3: height = 490
+        elif cantidad_transportes == 4: height = 460
+        elif cantidad_transportes == 5: height = 430
+        elif cantidad_transportes == 6: height = 400
+        elif cantidad_transportes == 7: height = 370
 
-            texts = ['Estaciones fijas', 'Bicicletas', 'Estaciones virtuales bicicletas', 'Patinetes', 'Estaciones virtuales patinetes']
-            colors = ['blue', '#fe1a1a', '#991010', 'orange', '#d87900']
-            utilInfo.show_leyenda(self.frame_leyenda_transportes, texts, colors)
-    
-    def borrar_leyenda_transportes(self):
-        if not self.checkbox_fijas.get() and not self.checkbox_bicicletas.get() and \
-            not self.checkbox_patinetes.get() and not self.checkbox_centroides_bicicletas.get() \
-            and not self.checkbox_centroides_patinetes.get():
-            self.frame_leyenda_transportes.destroy()
-            delattr(self, 'frame_leyenda_transportes')
+        self.frame_leyenda_transportes.place(x=30, y=height)
 
     def borrar_demanda_bicicletas(self):
         if self.poligonos_demanda_bicicletas != []:
@@ -2147,14 +2173,14 @@ class FormMapaDesign():
     def pintar_demanda_patinetes(self):
         self.borrar_demanda_patinetes()
         for punto in self.demanda_patinetes['coordenadas']:
-            d = 0.00000001
+            """d = 0.00000001
             coordinates = [(punto[0], punto[1]),
                            (punto[0], punto[1]+ d),
                            (punto[0] + d, punto[1] + d),
-                           (punto[0] + d, punto[1])]
-            poligono = self.labelMap.set_polygon(coordinates,
-                                                outline_color="#f1c40f",
-                                                border_width=5)
+                           (punto[0] + d, punto[1])]"""
+            poligono = self.labelMap.set_polygon([punto],
+                                                outline_color="#37921c",
+                                                border_width=2)
             self.poligonos_demanda_patinetes.append(poligono)
 
     def borrar_demanda_patinetes(self):
@@ -2165,14 +2191,14 @@ class FormMapaDesign():
     def boton_bicicletas(self, checkbox_bicicletas, clusters=False):
         if checkbox_bicicletas.get() and not clusters:
             self.pintar_bicicletas()
-            self.pintar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
         elif checkbox_bicicletas.get() and clusters:
             self.pintar_bicicletas_clusters_kmeans()
         elif not checkbox_bicicletas.get() and clusters:
             for poligono in self.poligonos_bicicletas_clusters:
                 poligono.delete()
         elif not checkbox_bicicletas.get() and not clusters:
-            self.borrar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
             for poligono in self.poligonos_bicicletas:
                 poligono.delete()
     
@@ -2188,45 +2214,49 @@ class FormMapaDesign():
     def boton_centroides_bicicletas(self, checkbox_centroides):
         if checkbox_centroides.get() == True:
             self.pintar_centroides_bicicletas()
-            self.pintar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
         elif checkbox_centroides.get() == False:
-            self.borrar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
             for poligono in self.poligonos_centroides_bicicletas:
                 poligono.delete()
 
     def boton_patinetes(self, checkbox_patinetes, clusters=False):
         if checkbox_patinetes.get() and not clusters:
             self.pintar_patinetes()
-            self.pintar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
         elif checkbox_patinetes.get() and clusters:
             self.pintar_patinetes_clusters_kmeans()
         elif not checkbox_patinetes.get() and clusters:
             for poligono in self.poligonos_patinetes_clusters:
                 poligono.delete()
         elif not checkbox_patinetes.get() and not clusters:
-            self.borrar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
             for poligono in self.poligonos_patinetes:
                 poligono.delete()
 
     def boton_centroides_patinetes(self, checkbox_centroides):
         if checkbox_centroides.get() == True:
             self.pintar_centroides_patinetes()
-            self.pintar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
         elif checkbox_centroides.get() == False:
-            self.borrar_leyenda_transportes()
+            self.actualizar_leyenda_transportes()
             for poligono in self.poligonos_centroides_patinetes:
                 poligono.delete()
 
     def boton_demanda_bicicletas(self, checkbox_demanda_bicicletas):
         if checkbox_demanda_bicicletas.get() == True:
+            self.actualizar_leyenda_transportes()
             self.pintar_demanda_bicicletas()
         elif checkbox_demanda_bicicletas.get() == False:
+            self.actualizar_leyenda_transportes()
             self.borrar_demanda_bicicletas()
     
     def boton_demanda_patinetes(self, checkbox_demanda_patinetes):
         if checkbox_demanda_patinetes.get() == True:
+            self.actualizar_leyenda_transportes()
             self.pintar_demanda_patinetes()
         elif checkbox_demanda_patinetes.get() == False:
+            self.actualizar_leyenda_transportes()
             self.borrar_demanda_patinetes()
 def anadir_mapa(self):
     self.labelMap=tkintermapview.TkinterMapView(self.frame_mapa, width=900, height=700, corner_radius=0)

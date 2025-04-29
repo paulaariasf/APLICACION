@@ -15,8 +15,9 @@ class FormularioGeneral(Tk):
     def __init__(self):
         super().__init__()
         #self.logo=utilImagenes.leer_imagen("C:/Users/paula/OneDrive/Escritorio/5CARRERA/TFG/INFORMATICA/APLICACION/imagenes/logo_bicimad.png", (560, 136))
-        self.logoURJC = utilImagenes.leer_imagen("./imagenes/URJC_logo.png", (80, 40))
+        self.logo = utilImagenes.leer_imagen("./imagenes/logo_bici_patinete_blanco.png", (75, 50))
         self.imagenPortada = utilImagenes.leer_imagen("./imagenes/fotoPortada.png", (260, 260))
+        self.link_my_city = utilImagenes.leer_imagen("./imagenes/link_my_city.png", (170, 40))
         #self.imagenConstruccion = utilImagenes.leer_imagen("./imagenes/construccion.png", (270, 270))
         #self.imagenEstacionesFijas = utilImagenes.leer_imagen("./imagenes/estacion.png", (500, 250))
         #self.imagenBicicletaFlotante = utilImagenes.leer_imagen("./imagenes/bicicletaFlotante.png", (500, 300))
@@ -26,7 +27,7 @@ class FormularioGeneral(Tk):
         
     def config_window(self):
         #Configuracion inicial de la ventana
-        self.title("Interfaz Grafica")
+        self.title("Aplicación de Visualización de Transportes Compartidos")
         self.iconbitmap("./imagenes/bycicle_icon.ico")
         self.aplicacion_ancho=1200
         self.aplicacion_largo=600
@@ -60,16 +61,19 @@ class FormularioGeneral(Tk):
         buttonTitulo.config(fg = "#fff", font=("Roboto", 15), bg=COLOR_BARRA_SUPERIOR, width=25, borderwidth=0)
         buttonTitulo.pack(side=LEFT)
 
-        
-        #Etiqueta de informacion
-        labelInfo = Label(self.barraSuperior, text="Universidad Rey Juan Carlos")
-        labelInfo.config(fg="#fff", font=("Roboto", 12), bg=COLOR_BARRA_SUPERIOR, padx=10)
-        labelInfo.pack(side=RIGHT)
-        
-        
         #Logo URJC
-        labelLogoURJC = Label(self.barraSuperior, image=self.logoURJC, bg=COLOR_BARRA_SUPERIOR)
+        labelLogoURJC = Label(self.barraSuperior, image=self.logo, bg=COLOR_BARRA_SUPERIOR)
         labelLogoURJC.pack(side=RIGHT)
+
+        #Etiqueta de informacion
+        labeltexto = Label(self.barraSuperior, image=self.link_my_city, bg=COLOR_BARRA_SUPERIOR)
+        labeltexto.pack(side=RIGHT)
+        """
+        labelInfo = Label(self.barraSuperior, text="Link My City")
+        labelInfo.config(fg="#fff", font=("Roboto", 15, "bold"), bg=COLOR_BARRA_SUPERIOR, padx=10)
+        labelInfo.pack(side=RIGHT)labelLogoURJC = Label(self.barraSuperior, image=self.logo, bg=COLOR_BARRA_SUPERIOR)
+        labelLogoURJC.pack(side=RIGHT)"""
+        
 
     
     def togglePanel(self):
