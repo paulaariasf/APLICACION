@@ -499,8 +499,8 @@ class FormMapaDesign():
         frame_opcion = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
         frame_opcion.pack(fill=X, pady=2)
 
-        boton_principal = Button(frame_opcion, text='Demanda', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
-                                font=fontAwesome, command=lambda: self.toggle_submenu('Demanda'), width=22, height=0)
+        boton_principal = Button(frame_opcion, text='Oferta-Demanda', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
+                                font=font.Font(family="FontAwesome", size=12, weight="bold"), command=lambda: self.toggle_submenu('Demanda'), width=22, height=0)
         boton_principal.pack(fill=X)
         self.bindHoverEvents(boton_principal)
 
