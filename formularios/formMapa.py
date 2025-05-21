@@ -1008,6 +1008,7 @@ class FormMapaDesign():
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
         
     def pintar_mapa(self):
+        print(self.seleccionado_metros.get())
         utilInfo.close_infozona(self)
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()
@@ -1019,6 +1020,12 @@ class FormMapaDesign():
         
         if not hasattr(self, 'influencia'):
             self.influencia = 'con'
+
+        if self.seleccionado_metros.get() != '':
+            if self.seleccionado_metros.get() == '500': self.n = 44
+            elif self.seleccionado_metros.get() == '400': self.n = 54
+            elif self.seleccionado_metros.get() == '300': self.n = 72
+            elif self.seleccionado_metros.get() == '200': self.n = 108
 
         if not hasattr(self, 'n'):
             metros = 500
@@ -1079,6 +1086,16 @@ class FormMapaDesign():
         print(f'El indice de la menor es: {index_min} y se trata de la zona {self.dic_mapa_calor['ids'][index_min]}')
         print(f'El indice de la mayor es: {index_max} y se trata de la zona {self.dic_mapa_calor['ids'][index_max]}')
         """
+        rangos_colores = {
+            (500, 'General', 'con', 3): [0, 2, 10, 18, 26, 34, 44, 56, 70, 84, 1000],
+            (500, 'General', 'con', 2): [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000],
+            (500, 'General', 'con', 1): [0, 1, 4, 7, 10, 13, 16, 19, 22, 25, 1000],
+            (500, 'General', 'sin', 3): [0, 8, 20, 34, 48, 64, 82, 100, 120, 142, 1000],
+            (500, 'General', 'sin', 2): [0, 4, 12, 20, 28, 38, 48, 60, 72, 84, 1000],
+            (500, 'General', 'sin', 1): [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000],
+
+        }
+
         for i in range(pow(self.n, 2)):
             if self.clasificacion == 'General' and self.influencia=='con':
                 factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
@@ -1845,7 +1862,7 @@ class FormMapaDesign():
             messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
             return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
-        self.ventana_mod.title("Entrada de Mapa de Calor")
+        self.ventana_mod.title("Modificación del Tamaño de la Cuadrícula")
 
         ancho_pantalla = self.ventana_mod.winfo_screenwidth()
         alto_pantalla = self.ventana_mod.winfo_screenheight()
@@ -1857,11 +1874,15 @@ class FormMapaDesign():
         y = (alto_pantalla // 2) - (alto_ventana // 2)
 
         self.ventana_mod.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
-
-        if self.n == 44: self.seleccionado_metros.set(500)
-        elif self.n == 51: self.seleccionado_metros.set(400)
-        elif self.n == 68: self.seleccionado_metros.set(300)
-        elif self.n == 102: self.seleccionado_metros.set(200)
+        
+        if self.seleccionado_metros.get() == '':
+            self.seleccionado_metros.set(500)
+        """elif hasattr(self, 'n'):
+            if self.n == 44: self.seleccionado_metros.set(500)
+            elif self.n == 54: self.seleccionado_metros.set(400)
+            elif self.n == 72: self.seleccionado_metros.set(300)
+            elif self.n == 108: self.seleccionado_metros.set(200)"""
+        
 
         # Crear RadioButtons
         radio500 = Radiobutton(self.ventana_mod, text="500 metros", variable=self.seleccionado_metros, value=500)
@@ -1876,7 +1897,7 @@ class FormMapaDesign():
         radio200 = Radiobutton(self.ventana_mod, text="200 metros", variable=self.seleccionado_metros, value=200)
         radio200.pack(anchor=W)
 
-        submit_button = Button(self.ventana_mod, text="Mostrar", command=self.enviar_tamano_cuadricula)
+        submit_button = Button(self.ventana_mod, text="Cambiar", command=self.enviar_tamano_cuadricula)
         submit_button.pack(pady=5)
 
         self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
@@ -1918,13 +1939,26 @@ class FormMapaDesign():
         self.borrar_mapacalor()
         self.ventana_mod.destroy()
 
-        
+        """
         metros = float(self.seleccionado_metros.get())
         lon_objetivo = metros/(111320*math.cos(40.4))
         lat_objetivo = metros/111320 
         n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
         n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
-        self.n = math.ceil(max(n_lon, n_lat))
+        
+        self.n = math.ceil(max(n_lon, n_lat))"""
+
+        print(self.seleccionado_metros.get())
+
+        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
+            and self.checkbox_mapa_patinetes.get()==False \
+            and self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
+            return
+        
+        if self.seleccionado_metros.get() == 500: self.n = 44
+        elif self.seleccionado_metros.get() == 400: self.n = 54
+        elif self.seleccionado_metros.get() == 300: self.n = 72
+        elif self.seleccionado_metros.get() == 200: self.n = 108
 
         if not hasattr(self, 'clasificacion'):
             self.clasificacion = "General"
