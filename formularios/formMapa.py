@@ -1008,7 +1008,7 @@ class FormMapaDesign():
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
         
     def pintar_mapa(self):
-        print(self.seleccionado_metros.get())
+        #print('Cuadrícula de ', self.seleccionado_metros.get(), ' metros')
         utilInfo.close_infozona(self)
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()
@@ -1047,6 +1047,12 @@ class FormMapaDesign():
             self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     estaciones=self.estaciones,mostrar_huecos=True)
+            if self.n == 44: self.alcance = 3
+            elif self.n == 54: self.alcance = 5
+            elif self.n == 72: self.alcance = 7
+            elif self.n == 108: self.alcance = 9
+            if self.influencia == 'con':
+                self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
         elif self.clasificacion == "Demanda Bicicletas":
             self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
@@ -1077,24 +1083,56 @@ class FormMapaDesign():
             json.dump(self.dic_mapa_calor, archivo, ensure_ascii=False, indent=4)
         colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
         
-        """minimo = np.min(self.dic_mapa_calor['factor_oferta_demanda_bicicletas'])
-        maximo = np.max(self.dic_mapa_calor['factor_oferta_demanda_bicicletas'])
-        index_min = np.argmin(self.dic_mapa_calor['factor_oferta_demanda_bicicletas'])
-        index_max = np.argmax(self.dic_mapa_calor['factor_oferta_demanda_bicicletas'])
-        print(f'Influencia: {self.influencia}')
+        """######################## CALCULO DE RANGOS #############################
+        minimo = np.min(self.dic_mapa_calor['cantidades'])
+        maximo = np.max(self.dic_mapa_calor['cantidades'])
+        index_min = np.argmin(self.dic_mapa_calor['cantidades'])
+        index_max = np.argmax(self.dic_mapa_calor['cantidades'])
+        print(f'Tamaño: {self.seleccionado_metros.get()}, Clasificación: {self.clasificacion}, \
+              Influencia: {self.influencia}, Num de transportes: {sum([self.checkbox_mapa_estaciones.get(), \
+                                self.checkbox_mapa_flotantes.get(), self.checkbox_mapa_patinetes.get()])}')
         print(f'Min: {minimo}, max: {maximo}')
         print(f'El indice de la menor es: {index_min} y se trata de la zona {self.dic_mapa_calor['ids'][index_min]}')
         print(f'El indice de la mayor es: {index_max} y se trata de la zona {self.dic_mapa_calor['ids'][index_max]}')
-        """
-        rangos_colores = {
-            (500, 'General', 'con', 3): [0, 2, 10, 18, 26, 34, 44, 56, 70, 84, 1000],
-            (500, 'General', 'con', 2): [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000],
-            (500, 'General', 'con', 1): [0, 1, 4, 7, 10, 13, 16, 19, 22, 25, 1000],
-            (500, 'General', 'sin', 3): [0, 8, 20, 34, 48, 64, 82, 100, 120, 142, 1000],
-            (500, 'General', 'sin', 2): [0, 4, 12, 20, 28, 38, 48, 60, 72, 84, 1000],
-            (500, 'General', 'sin', 1): [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000],
+        ########################################################################"""
 
-        }
+        # Tamaño de cuadrícula, tipo de clasificación, influencia de vecinos y número de transportes incluidos
+        rangos_colores = {  (500, 'General', 'con', 3): [0, 1, 4, 9, 16, 25, 36, 50, 65, 82, 1000],
+                            (500, 'General', 'con', 2): [0, 1, 3, 6, 11, 17, 24, 33, 43, 55, 1000],
+                            (500, 'General', 'con', 1): [0, 1, 3, 5, 9, 12, 17, 22, 28, 1000],
+                            (500, 'General', 'sin', 3): [0, 2, 6, 14, 24, 38, 54, 74, 97, 122, 1000],
+                            (500, 'General', 'sin', 2): [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 1000],
+                            (500, 'General', 'sin', 1): [0, 1, 2, 5, 8, 13, 18, 25, 33, 42, 1000],
+                            (400, 'General', 'con', 3): [0, 2, 4, 7, 10, 15, 20, 26, 33, 1000],
+                            (400, 'General', 'con', 2): [0, 1, 2, 4, 7, 10, 13, 18, 22, 1000],
+                            (400, 'General', 'con', 1): [0, 1, 2, 3, 5, 7, 9, 11, 1000],
+                            (400, 'General', 'sin', 3): [0, 1, 3, 7, 13, 20, 28, 39, 51, 64, 1000],
+                            (400, 'General', 'sin', 2): [0, 1, 2, 5, 9, 14, 20, 27, 35, 45, 1000],
+                            (400, 'General', 'sin', 1): [0, 1, 3, 5, 8, 11, 15, 20, 25, 1000],
+                            (300, 'General', 'con', 3): [0, 1, 3, 6, 11, 17, 24, 33, 42, 54, 1000],
+                            (300, 'General', 'con', 2): [0, 2, 4, 7, 11, 16, 22, 28, 36, 1000],
+                            (300, 'General', 'con', 1): [0, 1, 2, 4, 6, 8, 11, 14, 18, 1000],
+                            (300, 'General', 'sin', 3): [0, 1, 4, 9, 17, 26, 38, 51, 67, 84, 1000],
+                            (300, 'General', 'sin', 2): [0, 1, 3, 7, 12, 18, 27, 36, 47, 60, 1000],
+                            (300, 'General', 'sin', 1): [0, 2, 4, 7, 10, 15, 20, 26, 33, 1000],
+                            (200, 'General', 'con', 3): [0, 1, 2, 3, 5, 7, 10, 13, 16, 1000],
+                            (200, 'General', 'con', 2): [0, 1, 2, 3, 5, 7, 9, 11, 1000],
+                            (200, 'General', 'con', 1): [0, 1, 2, 3, 5, 6, 1000],
+                            (200, 'General', 'sin', 3): [0, 1, 2, 5, 9, 14, 20, 28, 36, 46, 1000],
+                            (200, 'General', 'sin', 2): [0, 2, 4, 6, 10, 14, 20, 25, 32, 1000],
+                            (200, 'General', 'sin', 1): [0, 1, 2, 4, 6, 8, 11, 15, 19, 1000],
+                            (500, 'Llenado', '', 1): [0, 1, 2, 6, 10, 15, 22, 30, 40, 50, 1000],
+                            (400, 'Llenado', '', 1): [0, 1, 2, 5, 9, 14, 20, 27, 36, 45, 1000],
+                            (300, 'Llenado', '', 1): [0, 2, 4, 8, 12, 17, 24, 31, 39, 1000],
+                            (200, 'Llenado', '', 1): [0, 2, 4, 6, 10, 14, 19, 25, 32, 1000],
+                            (500, 'Huecos', 'con', 1): [0, 1, 2, 5, 8, 13, 19, 26, 34, 43, 1000],
+                            (400, 'Huecos', 'con', 1): [0, 1, 3, 5, 8, 12, 16, 21, 27, 1000],
+                            (300, 'Huecos', 'con', 1): [0, 1, 2, 4, 6, 9, 12, 16, 20, 1000],
+                            (200, 'Huecos', 'con', 1): [0, 1, 2, 4, 6, 8, 10, 13, 1000],
+                            (500, 'Huecos', 'sin', 1): [0, 1, 5, 11, 20, 31, 44, 60, 78, 99, 1000],
+                            (400, 'Huecos', 'sin', 1): [0, 1, 3, 7, 13, 21, 30, 40, 52, 66, 1000],
+                            (300, 'Huecos', 'sin', 1): [0, 1, 4, 8, 14, 23, 32, 44, 58, 73, 1000],
+                            (200, 'Huecos', 'sin', 1): [0, 1, 2, 5, 8, 13, 19, 25, 33, 42, 1000]}
 
         for i in range(pow(self.n, 2)):
             if self.clasificacion == 'General' and self.influencia=='con':
@@ -1121,12 +1159,26 @@ class FormMapaDesign():
                 elif contador==1: # Si hay uno , los rangos son de 0-61/46 aprox 
                     rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
 
-            elif self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
+            elif self.clasificacion == 'Llenado':
                 rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
                 if self.dic_mapa_calor['capacidades'][i] != 0:
                     factor_llenado = (self.dic_mapa_calor['cantidades'][i]/self.dic_mapa_calor['capacidades'][i])*100
                 else: factor_llenado = 0
-            elif self.clasificacion == 'Demanda Bicicletas':
+            elif self.clasificacion == 'Huecos':
+                if self.influencia =='con':
+                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
+                    factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
+                elif self.influencia == 'sin':
+                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
+                    factor_llenado = self.dic_mapa_calor['cantidades'][i]
+            contador = sum([self.checkbox_mapa_estaciones.get(),
+                                self.checkbox_mapa_flotantes.get(),
+                                self.checkbox_mapa_patinetes.get()])
+            if self.seleccionado_metros.get() == '':
+                self.seleccionado_metros.set('500')
+            rangos = rangos_colores[(int(self.seleccionado_metros.get()), self.clasificacion, self.influencia, contador)]
+                    
+            if self.clasificacion == 'Demanda Bicicletas':
                 rangos = [-100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100]
                 bicicletas_disponibles = self.dic_mapa_calor['cantidades'][i]
                 solicitudes =  self.dic_mapa_calor['demanda_bicicletas'][i]
@@ -1948,7 +2000,7 @@ class FormMapaDesign():
         
         self.n = math.ceil(max(n_lon, n_lat))"""
 
-        print(self.seleccionado_metros.get())
+        #print(self.seleccionado_metros.get())
 
         if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
             and self.checkbox_mapa_patinetes.get()==False \
