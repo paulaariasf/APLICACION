@@ -57,9 +57,9 @@ class FormularioGeneral(Tk):
         self.buttonMenuLateral.pack(side=LEFT)
 
         #Boton inicio
-        buttonTitulo = Button(self.barraSuperior, text="Aplicación de Transporte", command=self.abrir_panel_inicio)
-        buttonTitulo.config(fg = "#fff", font=("Roboto", 15), bg=COLOR_BARRA_SUPERIOR, width=25, borderwidth=0)
-        buttonTitulo.pack(side=LEFT)
+        labelTitulo = Label(self.barraSuperior, text="Aplicación de Transporte")
+        labelTitulo.config(fg = "#fff", font=("Roboto", 15), bg=COLOR_BARRA_SUPERIOR, width=25, borderwidth=0)
+        labelTitulo.pack(side=LEFT)
 
         #Logo URJC
         labelLogoURJC = Label(self.barraSuperior, image=self.logo, bg=COLOR_BARRA_SUPERIOR)

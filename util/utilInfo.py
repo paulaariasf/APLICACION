@@ -185,7 +185,8 @@ def show_info_cambio_tipo(form_mapa):
 
     form_mapa.infotipo_frame.after(5000, form_mapa.infotipo_frame.destroy)
 
-def show_leyenda(frame_leyenda, fijas=False, bicis=False, virtuales_bicis=False, pats=False, virtuales_pats=False, demanda_bicis=False, demanda_pats=False, ocupacion=False):
+def show_leyenda(frame_leyenda, fijas=False, bicis=False, virtuales_bicis=False, pats=False, \
+                 virtuales_pats=False, demanda_bicis=False, demanda_pats=False, ocupacion=False):
     colors, texts = [], []
 
     if ocupacion:
@@ -224,6 +225,22 @@ def show_leyenda(frame_leyenda, fijas=False, bicis=False, virtuales_bicis=False,
 
         text_label = Label(row_frame, text=texts[i], font=("", 10, 'bold'), bg="white", fg="black")
         text_label.pack(side="left")
+
+def show_leyenda_mapa(frame_leyenda_mapa, tipo_mapa, influencia='', cuadricula='500'):
+    if cuadricula=='':
+        cuadricula='500'
+    if influencia == 'con':
+        influencia = 'activada'
+    elif influencia == 'sin':
+        influencia = 'desactivada'
+    if tipo_mapa == 'Llenado' or tipo_mapa == 'Demanda Bicicletas' or tipo_mapa == 'Demanda Patinetes' or \
+        tipo_mapa == 'Oferta-Demanda Bicicletas' or tipo_mapa == 'Oferta-Demanda Patinetes':
+        Label(frame_leyenda_mapa, text=f' Tipo de Mapa: {tipo_mapa}', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
+        Label(frame_leyenda_mapa, text=f' Tamaño de cuadrícula: {cuadricula}m', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
+    else:
+        Label(frame_leyenda_mapa, text=f' Tipo de Mapa: {tipo_mapa}', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
+        Label(frame_leyenda_mapa, text=f' Influencia de vecinos: {influencia}', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
+        Label(frame_leyenda_mapa, text=f' Tamaño de cuadrícula: {cuadricula}m', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
 
 """form_mapa.frame_leyenda_colores = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
     form_mapa.frame_leyenda_colores.place(x=30, y=430)

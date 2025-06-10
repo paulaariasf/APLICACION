@@ -377,15 +377,15 @@ class FormMapaDesign():
 
         self.frame_mostrar_mapa_bicicletas = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
         self.frame_mostrar_mapa_bicicletas.pack(fill=X, padx=10, pady=2, side=TOP)
-        self.checkbox_mapa_flotantes = BooleanVar()
-        self.buttonMostrarMapaFlotantes = Checkbutton(self.frame_mostrar_mapa_bicicletas, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
-                                                variable=self.checkbox_mapa_flotantes, command= self.mostrar_mapa)
-        self.buttonMostrarMapaFlotantes.pack(side=LEFT, pady=5)
+        self.checkbox_mapa_bicicletas = BooleanVar()
+        self.buttonMostrarMapaBicicletas = Checkbutton(self.frame_mostrar_mapa_bicicletas, text=" Bicicletas flotantes", style="Custom.TCheckbutton",
+                                                variable=self.checkbox_mapa_bicicletas, command= self.mostrar_mapa)
+        self.buttonMostrarMapaBicicletas.pack(side=LEFT, pady=5)
 
         self.frame_mostrar_mapa_patinetes = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
         self.frame_mostrar_mapa_patinetes.pack(fill=X, padx=10, pady=2, side=TOP)
         self.checkbox_mapa_patinetes = BooleanVar()
-        self.buttonMostrarMapaPatinetes = Checkbutton(self.frame_mostrar_mapa_patinetes, text=" Patinetes", style="Custom.TCheckbutton",
+        self.buttonMostrarMapaPatinetes = Checkbutton(self.frame_mostrar_mapa_patinetes, text=" Patinetes", style="Custom.TCheckbutton",
                                                 variable=self.checkbox_mapa_patinetes, command= self.mostrar_mapa)
         self.buttonMostrarMapaPatinetes.pack(side=LEFT, pady=5)
 
@@ -559,10 +559,47 @@ class FormMapaDesign():
         self.submenus['Solicitudes'] = {"titulo": self.buttonSolicitudes, "frame_opcion": frame_solicitudes, 
                                           "frame_submenu": frame_submenu_solicitudes, "visible": True}
         
+        #################################### MAPA DEMANDA ###############################################
+        
+        frame_mapademanda = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_mapademanda.pack(side=TOP, fill=X, pady=2)
+
+        self.buttonMapaDemanda = Button(frame_mapademanda, text="Mapa de Demanda", font=font.Font(family="FontAwesome", size=11, weight="bold"),
+                                    anchor='w', command=lambda: self.toggle_submenu('Mapa Demanda'))
+        self.buttonMapaDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonMapaDemanda.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMapaDemanda)
+
+        frame_opciones_mapademanda = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
+        frame_opciones_mapademanda.pack(side=TOP, fill=X, pady=2)
+
+        self.buttonMapaCalorDemandaBicicletas = Button(frame_opciones_mapademanda, text=" Demanda bicicletas", font=font.Font(family="FontAwesome", size=10),
+                                    anchor='w', command=self.mostrar_mapa_demanda_bicicletas)
+        self.buttonMapaCalorDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
+        self.buttonMapaCalorDemandaBicicletas.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMapaCalorDemandaBicicletas)
+
+        self.buttonMapaCalorDemandaPatinetes = Button(frame_opciones_mapademanda, text=" Demanda patinetes", font=font.Font(family="FontAwesome", size=10),
+                                    anchor='w', command=self.mostrar_mapa_demanda_patinetes)
+        self.buttonMapaCalorDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
+        self.buttonMapaCalorDemandaPatinetes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMapaCalorDemandaPatinetes)
+
+        self.buttonBorrarMapa = Button(frame_opciones_mapademanda, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
+                                                 anchor="w", command= self.borrar_mapacalor)
+        self.buttonBorrarMapa.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        self.buttonBorrarMapa.pack(side=TOP)
+        self.bindHoverEvents(self.buttonBorrarMapa)
+
+        self.submenus['Mapa Demanda'] = {"titulo": self.buttonMapaDemanda, "frame_opcion": frame_mapademanda, 
+                                          "frame_submenu": frame_opciones_mapademanda, "visible": True}
+
+        #################################### MAPA OFERTA DEMANDA ###############################################
+        
         frame_ofertademanda = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
         frame_ofertademanda.pack(side=TOP, fill=X, pady=2)
 
-        self.buttonOfertaDemanda = Button(frame_ofertademanda, text="Mapa de oferta-demanda", font=font.Font(family="FontAwesome", size=11, weight="bold"),
+        self.buttonOfertaDemanda = Button(frame_ofertademanda, text="Mapa de Oferta-demanda", font=font.Font(family="FontAwesome", size=11, weight="bold"),
                                     anchor='w', command=lambda: self.toggle_submenu('Oferta Demanda'))
         self.buttonOfertaDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonOfertaDemanda.pack(side=TOP)
@@ -571,17 +608,17 @@ class FormMapaDesign():
         frame_opciones_ofertademanda = Frame(frame_submenu, bg=COLOR_MENU_LATERAL)
         frame_opciones_ofertademanda.pack(side=TOP, fill=X, pady=2)
 
-        self.buttonMapaCalorDemandaBicicletas = Button(frame_opciones_ofertademanda, text=" Oferta-demanda bicicletas", font=font.Font(family="FontAwesome", size=10),
-                                    anchor='w', command=self.mostrar_mapa_demanda_bicicletas)
-        self.buttonMapaCalorDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
-        self.buttonMapaCalorDemandaBicicletas.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMapaCalorDemandaBicicletas)
+        self.buttonMapaCalorOfertaDemandaBicicletas = Button(frame_opciones_ofertademanda, text=" Oferta-demanda bicicletas", font=font.Font(family="FontAwesome", size=10),
+                                    anchor='w', command=self.mostrar_mapa_oferta_demanda_bicicletas)
+        self.buttonMapaCalorOfertaDemandaBicicletas.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
+        self.buttonMapaCalorOfertaDemandaBicicletas.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMapaCalorOfertaDemandaBicicletas)
 
-        self.buttonMapaCalorDemandaPatinetes = Button(frame_opciones_ofertademanda, text=" Oferta-demanda patinetes", font=font.Font(family="FontAwesome", size=10),
-                                    anchor='w', command=self.mostrar_mapa_demanda_patinetes)
-        self.buttonMapaCalorDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
-        self.buttonMapaCalorDemandaPatinetes.pack(side=TOP)
-        self.bindHoverEvents(self.buttonMapaCalorDemandaPatinetes)
+        self.buttonMapaCalorOfertaDemandaPatinetes = Button(frame_opciones_ofertademanda, text=" Oferta-demanda patinetes", font=font.Font(family="FontAwesome", size=10),
+                                    anchor='w', command=self.mostrar_mapa_oferta_demanda_patinetes)
+        self.buttonMapaCalorOfertaDemandaPatinetes.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=22, height=2)
+        self.buttonMapaCalorOfertaDemandaPatinetes.pack(side=TOP)
+        self.bindHoverEvents(self.buttonMapaCalorOfertaDemandaPatinetes)
 
         self.buttonBorrarMapa = Button(frame_opciones_ofertademanda, text=" Borrar mapa de calor", font=font.Font(family="FontAwesome", size=10), 
                                                  anchor="w", command= self.borrar_mapacalor)
@@ -954,7 +991,6 @@ class FormMapaDesign():
 
         if len(self.cargados_demanda_patinetes) != 0:
             for id, archivo in self.cargados_demanda_patinetes.items():
-                print(id)
                 if archivo[1]:
                     self.selected_archivo_solicitudes_patinetes.set(id)
 
@@ -1008,15 +1044,18 @@ class FormMapaDesign():
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
         
     def pintar_mapa(self):
-        #print('Cuadrícula de ', self.seleccionado_metros.get(), ' metros')
+        print(self.clasificacion)
         utilInfo.close_infozona(self)
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()
 
-        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
+        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_bicicletas.get()==False \
             and self.checkbox_mapa_patinetes.get()==False \
+            and self.clasificacion != 'Oferta-Demanda Bicicletas' and self.clasificacion != 'Oferta-Demanda Patinetes' \
             and self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
             return
+        
+        
         
         if not hasattr(self, 'influencia'):
             self.influencia = 'con'
@@ -1053,24 +1092,23 @@ class FormMapaDesign():
             elif self.n == 108: self.alcance = 9
             if self.influencia == 'con':
                 self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
-        elif self.clasificacion == "Demanda Bicicletas":
+        elif self.clasificacion == "Demanda Bicicletas" or self.clasificacion == "Oferta-Demanda Bicicletas":
             self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     estaciones=self.estaciones,flotantes= self.bicicletas_flotantes,
                     demanda_bicicletas=self.demanda_bicicletas, demanda_patinetes=self.demanda_patinetes,
-                    mostrar_demanda_bicicletas=True, add_fijas=True, add_flotantes=True)
-        elif self.clasificacion == "Demanda Patinetes":
+                    add_demanda_bicicletas=True, add_fijas=True, add_flotantes=True)
+        elif self.clasificacion == "Demanda Patinetes"  or self.clasificacion == "Oferta-Demanda Patinetes":
             self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda, 
                     patinetes=self.patinetes,
                     demanda_bicicletas=self.demanda_bicicletas, demanda_patinetes=self.demanda_patinetes,
-                    mostrar_demanda_patinetes=True, add_patinetes=True)
+                    add_demanda_patinetes=True, add_patinetes=True)
         else:
-            #print(f'Est: {self.checkbox_mapa_estaciones.get()}, Flot: {self.checkbox_mapa_flotantes.get()}')
             self.dic_mapa_calor = utilTransportes.crear_diccionario(
                     self.n, self.minLon, self.maxLat, self.lon_celda, self.lat_celda,
                     estaciones=self.estaciones, flotantes=self.bicicletas_flotantes, patinetes=self.patinetes,
-                    add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_flotantes.get(),
+                    add_fijas=self.checkbox_mapa_estaciones.get(), add_flotantes=self.checkbox_mapa_bicicletas.get(),
                     add_patinetes=self.checkbox_mapa_patinetes.get())
             
             if self.n == 44: self.alcance = 3
@@ -1081,16 +1119,17 @@ class FormMapaDesign():
                 self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
         with open('diccionario_demanda.json', 'w', encoding='utf-8') as archivo:
             json.dump(self.dic_mapa_calor, archivo, ensure_ascii=False, indent=4)
+        
         colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
         
         """######################## CALCULO DE RANGOS #############################
-        minimo = np.min(self.dic_mapa_calor['cantidades'])
-        maximo = np.max(self.dic_mapa_calor['cantidades'])
-        index_min = np.argmin(self.dic_mapa_calor['cantidades'])
-        index_max = np.argmax(self.dic_mapa_calor['cantidades'])
+        minimo = np.min(self.dic_mapa_calor['demanda_bicicletas'])
+        maximo = np.max(self.dic_mapa_calor['demanda_bicicletas'])
+        index_min = np.argmin(self.dic_mapa_calor['demanda_bicicletas'])
+        index_max = np.argmax(self.dic_mapa_calor['demanda_bicicletas'])
         print(f'Tamaño: {self.seleccionado_metros.get()}, Clasificación: {self.clasificacion}, \
               Influencia: {self.influencia}, Num de transportes: {sum([self.checkbox_mapa_estaciones.get(), \
-                                self.checkbox_mapa_flotantes.get(), self.checkbox_mapa_patinetes.get()])}')
+                                self.checkbox_mapa_bicicletas.get(), self.checkbox_mapa_patinetes.get()])}')
         print(f'Min: {minimo}, max: {maximo}')
         print(f'El indice de la menor es: {index_min} y se trata de la zona {self.dic_mapa_calor['ids'][index_min]}')
         print(f'El indice de la mayor es: {index_max} y se trata de la zona {self.dic_mapa_calor['ids'][index_max]}')
@@ -1099,100 +1138,91 @@ class FormMapaDesign():
         # Tamaño de cuadrícula, tipo de clasificación, influencia de vecinos y número de transportes incluidos
         rangos_colores = {  (500, 'General', 'con', 3): [0, 1, 4, 9, 16, 25, 36, 50, 65, 82, 1000],
                             (500, 'General', 'con', 2): [0, 1, 3, 6, 11, 17, 24, 33, 43, 55, 1000],
-                            (500, 'General', 'con', 1): [0, 1, 3, 5, 9, 12, 17, 22, 28, 1000],
-                            (500, 'General', 'sin', 3): [0, 2, 6, 14, 24, 38, 54, 74, 97, 122, 1000],
+                            (500, 'General', 'con', 1): [0, 1, 2, 3, 6, 9, 12, 17, 22, 28, 1000],
+                            (500, 'General', 'sin', 3): [0, 2, 6, 14, 24, 38, 54, 74, 96, 122, 1000],
                             (500, 'General', 'sin', 2): [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 1000],
-                            (500, 'General', 'sin', 1): [0, 1, 2, 5, 8, 13, 18, 25, 33, 42, 1000],
-                            (400, 'General', 'con', 3): [0, 2, 4, 7, 10, 15, 20, 26, 33, 1000],
-                            (400, 'General', 'con', 2): [0, 1, 2, 4, 7, 10, 13, 18, 22, 1000],
-                            (400, 'General', 'con', 1): [0, 1, 2, 3, 5, 7, 9, 11, 1000],
+                            (500, 'General', 'sin', 1): [0, 1, 2, 5, 8, 13, 19, 25, 33, 42, 1000],
+                            (400, 'General', 'con', 3): [0, 1, 2, 4, 7, 10, 15, 20, 26, 33, 1000],
+                            (400, 'General', 'con', 2): [0, 1, 2, 3, 4, 7, 10, 13, 17, 22, 1000],
+                            (400, 'General', 'con', 1): [0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 1000],
                             (400, 'General', 'sin', 3): [0, 1, 3, 7, 13, 20, 28, 39, 51, 64, 1000],
-                            (400, 'General', 'sin', 2): [0, 1, 2, 5, 9, 14, 20, 27, 35, 45, 1000],
-                            (400, 'General', 'sin', 1): [0, 1, 3, 5, 8, 11, 15, 20, 25, 1000],
-                            (300, 'General', 'con', 3): [0, 1, 3, 6, 11, 17, 24, 33, 42, 54, 1000],
-                            (300, 'General', 'con', 2): [0, 2, 4, 7, 11, 16, 22, 28, 36, 1000],
-                            (300, 'General', 'con', 1): [0, 1, 2, 4, 6, 8, 11, 14, 18, 1000],
-                            (300, 'General', 'sin', 3): [0, 1, 4, 9, 17, 26, 38, 51, 67, 84, 1000],
-                            (300, 'General', 'sin', 2): [0, 1, 3, 7, 12, 18, 27, 36, 47, 60, 1000],
-                            (300, 'General', 'sin', 1): [0, 2, 4, 7, 10, 15, 20, 26, 33, 1000],
-                            (200, 'General', 'con', 3): [0, 1, 2, 3, 5, 7, 10, 13, 16, 1000],
-                            (200, 'General', 'con', 2): [0, 1, 2, 3, 5, 7, 9, 11, 1000],
-                            (200, 'General', 'con', 1): [0, 1, 2, 3, 5, 6, 1000],
+                            (400, 'General', 'sin', 2): [0, 1, 2, 5, 9, 14, 20, 27, 36, 45, 1000],
+                            (400, 'General', 'sin', 1): [0, 1, 2, 3, 5, 8, 11, 15, 20, 25, 1000],
+                            (300, 'General', 'con', 3): [0, 1, 3, 6, 11, 17, 24, 33, 43, 54, 1000],
+                            (300, 'General', 'con', 2): [0, 1, 2, 4, 7, 11, 16, 22, 28, 36, 1000],
+                            (300, 'General', 'con', 1): [0, 1, 2, 3, 4, 6, 8, 11, 14, 18, 1000],
+                            (300, 'General', 'sin', 3): [0, 1, 4, 9, 17, 26, 37, 51, 66, 84, 1000],
+                            (300, 'General', 'sin', 2): [0, 1, 3, 7, 12, 19, 27, 36, 47, 60, 1000],
+                            (300, 'General', 'sin', 1): [0, 1, 2, 4, 7, 10, 15, 20, 26, 33, 1000],
+                            (200, 'General', 'con', 3): [0, 1, 2, 3, 4, 5, 7, 10, 13, 16, 1000],
+                            (200, 'General', 'con', 2): [0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 1000],
+                            (200, 'General', 'con', 1): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1000],
                             (200, 'General', 'sin', 3): [0, 1, 2, 5, 9, 14, 20, 28, 36, 46, 1000],
-                            (200, 'General', 'sin', 2): [0, 2, 4, 6, 10, 14, 20, 25, 32, 1000],
-                            (200, 'General', 'sin', 1): [0, 1, 2, 4, 6, 8, 11, 15, 19, 1000],
-                            (500, 'Llenado', '', 1): [0, 1, 2, 6, 10, 15, 22, 30, 40, 50, 1000],
-                            (400, 'Llenado', '', 1): [0, 1, 2, 5, 9, 14, 20, 27, 36, 45, 1000],
-                            (300, 'Llenado', '', 1): [0, 2, 4, 8, 12, 17, 24, 31, 39, 1000],
-                            (200, 'Llenado', '', 1): [0, 2, 4, 6, 10, 14, 19, 25, 32, 1000],
+                            (200, 'General', 'sin', 2): [0, 1, 2, 4, 6, 10, 14, 19, 25, 32, 1000],
+                            (200, 'General', 'sin', 1): [0, 1, 2, 3, 4, 6, 8, 11, 15, 19, 1000],
                             (500, 'Huecos', 'con', 1): [0, 1, 2, 5, 8, 13, 19, 26, 34, 43, 1000],
-                            (400, 'Huecos', 'con', 1): [0, 1, 3, 5, 8, 12, 16, 21, 27, 1000],
-                            (300, 'Huecos', 'con', 1): [0, 1, 2, 4, 6, 9, 12, 16, 20, 1000],
-                            (200, 'Huecos', 'con', 1): [0, 1, 2, 4, 6, 8, 10, 13, 1000],
+                            (400, 'Huecos', 'con', 1): [0, 1, 2, 3, 5, 8, 12, 16, 21, 27, 1000],
+                            (300, 'Huecos', 'con', 1): [0, 1, 2, 3, 4, 6, 9, 12, 16, 20, 1000],
+                            (200, 'Huecos', 'con', 1): [0, 1, 2, 3, 4, 5, 6, 8, 10, 13, 1000],
                             (500, 'Huecos', 'sin', 1): [0, 1, 5, 11, 20, 31, 44, 60, 78, 99, 1000],
-                            (400, 'Huecos', 'sin', 1): [0, 1, 3, 7, 13, 21, 30, 40, 52, 66, 1000],
+                            (400, 'Huecos', 'sin', 1): [0, 1, 3, 7, 13, 20, 29, 40, 52, 66, 1000],
                             (300, 'Huecos', 'sin', 1): [0, 1, 4, 8, 14, 23, 32, 44, 58, 73, 1000],
-                            (200, 'Huecos', 'sin', 1): [0, 1, 2, 5, 8, 13, 19, 25, 33, 42, 1000]}
+                            (200, 'Huecos', 'sin', 1): [0, 1, 2, 5, 8, 13, 19, 25, 33, 42, 1000],
+                            (500, 'Demanda Bicicletas', '', 1): [0, 1, 2, 3, 4, 5, 6, 7, 9, 12, 1000],
+                            (500, 'Demanda Patinetes', '', 1): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1000]}
 
         for i in range(pow(self.n, 2)):
+            ########################### ASIGNACION DE FACTOR DE LLENADO ########################
             if self.clasificacion == 'General' and self.influencia=='con':
                 factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
-                contador = sum([self.checkbox_mapa_estaciones.get(),
-                                self.checkbox_mapa_flotantes.get(),
-                                self.checkbox_mapa_patinetes.get()])
-                if contador==3: # Si hay tres medios seleccionados, los rangos son de 0-100 aprox
-                    rangos = [0, 2, 10, 18, 26, 34, 44, 56, 70, 84, 1000]
-                elif contador==2: # Si hay dos medios seleccionados, los rangos son de 0-65 aprox 
-                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
-                elif contador==1: # Si hay uno , los rangos son de 0-33 aprox 
-                    rangos = [0, 1, 4, 7, 10, 13, 16, 19, 22, 25, 1000]
 
             elif self.clasificacion == 'General' and self.influencia=='sin':
                 factor_llenado = self.dic_mapa_calor['cantidades'][i]
-                contador = sum([self.checkbox_mapa_estaciones.get(),
-                                self.checkbox_mapa_flotantes.get(),
-                                self.checkbox_mapa_patinetes.get()])
-                if contador==3: # Si hay tres medios seleccionados, los rangos son de ????? aprox
-                    rangos = [0, 8, 20, 34, 48, 64, 82, 100, 120, 142, 1000]
-                elif contador==2: # Si hay dos medios seleccionados, los rangos son de 0-92/106 aprox 
-                    rangos = [0, 4, 12, 20, 28, 38, 48, 60, 72, 84, 1000]
-                elif contador==1: # Si hay uno , los rangos son de 0-61/46 aprox 
-                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
 
             elif self.clasificacion == 'Llenado':
-                rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
                 if self.dic_mapa_calor['capacidades'][i] != 0:
                     factor_llenado = (self.dic_mapa_calor['cantidades'][i]/self.dic_mapa_calor['capacidades'][i])*100
                 else: factor_llenado = 0
             elif self.clasificacion == 'Huecos':
                 if self.influencia =='con':
-                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
                     factor_llenado = self.dic_mapa_calor['cantidades_suavizadas'][i]
                 elif self.influencia == 'sin':
-                    rangos = [0, 1, 6, 12, 18, 24, 30, 36, 42, 50, 1000]
                     factor_llenado = self.dic_mapa_calor['cantidades'][i]
-            contador = sum([self.checkbox_mapa_estaciones.get(),
-                                self.checkbox_mapa_flotantes.get(),
-                                self.checkbox_mapa_patinetes.get()])
-            if self.seleccionado_metros.get() == '':
-                self.seleccionado_metros.set('500')
-            rangos = rangos_colores[(int(self.seleccionado_metros.get()), self.clasificacion, self.influencia, contador)]
-                    
-            if self.clasificacion == 'Demanda Bicicletas':
-                rangos = [-100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100]
+            elif self.clasificacion == 'Demanda Bicicletas':
+                factor_llenado = self.dic_mapa_calor['demanda_bicicletas'][i]
+            elif self.clasificacion == 'Demanda Patinetes':
+                factor_llenado = self.dic_mapa_calor['demanda_patinetes'][i]
+            elif self.clasificacion == 'Oferta-Demanda Bicicletas':
                 bicicletas_disponibles = self.dic_mapa_calor['cantidades'][i]
                 solicitudes =  self.dic_mapa_calor['demanda_bicicletas'][i]
                 factor_llenado=100*(bicicletas_disponibles-solicitudes)/(bicicletas_disponibles+solicitudes+1)
-            elif self.clasificacion == 'Demanda Patinetes':
-                rangos = [-100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100]
+            elif self.clasificacion == 'Oferta-Demanda Patinetes':
                 patinetes_disponibles = self.dic_mapa_calor['cantidades'][i]
                 solicitudes =  self.dic_mapa_calor['demanda_patinetes'][i]
                 factor_llenado=100*(patinetes_disponibles-solicitudes)/(patinetes_disponibles+solicitudes+1)
+
+            ############################ ASIGNACION DE RANGOS ###############################
+            contador = sum([self.checkbox_mapa_estaciones.get(),
+                                self.checkbox_mapa_bicicletas.get(),
+                                self.checkbox_mapa_patinetes.get()])
+            if self.seleccionado_metros.get() == '':
+                self.seleccionado_metros.set('500')
+            if self.clasificacion == "Llenado":
+                rangos = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+            elif self.clasificacion == 'Demanda Bicicletas' or self.clasificacion == 'Demanda Patinetes':
+                rangos = rangos_colores[(int(self.seleccionado_metros.get()), self.clasificacion, '', 1)]
+            elif self.clasificacion == 'Oferta-Demanda Bicicletas' or self.clasificacion == 'Oferta-Demanda Patinetes':
+                rangos = [-100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100]
+            else:
+                rangos = rangos_colores[(int(self.seleccionado_metros.get()), self.clasificacion, self.influencia, contador)]
+
+
+
             color = utilTransportes.get_color(factor_llenado, rangos, colores)
             
             if factor_llenado != 0 and (not self.clasificacion == 'Llenado' or self.checkbox_mapa_estaciones.get()) \
-                or (self.clasificacion == 'Demanda Bicicletas' and factor_llenado == 0) \
-                or (self.clasificacion == 'Demanda Patinetes' and factor_llenado == 0): #los que son 0 no pintarlos
+                or (self.clasificacion == 'Oferta-Demanda Bicicletas' and factor_llenado == 0) \
+                or (self.clasificacion == 'Oferta-Demanda Patinetes' and factor_llenado == 0): #los que son 0 no pintarlos
                 poligono = self.labelMap.set_polygon(self.dic_mapa_calor['coordenadas'][i],
                                         fill_color=color,
                                         outline_color=None,
@@ -1210,7 +1240,8 @@ class FormMapaDesign():
         
         i=10
         for color in colores[::-1]:
-            if self.clasificacion == 'General':
+            if self.clasificacion == 'General' or self.clasificacion == 'Huecos' or \
+                self.clasificacion == 'Demanda Bicicletas' or self.clasificacion == 'Demanda Patinetes':
                 rangos[-1]='...'
                 color_label = Label(self.frame_leyenda, width=50, height=1, bg=color, text=f"{rangos[i-1]}-{rangos[i]}")
             else:
@@ -1219,8 +1250,9 @@ class FormMapaDesign():
             i=i-1
 
         if self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_flotantes.get()==False and \
+        self.checkbox_mapa_bicicletas.get()==False and \
         self.checkbox_mapa_patinetes.get()==False and \
+        self.clasificacion != 'Oferta-Demanda Bicicletas' and self.clasificacion != 'Oferta-Demanda Patinetes' and \
         self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
             self.frame_leyenda.destroy()
         ###############################################################################
@@ -1228,7 +1260,7 @@ class FormMapaDesign():
         ##################################### BOTONES RIGHT CLICK ##################################
         mostrados=""
         if self.checkbox_mapa_estaciones.get()==True:   mostrados+="estaciones "
-        if self.checkbox_mapa_flotantes.get()==True:    mostrados+="flotantes "
+        if self.checkbox_mapa_bicicletas.get()==True:    mostrados+="bicicletas "
         if self.checkbox_mapa_patinetes.get()==True:    mostrados+="patinetes "
         tipo_mapa = (self.n, self.clasificacion, mostrados)
         if not tipo_mapa in self.botones_anadidos:
@@ -1254,6 +1286,8 @@ class FormMapaDesign():
         [self.buttonPatinetes.invoke() for _ in range(2)] if self.checkbox_patinetes.get() else None
         [self.buttonAgruparPatinetes.invoke() for _ in range(2)] if self.checkbox_agrupar_patinetes.get() else None
         [self.buttonCentroidesPatinetes.invoke() for _ in range(2)] if self.checkbox_centroides_patinetes.get() else None
+        [self.buttonMapaCalorOfertaDemandaPatinetes.invoke() for _ in range(2)] if self.checkbox_demanda_bicicletas.get() else None
+        [self.buttonMapaCalorOfertaDemandaPatinetes.invoke() for _ in range(2)] if self.checkbox_demanda_patinetes.get() else None
         [self.buttonDemandaBicicletas.invoke() for _ in range(2)] if self.checkbox_demanda_bicicletas.get() else None
         [self.buttonDemandaPatinetes.invoke() for _ in range(2)] if self.checkbox_demanda_patinetes.get() else None
 
@@ -1285,15 +1319,6 @@ class FormMapaDesign():
             self.cargados_demanda_patinetes[self.patinetes_solicitudes_anterior][1] = False
         self.cargados_demanda_patinetes[self.selected_archivo_solicitudes_patinetes.get()][1] = True
         self.patinetes_solicitudes_anterior = self.selected_archivo_solicitudes_patinetes.get()
-
-        """for clave, valor in self.cargados_estaciones.items():
-            print(f"Clave: {clave}, Booleano: {valor[1]}")
-
-        for clave, valor in self.cargados_bicicletas.items():
-            print(f"Clave: {clave}, Booleano: {valor[1]}")
-
-        for clave, valor in self.cargados_patinetes.items():
-            print(f"Clave: {clave}, Booleano: {valor[1]}")"""
     
     def eliminar_cargados(self, nombre, tipo):
         if tipo == 'estaciones':
@@ -1481,36 +1506,38 @@ class FormMapaDesign():
     def generar_datos_demanda_patinetes(self):
         self.solicitudes_patinetes = simpledialog.askinteger("Entrada", "Introduce un número:")
         data =  utilDatos.generar_datos_demanda(self.solicitudes_patinetes, self.maxLon, self.minLon, self.maxLat, self.minLat)
-        print(len(data['coordenadas']), len(data['zona']))
         self.cargados_demanda_patinetes[f'solicitudes_{self.solicitudes_patinetes}_patinetes.json'] = [data, False]
         self.ventana_gestor_demanda_patinetes.destroy()
         self.gestor_demanda_patinetes()
     
     def aplicar_cambios(self, cambiado):
-        if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
-            self.verificar_credenciales()
-        elif self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and self.sesion_iniciada:
-            self.select_button()
-            self.datos_estaciones_api()
-        elif cambiado == 'estaciones':
-            self.estaciones = self.cargados_estaciones[self.selected_archivo_estaciones.get()][0]
-            self.ventana_informativa()
-            #self.ventana_gestor_estaciones.destroy()
+        if cambiado == 'estaciones':
+            if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
+                self.verificar_credenciales()
+            elif self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and self.sesion_iniciada:
+                self.select_button()
+                self.datos_estaciones_api()
+                self.ventana_gestor_estaciones.destroy()
+            else:
+                self.estaciones = self.cargados_estaciones[self.selected_archivo_estaciones.get()][0]
+                #self.ventana_informativa()
+                self.ventana_gestor_estaciones.destroy()
         elif cambiado == 'bicicletas':
             self.bicicletas_flotantes = self.cargados_bicicletas[self.selected_archivo_bicicletas.get()][0]
-            self.ventana_informativa()
-            #self.ventana_gestor_bicicletas.destroy()
+            #self.ventana_informativa()
+            self.ventana_gestor_bicicletas.destroy()
         elif cambiado == 'patinetes':
             self.patinetes = self.cargados_patinetes[self.selected_archivo_patinetes.get()][0]
-            self.ventana_informativa()
-            #self.ventana_gestor_patinetes.destroy()
+            #self.ventana_informativa()
+            self.ventana_gestor_patinetes.destroy()
         elif cambiado == 'demanda bicicletas':
             self.demanda_bicicletas = self.cargados_demanda_bicicletas[self.selected_archivo_solicitudes_bicicletas.get()][0]
-            self.ventana_informativa()
+            #self.ventana_informativa()
+            self.ventana_gestor_demanda_bicicletas.destroy()
         elif cambiado == 'demanda patinetes':
-            #print(self.selected_archivo_patinetes.get())
             self.demanda_patinetes = self.cargados_demanda_patinetes[self.selected_archivo_solicitudes_patinetes.get()][0]
-            self.ventana_informativa()
+            #self.ventana_informativa()
+            self.ventana_gestor_demanda_patinetes.destroy()
 
     def selector_fecha(self):
         self.ventana_fecha = Toplevel(self.frame_mapa)
@@ -1850,14 +1877,6 @@ class FormMapaDesign():
                             sumatoria += matriz[ni, nj] * matriz_influencia[fi + mitad_alcance, fj + mitad_alcance]
                 matriz_suavizada[i, j] = sumatoria
         
-        """minimo = np.min(matriz_suavizada)
-        maximo = np.max(matriz_suavizada)
-        index_min = np.argmin(matriz_suavizada)
-        index_max = np.argmax(matriz_suavizada)
-        print(f'Min: {minimo}, max: {maximo}')
-        print(f'El indice de la menor es: {index_min} y se trata de la zona {self.dic_mapa_calor['ids'][index_min]}')
-        print(f'El indice de la mayor es: {index_max} y se trata de la zona {self.dic_mapa_calor['ids'][index_max]}')
-        """
         return matriz_suavizada.flatten().tolist()
         """
         ################## NORMALIZACION ######################
@@ -1870,10 +1889,15 @@ class FormMapaDesign():
 
     def mostrar_mapa(self):
         self.borrar_mapacalor()
+        self.actualizar_leyenda_mapa()
+        self.clasificacion = self.tipo_mapa.get()
         self.pintar_mapa()
 
     def confirmar_tipo(self):        
         self.borrar_mapacalor()
+        self.checkbox_mapa_estaciones.set(False)
+        self.checkbox_mapa_bicicletas.set(False)
+        self.checkbox_mapa_patinetes.set(False)        
         self.clasificacion = self.tipo_mapa.get()
         if self.clasificacion == 'Llenado' or self.clasificacion == 'Huecos':
             self.frame_mostrar_mapa_bicicletas.pack_forget()
@@ -1881,9 +1905,9 @@ class FormMapaDesign():
         if self.clasificacion == 'General':
             self.frame_mostrar_mapa_bicicletas.pack(after=self.frame_mostrar_mapa_estaciones, fill=X, padx=10, pady=2, side=TOP)
             self.frame_mostrar_mapa_patinetes.pack(after=self.frame_mostrar_mapa_bicicletas, fill=X, padx=10, pady=2, side=TOP)
-        self.pintar_mapa()
+        #self.pintar_mapa()
         utilInfo.show_info_cambio_tipo(self)
-        self.tipo_mapa_anterior == self.tipo_mapa.get()
+        #self.tipo_mapa_anterior == self.tipo_mapa.get()
 
     def cambiar_tipo(self):
         self.toggle_submenu(f'Mapa {self.tipo_mapa_anterior}')
@@ -1893,11 +1917,25 @@ class FormMapaDesign():
     def mostrar_mapa_demanda_bicicletas(self):
         self.borrar_mapacalor()
         self.clasificacion = "Demanda Bicicletas"
+        self.actualizar_leyenda_mapa()
         self.pintar_mapa()
 
     def mostrar_mapa_demanda_patinetes(self):
         self.borrar_mapacalor()
         self.clasificacion = "Demanda Patinetes"
+        self.actualizar_leyenda_mapa()
+        self.pintar_mapa()
+
+    def mostrar_mapa_oferta_demanda_bicicletas(self):
+        self.borrar_mapacalor()
+        self.clasificacion = "Oferta-Demanda Bicicletas"
+        self.actualizar_leyenda_mapa()
+        self.pintar_mapa()
+
+    def mostrar_mapa_oferta_demanda_patinetes(self):
+        self.borrar_mapacalor()
+        self.clasificacion = "Oferta-Demanda Patinetes"
+        self.actualizar_leyenda_mapa()
         self.pintar_mapa()
 
     def borrar_mapacalor(self):
@@ -1907,10 +1945,14 @@ class FormMapaDesign():
                 for poligono in poligonos:
                     poligono.delete()
             self.frame_leyenda.destroy()
+        if hasattr(self, 'frame_leyenda_mapa'):
+            for widget in self.frame_leyenda_mapa.winfo_children():
+                widget.destroy()
+            self.frame_leyenda_mapa.place_forget()
     
     def modificar_cuadricula(self):
         """if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()):
+        self.checkbox_mapa_bicicletas.get()==False and self.checkbox_mapa_patinetes.get()):
             messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
             return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
@@ -1956,7 +1998,7 @@ class FormMapaDesign():
 
     def modificar_influencia(self):
         """if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_flotantes.get()==False and self.checkbox_mapa_patinetes.get()==False):
+        self.checkbox_mapa_bicicletas.get()==False and self.checkbox_mapa_patinetes.get()==False):
             messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
             return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
@@ -2000,9 +2042,7 @@ class FormMapaDesign():
         
         self.n = math.ceil(max(n_lon, n_lat))"""
 
-        #print(self.seleccionado_metros.get())
-
-        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_flotantes.get()==False \
+        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_bicicletas.get()==False \
             and self.checkbox_mapa_patinetes.get()==False \
             and self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
             return
@@ -2238,6 +2278,36 @@ class FormMapaDesign():
         elif cantidad_transportes == 7: height = 370
 
         self.frame_leyenda_transportes.place(x=30, y=height)
+
+    def actualizar_leyenda_mapa(self):
+        if not self.checkbox_mapa_estaciones.get() and not self.checkbox_mapa_bicicletas.get() and \
+            not self.checkbox_mapa_patinetes.get() and \
+            self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes' and \
+            self.clasificacion != 'Oferta-Demanda Bicicletas' and self.clasificacion != 'Oferta-Demanda Patinetes' and \
+            hasattr(self, 'frame_leyenda_mapa'):
+            self.frame_leyenda_mapa.destroy()
+            delattr(self, 'frame_leyenda_mapa')
+            return
+
+        if hasattr(self, 'frame_leyenda_mapa') and self.frame_leyenda_mapa is not None:
+            if self.frame_leyenda_mapa.winfo_ismapped():
+                if self.frame_leyenda_mapa.winfo_children():
+                    for widget in self.frame_leyenda_mapa.winfo_children():
+                        widget.destroy()
+        else:
+            self.frame_leyenda_mapa = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
+        
+        utilInfo.show_leyenda_mapa(self.frame_leyenda_mapa, tipo_mapa=self.clasificacion, influencia=self.influencia, cuadricula=self.seleccionado_metros.get())
+        #show_leyenda_mapa(frame_leyenda_mapa, tipo_mapa, influencia='', cuadricula='500')
+        if self.clasificacion == 'Llenado':
+            self.frame_leyenda_mapa.place(relx=0.8, rely=0.9)
+        elif self.clasificacion == 'Oferta-Demanda Bicicletas' or self.clasificacion == 'Oferta-Demanda Patinetes':
+            self.frame_leyenda_mapa.place(relx=0.73, rely=0.9)
+        elif self.clasificacion == 'Demanda Bicicletas' or self.clasificacion == 'Demanda Patinetes':
+            self.frame_leyenda_mapa.place(relx=0.75, rely=0.9)
+        else:
+            self.frame_leyenda_mapa.place(relx=0.8, rely=0.85)
+
 
     def borrar_demanda_bicicletas(self):
         if self.poligonos_demanda_bicicletas != []:

@@ -65,7 +65,7 @@ def crear_diccionario_zonas_nuevo(estaciones, n, minLon, maxLat, lon_celda, lat_
 def crear_diccionario(n, minLon, maxLat, lon_celda, lat_celda,
                       estaciones=None, flotantes=None, patinetes=None, demanda_bicicletas=None, demanda_patinetes=None,
                       add_fijas=False, add_flotantes=False, add_patinetes=False, 
-                      mostrar_huecos=False, mostrar_demanda_bicicletas=False, mostrar_demanda_patinetes=False):
+                      mostrar_huecos=False, add_demanda_bicicletas=False, add_demanda_patinetes=False):
     #print(f'add_fijas: {add_fijas}, add_flotantes: {add_flotantes}, add_patinetes: {add_patinetes}')
     matriz = [[(maxLat, minLon) for _ in range(n+1)] for _ in range(n+1)]
     #Creo la matriz con las coordenadas para cada extremo de la cuadricula
@@ -136,13 +136,13 @@ def crear_diccionario(n, minLon, maxLat, lon_celda, lat_celda,
             diccionario['capacidades'][zona-1] = diccionario['capacidades'][zona-1] + (estaciones[id]['bike_bases']+estaciones[id]['free_bases'])
             diccionario['num_estaciones'][zona-1] = diccionario['num_estaciones'][zona-1] + 1
 
-    if demanda_bicicletas and estaciones != None and flotantes != None and demanda_bicicletas != None:
+    if add_demanda_bicicletas and estaciones != None and flotantes != None and demanda_bicicletas != None:
         for solicitud in demanda_bicicletas['coordenadas']:
             zona = clasificar_punto(n, solicitud, lon_celda, lat_celda, minLon, maxLat)
             demanda_bicicletas['zona'].append(zona)
             diccionario['demanda_bicicletas'][zona-1] = diccionario['demanda_bicicletas'][zona-1]+1
 
-    if demanda_patinetes and patinetes != None and demanda_patinetes != None:
+    if add_demanda_patinetes and patinetes != None and demanda_patinetes != None:
         for solicitud in demanda_patinetes['coordenadas']:
             zona = clasificar_punto(n, solicitud, lon_celda, lat_celda, minLon, maxLat)
             demanda_patinetes['zona'].append(zona)
