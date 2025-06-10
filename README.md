@@ -25,7 +25,7 @@ Sigue los siguientes pasos para descargar e iniciar la aplicación en la máquin
 
 ### 1. Clonar el repositorio
 
-Primero, hay que el repositorio y asegurarse de estar en la rama `main`:
+Primero, hay que clonar el repositorio y asegurarse de estar en la rama `main`:
 
 ```bash
 git clone https://github.com/paulaariasf/APLICACION.git
