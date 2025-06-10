@@ -3,3 +3,5 @@ pandas
 scikit-learn
 requests
 tkintermapview
+Pillow
+matplotlib
