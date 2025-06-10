@@ -87,7 +87,7 @@ APLICACION/
 - Se pueden importar datos históricos o trabajar con datos simulados. Hay que tener en cuenta que los datos deben tener el formato adecuado.
 
 - El sistema soporta actualización de estaciones fijas en tiempo real mediante APIs como BiciMAD.
-- 
+  
 - La aplicación sólo podrá ser ejecutada en equipos con sistema operativo Windows, debido a la incompatibilidad de algunas de las librerías utilizadas en MacOS.
 
 
