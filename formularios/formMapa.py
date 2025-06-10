@@ -2302,14 +2302,13 @@ class FormMapaDesign():
         utilInfo.show_leyenda_mapa(self.frame_leyenda_mapa, tipo_mapa=self.clasificacion, influencia=self.influencia, cuadricula=self.seleccionado_metros.get())
         #show_leyenda_mapa(frame_leyenda_mapa, tipo_mapa, influencia='', cuadricula='500')
         if self.clasificacion == 'Llenado':
-            self.frame_leyenda_mapa.place(relx=0.8, rely=0.9)
+            self.frame_leyenda_mapa.place(relx=0.1, rely=0.03)
         elif self.clasificacion == 'Oferta-Demanda Bicicletas' or self.clasificacion == 'Oferta-Demanda Patinetes':
             self.frame_leyenda_mapa.place(relx=0.73, rely=0.9)
         elif self.clasificacion == 'Demanda Bicicletas' or self.clasificacion == 'Demanda Patinetes':
-            self.frame_leyenda_mapa.place(relx=0.75, rely=0.9)
+            self.frame_leyenda_mapa.place(relx=0.75, rely=0.03)
         else:
-            self.frame_leyenda_mapa.place(relx=0.8, rely=0.85)
-
+            self.frame_leyenda_mapa.place(relx=0.8, rely=0.03)
 
     def borrar_demanda_bicicletas(self):
         if self.poligonos_demanda_bicicletas != []:

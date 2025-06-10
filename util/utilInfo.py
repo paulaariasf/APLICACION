@@ -23,7 +23,7 @@ def show_info_zona(form_mapa, coords):
         if form_mapa.checkbox_mapa_estaciones.get():
             texto+=f"Número de estaciones:{form_mapa.dic_mapa_calor['num_estaciones'][zona-1]}\n"
             texto+=f"Cantidad bicicletas estaciones: {form_mapa.dic_mapa_calor['cantidades_estaciones'][zona-1]}\n"
-        if form_mapa.checkbox_mapa_flotantes.get():
+        if form_mapa.checkbox_mapa_bicicletas.get():
             texto+=f"Número de bicicletas flotantes:{form_mapa.dic_mapa_calor['cantidades_flotantes'][zona-1]}\n"
         if form_mapa.checkbox_mapa_patinetes.get():
             texto+=f"Número de patinetes:{form_mapa.dic_mapa_calor['cantidades_patinetes'][zona-1]}\n"
