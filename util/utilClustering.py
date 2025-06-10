@@ -5,8 +5,6 @@ from sklearn.metrics import silhouette_score
 import numpy as np
 import matplotlib.pyplot as plt
 from tkinter import *
-from tkinter import ttk
-from collections import Counter
 
 def clusters_dbscan(eps, coordenadas):
     # Aplicar el algoritmo de clustering DBSCAN

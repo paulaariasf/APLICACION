@@ -2,12 +2,8 @@ from tkinter import *
 from tkinter import font
 import util.utilVentana as utilVentana
 import util.utilImagenes as utilImagenes
-from PIL import ImageTk, Image
 from config import COLOR_BARRA_SUPERIOR, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_LATERAL
-from formularios.formConstruccion import FormConstruccionDesign
 from formularios.formInicio import FormInicioDesign
-from formularios.formMapa import FormMapaDesign
-from formularios.formBicicletasFlotantes import FormBicicletasFlotantesDesign
 
 
 class FormularioGeneral(Tk):

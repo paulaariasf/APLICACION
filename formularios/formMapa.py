@@ -17,8 +17,6 @@ from tkinter import filedialog
 import json
 from tkinter.font import Font
 import requests
-import uuid
-from PIL import Image, ImageTk
 
 class FormMapaDesign():
 
@@ -50,12 +48,17 @@ class FormMapaDesign():
 
         self.botones_anadidos = []
 
-        self.estaciones = utilTransportes.devolver_estaciones()
+        with open('./data/estaciones_16-04-2024_23h.json', "r", encoding="utf-8") as archivo:
+            self.estaciones = json.load(archivo)
 
         self.maxLon, self.minLon, self.maxLat, self.minLat = utilTransportes.limites(self.estaciones)
 
-        self.bicicletas_flotantes = utilTransportes.generar_flotantes_v2(self.estaciones, 0.005)
-        self.patinetes = utilTransportes.generar_patinetes(self.estaciones, 0.005, self.maxLon, self.minLon, self.maxLat, self.minLat)
+        with open("./data/bicicletas_generadas_estaciones.json", "r", encoding="utf-8") as archivo:
+            self.bicicletas_flotantes = json.load(archivo)
+
+        with open("./data/patinetes_generados_estaciones.json", "r", encoding="utf-8") as archivo:
+            self.patinetes = json.load(archivo)
+
         self.solicitudes_bicicletas = 1000
         self.demanda_bicicletas = utilDatos.generar_datos_demanda(self.solicitudes_bicicletas, self.maxLon, self.minLon, self.maxLat, self.minLat)
         self.solicitudes_patinetes = 500
@@ -1044,7 +1047,6 @@ class FormMapaDesign():
         button.config(bg=COLOR_MENU_LATERAL, fg="white")
         
     def pintar_mapa(self):
-        print(self.clasificacion)
         utilInfo.close_infozona(self)
         if hasattr (self, "frame_leyenda"):
             self.frame_leyenda.destroy()

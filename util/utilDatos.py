@@ -1,9 +1,6 @@
 import random
-import pandas as pd
-import re
 import json
 import numpy as np
-import requests
 from tkinter import *
 from tkinter import messagebox, filedialog
 
