@@ -895,7 +895,7 @@ class FormMapaDesign():
         alto_pantalla = self.ventana_gestor_demanda_bicicletas.winfo_screenheight()
 
         ancho_ventana = 350
-        alto_ventana = 400
+        alto_ventana = 420
 
         x = (ancho_pantalla // 2) - (ancho_ventana // 2)
         y = (alto_pantalla // 2) - (alto_ventana // 2)
@@ -1345,6 +1345,12 @@ class FormMapaDesign():
             self.gestor_demanda_patinetes()
 
     def cargar_archivo(self, tipo, visualizador=False):
+        #Comprobacion limite
+        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
+            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+            return 
+        
         ruta_relativa = os.path.join(os.getcwd(), "data")
         if tipo == 'estaciones':
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de estaciones",
@@ -1499,6 +1505,11 @@ class FormMapaDesign():
         return True
 
     def generar_datos_demanda_bicicletas(self):
+        #Comprobacion limite
+        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
+            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
+            return
         self.solicitudes_bicicletas = simpledialog.askinteger("Entrada", "Introduce un número:")
         data =  utilDatos.generar_datos_demanda(self.solicitudes_bicicletas, self.maxLon, self.minLon, self.maxLat, self.minLat)
         self.cargados_demanda_bicicletas[f'solicitudes_{self.solicitudes_bicicletas}_bicicletas.json'] = [data, False]
@@ -1506,6 +1517,11 @@ class FormMapaDesign():
         self.gestor_demanda_bicicletas()
 
     def generar_datos_demanda_patinetes(self):
+        #Comprobacion limite
+        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
+            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
+            return 
         self.solicitudes_patinetes = simpledialog.askinteger("Entrada", "Introduce un número:")
         data =  utilDatos.generar_datos_demanda(self.solicitudes_patinetes, self.maxLon, self.minLon, self.maxLat, self.minLat)
         self.cargados_demanda_patinetes[f'solicitudes_{self.solicitudes_patinetes}_patinetes.json'] = [data, False]
@@ -1513,6 +1529,7 @@ class FormMapaDesign():
         self.gestor_demanda_patinetes()
     
     def aplicar_cambios(self, cambiado):
+        self.borrar_mapacalor()
         if cambiado == 'estaciones':
             if self.selected_archivo_estaciones.get() == 'Tomar datos en tiempo real' and not self.sesion_iniciada:
                 self.verificar_credenciales()
@@ -1520,28 +1537,58 @@ class FormMapaDesign():
                 self.select_button()
                 self.datos_estaciones_api()
                 self.ventana_gestor_estaciones.destroy()
+
+                if self.checkbox_mapa_estaciones.get():     self.buttonMostrarMapaEstaciones.invoke()
+                if self.checkbox_fijas.get():               self.buttonEstacionesFijas.invoke()
+                if self.checkbox_ocupacion.get():           self.buttonEstacionesOcupacion.invoke()
             else:
                 self.estaciones = self.cargados_estaciones[self.selected_archivo_estaciones.get()][0]
                 #self.ventana_informativa()
                 self.ventana_gestor_estaciones.destroy()
+
+                if self.checkbox_mapa_estaciones.get():     self.buttonMostrarMapaEstaciones.invoke()
+                if self.checkbox_fijas.get():               self.buttonEstacionesFijas.invoke()
+                if self.checkbox_ocupacion.get():           self.buttonEstacionesOcupacion.invoke()
         elif cambiado == 'bicicletas':
             self.bicicletas_flotantes = self.cargados_bicicletas[self.selected_archivo_bicicletas.get()][0]
             #self.ventana_informativa()
             self.ventana_gestor_bicicletas.destroy()
+
+            if self.checkbox_mapa_bicicletas.get():         self.buttonMostrarMapaBicicletas.invoke()
+            if self.checkbox_bicicletas.get():              self.buttonBicicletasFlotantes.invoke()
+            if self.checkbox_agrupar_bicicletas.get():      self.buttonAgruparBicicletas.invoke()
+            if self.checkbox_centroides_bicicletas.get():   self.buttonCentroidesBicicletas.invoke()
         elif cambiado == 'patinetes':
             self.patinetes = self.cargados_patinetes[self.selected_archivo_patinetes.get()][0]
             #self.ventana_informativa()
             self.ventana_gestor_patinetes.destroy()
+
+            if self.checkbox_mapa_patinetes.get():          self.buttonMostrarMapaPatinetes.invoke()
+            if self.checkbox_patinetes.get():               self.buttonPatinetes.invoke()
+            if self.checkbox_agrupar_patinetes.get():       self.buttonAgruparPatinetes.invoke()
+            if self.checkbox_centroides_patinetes.get():    self.buttonCentroidesPatinetes.invoke()
         elif cambiado == 'demanda bicicletas':
             self.demanda_bicicletas = self.cargados_demanda_bicicletas[self.selected_archivo_solicitudes_bicicletas.get()][0]
             #self.ventana_informativa()
             self.ventana_gestor_demanda_bicicletas.destroy()
+
+            self.borrar_mapacalor()
+            if self.checkbox_demanda_bicicletas.get():      self.buttonDemandaBicicletas.invoke()
         elif cambiado == 'demanda patinetes':
             self.demanda_patinetes = self.cargados_demanda_patinetes[self.selected_archivo_solicitudes_patinetes.get()][0]
             #self.ventana_informativa()
             self.ventana_gestor_demanda_patinetes.destroy()
 
+            self.borrar_mapacalor()
+            if self.checkbox_demanda_patinetes.get():       self.buttonDemandaPatinetes.invoke()
+
     def selector_fecha(self):
+        #Comprobacion limite
+        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
+            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+            return 
+        
         self.ventana_fecha = Toplevel(self.frame_mapa)
         self.ventana_fecha.title("Entrada de Mapa de Calor")
 
@@ -1680,6 +1727,12 @@ class FormMapaDesign():
         ventana_info.mainloop()
 
     def ventana_datos_aleatorios(self, tipo):
+        #Comprobacion limite
+        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
+            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
+            return 
+        
         self.ventana_aleatorios = Toplevel(self.frame_mapa)
         self.ventana_aleatorios.title("Generación de datos aleatorios")
 
@@ -1755,17 +1808,17 @@ class FormMapaDesign():
             return
 
         if tipo == 'estaciones':
-            nombre_aleatorios = 'estaciones_aleatorios_'
+            nombre_aleatorios = 'estaciones_'
             if seleccionado.get() == 'est_num_bicicletas':
-                nombre_aleatorios+=f'num_bicicletas_{self.num_archivos_aleatorios_est}'
+                nombre_aleatorios+=f'num_bicicletas_aleatorio'
                 self.num_archivos_aleatorios_est+=1
                 datos = utilDatos.generar_aleatorios_estaciones_num_bicicletas(self.estaciones)
             elif seleccionado.get() == 'est_uniforme':
-                nombre_aleatorios+=f'uniforme_{self.num_archivos_aleatorios_est}'
+                nombre_aleatorios+=f'uniformes'
                 self.num_archivos_aleatorios_est+=1
                 datos = utilDatos.generar_aleatorios_estaciones_uniformes(len(self.estaciones)-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
             elif seleccionado.get() == 'est_centrado':
-                nombre_aleatorios+=f'centrado_{self.num_archivos_aleatorios_est}'
+                nombre_aleatorios+=f'centradas'
                 self.num_archivos_aleatorios_est+=1
                 datos = utilDatos.generar_aleatorios_estaciones_centrados(len(self.estaciones)-1, self.maxLon, self.minLon, self.maxLat, self.minLat)
             self.cargados_estaciones[nombre_aleatorios] = [datos, False]
@@ -1775,17 +1828,17 @@ class FormMapaDesign():
             self.gestor_estaciones()
         
         elif tipo == 'bicicletas':
-            nombre_aleatorios = 'bicicletas_aleatorias_'
+            nombre_aleatorios = 'bicicletas_'
             if seleccionado.get() == 'bic_estaciones':
-                nombre_aleatorios+=f'estaciones_{self.num_archivos_aleatorios_bic}'
+                nombre_aleatorios+=f'generadas_estaciones'
                 self.num_archivos_aleatorios_bic+=1
                 datos = utilDatos.generar_aleatorios_flotantes_estaciones(self.estaciones)
             elif seleccionado.get() == 'bic_uniforme':
-                nombre_aleatorios+=f'uniforme_{self.num_archivos_aleatorios_bic}'
+                nombre_aleatorios+=f'uniformes_{num_transportes.get()}'
                 self.num_archivos_aleatorios_bic+=1
                 datos = utilDatos.generar_aleatorios_flotantes_uniforme(num_transportes, self.maxLon, self.minLon, self.maxLat, self.minLat)
             elif seleccionado.get() == 'bic_centrado':
-                nombre_aleatorios+=f'centrado_{self.num_archivos_aleatorios_bic}'
+                nombre_aleatorios+=f'centradas_{num_transportes.get()}'
                 self.num_archivos_aleatorios_bic+=1
                 datos = utilDatos.generar_aleatorios_flotantes_centrado(num_transportes, self.maxLon, self.minLon, self.maxLat, self.minLat)
             self.cargados_bicicletas[nombre_aleatorios] = [datos, False]
@@ -1796,17 +1849,17 @@ class FormMapaDesign():
             self.gestor_bicicletas()
 
         elif tipo == 'patinetes':
-            nombre_aleatorios = 'patinetes_aleatorios_'
+            nombre_aleatorios = 'patinetes_'
             if seleccionado.get() == 'pat_estaciones':
-                nombre_aleatorios+=f'estaciones_{self.num_archivos_aleatorios_pat}'
+                nombre_aleatorios+=f'generados_estaciones'
                 self.num_archivos_aleatorios_pat+=1
                 datos = utilDatos.generar_aleatorios_flotantes_estaciones(self.estaciones)
             elif seleccionado.get() == 'pat_uniforme':
-                nombre_aleatorios+=f'uniforme_{self.num_archivos_aleatorios_pat}'
+                nombre_aleatorios+=f'uniformes_{num_transportes.get()}'
                 self.num_archivos_aleatorios_pat+=1
                 datos = utilDatos.generar_aleatorios_flotantes_uniforme(num_transportes, self.maxLon, self.minLon, self.maxLat, self.minLat)
             elif seleccionado.get() == 'pat_centrado':
-                nombre_aleatorios+=f'centrado_{self.num_archivos_aleatorios_pat}'
+                nombre_aleatorios+=f'centrados_{num_transportes.get()}'
                 self.num_archivos_aleatorios_pat+=1
                 datos = utilDatos.generar_aleatorios_flotantes_centrado(num_transportes, self.maxLon, self.minLon, self.maxLat, self.minLat)
             self.cargados_patinetes[nombre_aleatorios] = [datos, False]
@@ -1891,13 +1944,17 @@ class FormMapaDesign():
 
     def mostrar_mapa(self):
         self.borrar_mapacalor()
-        self.actualizar_leyenda_mapa()
         self.clasificacion = self.tipo_mapa.get()
+        self.actualizar_leyenda_mapa()
+        self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
 
-    def confirmar_tipo(self):        
+    def confirmar_tipo(self):
         self.borrar_mapacalor()
-        self.checkbox_mapa_estaciones.set(False)
+        if self.checkbox_mapa_estaciones.get(): self.buttonMostrarMapaEstaciones.invoke()
+        if self.checkbox_mapa_bicicletas.get(): self.buttonMostrarMapaBicicletas.invoke()
+        if self.checkbox_mapa_patinetes.get(): self.buttonMostrarMapaPatinetes.invoke()
+
         self.checkbox_mapa_bicicletas.set(False)
         self.checkbox_mapa_patinetes.set(False)        
         self.clasificacion = self.tipo_mapa.get()
@@ -1920,24 +1977,28 @@ class FormMapaDesign():
         self.borrar_mapacalor()
         self.clasificacion = "Demanda Bicicletas"
         self.actualizar_leyenda_mapa()
+        self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
 
     def mostrar_mapa_demanda_patinetes(self):
         self.borrar_mapacalor()
         self.clasificacion = "Demanda Patinetes"
         self.actualizar_leyenda_mapa()
+        self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
 
     def mostrar_mapa_oferta_demanda_bicicletas(self):
         self.borrar_mapacalor()
         self.clasificacion = "Oferta-Demanda Bicicletas"
         self.actualizar_leyenda_mapa()
+        self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
 
     def mostrar_mapa_oferta_demanda_patinetes(self):
         self.borrar_mapacalor()
         self.clasificacion = "Oferta-Demanda Patinetes"
         self.actualizar_leyenda_mapa()
+        self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
 
     def borrar_mapacalor(self):
@@ -1951,12 +2012,11 @@ class FormMapaDesign():
             for widget in self.frame_leyenda_mapa.winfo_children():
                 widget.destroy()
             self.frame_leyenda_mapa.place_forget()
+        if hasattr(self, 'clasificacion'):
+            self.clasificacion = ''
+        self.actualizar_leyenda_archivos_seleccionados()
     
     def modificar_cuadricula(self):
-        """if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_bicicletas.get()==False and self.checkbox_mapa_patinetes.get()):
-            messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
-            return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Modificación del Tamaño de la Cuadrícula")
 
@@ -1973,11 +2033,6 @@ class FormMapaDesign():
         
         if self.seleccionado_metros.get() == '':
             self.seleccionado_metros.set(500)
-        """elif hasattr(self, 'n'):
-            if self.n == 44: self.seleccionado_metros.set(500)
-            elif self.n == 54: self.seleccionado_metros.set(400)
-            elif self.n == 72: self.seleccionado_metros.set(300)
-            elif self.n == 108: self.seleccionado_metros.set(200)"""
         
 
         # Crear RadioButtons
@@ -1999,10 +2054,6 @@ class FormMapaDesign():
         self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
 
     def modificar_influencia(self):
-        """if not hasattr(self, 'n') or (self.checkbox_mapa_estaciones.get()==False and \
-        self.checkbox_mapa_bicicletas.get()==False and self.checkbox_mapa_patinetes.get()==False):
-            messagebox.showwarning("Advertencia", "Debe seleccionar lo que desea incluir en el mapa de calor")
-            return"""
         self.ventana_mod = Toplevel(self.frame_mapa)
         self.ventana_mod.title("Modificación de la Influencia de Zonas Vecinas")
 
@@ -2031,23 +2082,18 @@ class FormMapaDesign():
 
         self.ventana_mod.protocol("WM_DELETE_WINDOW", self.ventana_mod.destroy)
 
-    def enviar_tamano_cuadricula(self):        
+    def enviar_tamano_cuadricula(self):
+        if self.checkbox_mapa_estaciones.get(): self.buttonMostrarMapaEstaciones.invoke()
+        if self.checkbox_mapa_bicicletas.get(): self.buttonMostrarMapaBicicletas.invoke()
+        if self.checkbox_mapa_patinetes.get(): self.buttonMostrarMapaPatinetes.invoke()
+
         self.borrar_mapacalor()
         self.ventana_mod.destroy()
 
-        """
-        metros = float(self.seleccionado_metros.get())
-        lon_objetivo = metros/(111320*math.cos(40.4))
-        lat_objetivo = metros/111320 
-        n_lon = abs(self.maxLon - self.minLon) / lon_objetivo
-        n_lat = abs(self.maxLat - self.minLat) / lat_objetivo
-        
-        self.n = math.ceil(max(n_lon, n_lat))"""
-
-        if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_bicicletas.get()==False \
+        """if self.checkbox_mapa_estaciones.get()==False and self.checkbox_mapa_bicicletas.get()==False \
             and self.checkbox_mapa_patinetes.get()==False \
             and self.clasificacion != 'Demanda Bicicletas' and self.clasificacion != 'Demanda Patinetes':
-            return
+            return"""
         
         if self.seleccionado_metros.get() == 500: self.n = 44
         elif self.seleccionado_metros.get() == 400: self.n = 54
@@ -2059,7 +2105,11 @@ class FormMapaDesign():
 
         self.pintar_mapa()
 
-    def enviar_influencia(self):        
+    def enviar_influencia(self):
+        if self.checkbox_mapa_estaciones.get(): self.buttonMostrarMapaEstaciones.invoke()
+        if self.checkbox_mapa_bicicletas.get(): self.buttonMostrarMapaBicicletas.invoke()
+        if self.checkbox_mapa_patinetes.get(): self.buttonMostrarMapaPatinetes.invoke()
+        
         self.borrar_mapacalor()
         self.ventana_mod.destroy()
 
@@ -2106,16 +2156,6 @@ class FormMapaDesign():
                                     command=lambda event: utilInfo.show_info_estacion(self, event))
             if ocupacion: self.poligonos_estaciones_ocupacion.append(poligono)
             else: self.poligonos_estaciones.append(poligono)
-
-    def boton_fijas(self, checkbox_fijas):
-        if checkbox_fijas.get() == True:
-            self.pintar_estaciones()
-            self.actualizar_leyenda_transportes()
-        elif checkbox_fijas.get() == False:
-            self.actualizar_leyenda_transportes()
-            utilInfo.close_infoest(self)
-            for poligono in self.poligonos_estaciones:
-                poligono.delete()
       
     def pintar_bicicletas(self):
         if self.checkbox_agrupar_bicicletas.get():
@@ -2168,7 +2208,8 @@ class FormMapaDesign():
                                                 outline_color="#991010",
                                                 border_width=5,
                                                 name="Outlier",
-                                                command=lambda _, i=i, centroide=centroide: utilInfo.show_info_centroide(self, i, centroide))
+                                                command=lambda _, i=i, centroide=centroide, transporte='b':\
+                                                    utilInfo.show_info_centroide(self, i, centroide, transporte))
             self.poligonos_centroides_bicicletas.append(poligono)
 
     def pintar_patinetes_clusters_kmeans(self):
@@ -2203,7 +2244,9 @@ class FormMapaDesign():
             poligono = self.labelMap.set_polygon(coordinates,
                                                 outline_color="#d87900",
                                                 border_width=5,
-                                                name="Outlier")
+                                                name="Outlier",
+                                                command=lambda _, i=i, centroide=centroide, transporte='p': \
+                                                    utilInfo.show_info_centroide(self, i, centroide, transporte))
             self.poligonos_centroides_patinetes.append(poligono)
 
     def pintar_patinetes(self):
@@ -2300,15 +2343,69 @@ class FormMapaDesign():
             self.frame_leyenda_mapa = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
         
         utilInfo.show_leyenda_mapa(self.frame_leyenda_mapa, tipo_mapa=self.clasificacion, influencia=self.influencia, cuadricula=self.seleccionado_metros.get())
-        #show_leyenda_mapa(frame_leyenda_mapa, tipo_mapa, influencia='', cuadricula='500')
-        if self.clasificacion == 'Llenado':
-            self.frame_leyenda_mapa.place(relx=0.1, rely=0.03)
-        elif self.clasificacion == 'Oferta-Demanda Bicicletas' or self.clasificacion == 'Oferta-Demanda Patinetes':
-            self.frame_leyenda_mapa.place(relx=0.73, rely=0.9)
-        elif self.clasificacion == 'Demanda Bicicletas' or self.clasificacion == 'Demanda Patinetes':
-            self.frame_leyenda_mapa.place(relx=0.75, rely=0.03)
+        
+        if self.clasificacion == 'Demanda Patinetes' or self.clasificacion == 'Demanda Bicicletas':
+            self.frame_leyenda_mapa.place(relx=0.77, rely=0.03)
+        elif self.clasificacion == 'Oferta-Demanda Patinetes' or self.clasificacion == 'Oferta-Demanda Bicicletas':
+            self.frame_leyenda_mapa.place(relx=0.73, rely=0.03)
         else:
-            self.frame_leyenda_mapa.place(relx=0.8, rely=0.03)
+            if self.influencia == 'con': self.frame_leyenda_mapa.place(relx=0.8, rely=0.03)
+            elif self.influencia == 'sin': self.frame_leyenda_mapa.place(relx=0.77, rely=0.03)
+
+    def actualizar_leyenda_archivos_seleccionados(self):
+        if not self.checkbox_fijas.get() and                    not self.checkbox_ocupacion.get() and  not self.checkbox_mapa_estaciones.get() and\
+            not self.checkbox_bicicletas.get() and              not self.checkbox_agrupar_bicicletas.get() and \
+            not self.checkbox_centroides_bicicletas.get() and   not self.checkbox_mapa_bicicletas.get() and \
+            not self.checkbox_patinetes.get() and               not self.checkbox_agrupar_patinetes.get() and \
+            not self.checkbox_centroides_patinetes.get() and    not self.checkbox_mapa_patinetes.get() and \
+            not self.checkbox_demanda_bicicletas.get() and      not self.checkbox_demanda_patinetes.get() and \
+            self.clasificacion != 'Demanda Bicicletas' and      self.clasificacion != 'Demanda Patinetes' and \
+            self.clasificacion != 'Oferta-Demanda Bicicletas' and self.clasificacion != 'Oferta-Demanda Patinetes' and \
+            hasattr(self, 'frame_leyenda_archivos'):
+            if self.frame_leyenda_archivos.winfo_ismapped():
+                if self.frame_leyenda_archivos.winfo_children():
+                    for widget in self.frame_leyenda_archivos.winfo_children():
+                        widget.destroy()
+            self.frame_leyenda_archivos.place_forget()
+            return
+        
+        if hasattr(self, 'frame_leyenda_archivos') and self.frame_leyenda_archivos is not None:
+            if self.frame_leyenda_archivos.winfo_ismapped():
+                if self.frame_leyenda_archivos.winfo_children():
+                    for widget in self.frame_leyenda_archivos.winfo_children():
+                        widget.destroy()
+        else:
+            self.frame_leyenda_archivos = Frame(self.panel_principal, bg="white", borderwidth=1, relief="solid")
+
+        if self.checkbox_fijas.get() or self.checkbox_ocupacion.get() or self.checkbox_mapa_estaciones.get() \
+            or self.clasificacion == 'Oferta-Demanda Bicicletas':
+            archivo_estaciones = self.selected_archivo_estaciones.get()
+        else: archivo_estaciones = ''
+
+        if self.checkbox_bicicletas.get() or self.checkbox_agrupar_bicicletas.get() \
+            or self.checkbox_centroides_bicicletas.get() or self.checkbox_mapa_bicicletas.get() \
+            or self.clasificacion == 'Oferta-Demanda Bicicletas':
+            archivo_bicicletas = self.selected_archivo_bicicletas.get()
+        else: archivo_bicicletas = ''
+
+        if self.checkbox_patinetes.get() or self.checkbox_agrupar_patinetes.get() \
+            or self.checkbox_centroides_patinetes.get() or self.checkbox_mapa_patinetes.get() \
+            or self.clasificacion == 'Oferta-Demanda Patinetes':
+            archivo_patinetes = self.selected_archivo_patinetes.get()
+        else: archivo_patinetes = ''
+
+        if self.checkbox_demanda_bicicletas.get() or self.clasificacion == 'Demanda Bicicletas' or self.clasificacion == 'Oferta-Demanda Bicicletas':
+            archivo_demanda_bicicletas = self.selected_archivo_solicitudes_bicicletas.get()
+        else: archivo_demanda_bicicletas = ''
+
+        if self.checkbox_demanda_patinetes.get() or self.clasificacion == 'Demanda Patinetes' or self.clasificacion == 'Oferta-Demanda Patinetes':
+            archivo_demanda_patinetes = self.selected_archivo_solicitudes_patinetes.get()
+        else: archivo_demanda_patinetes = ''
+
+        utilInfo.show_archivo_seleccionado(self.frame_leyenda_archivos, archivo_estaciones, archivo_bicicletas, \
+                                archivo_patinetes, archivo_demanda_bicicletas, archivo_demanda_patinetes)
+        
+        self.frame_leyenda_archivos.place(relx=0.06, rely=0.03)
 
     def borrar_demanda_bicicletas(self):
         if self.poligonos_demanda_bicicletas != []:
@@ -2333,75 +2430,113 @@ class FormMapaDesign():
             for poligono in self.poligonos_demanda_patinetes:
                 poligono.delete()
 
+    def boton_fijas(self, checkbox_fijas):
+        if checkbox_fijas.get() == True:
+            self.pintar_estaciones()
+            self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
+        elif checkbox_fijas.get() == False:
+            self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
+            utilInfo.close_infoest(self)
+            for poligono in self.poligonos_estaciones:
+                poligono.delete()
+
     def boton_bicicletas(self, checkbox_bicicletas, clusters=False):
+        if self.checkbox_ocupacion.get(): self.buttonEstacionesFijas.invoke()
         if checkbox_bicicletas.get() and not clusters:
             self.pintar_bicicletas()
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif checkbox_bicicletas.get() and clusters:
             self.pintar_bicicletas_clusters_kmeans()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif not checkbox_bicicletas.get() and clusters:
             for poligono in self.poligonos_bicicletas_clusters:
                 poligono.delete()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif not checkbox_bicicletas.get() and not clusters:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
             for poligono in self.poligonos_bicicletas:
                 poligono.delete()
     
     def boton_fijas_ocupacion(self, checkbox_ocupacion):
         if checkbox_ocupacion.get() == True:
             self.pintar_estaciones(ocupacion=True)
+            self.actualizar_leyenda_archivos_seleccionados()
         elif checkbox_ocupacion.get() == False:
             self.frame_leyenda_ocupacion.destroy()
+            self.actualizar_leyenda_archivos_seleccionados()
             utilInfo.close_infoest(self)
             for poligono in self.poligonos_estaciones_ocupacion:
                 poligono.delete()
     
     def boton_centroides_bicicletas(self, checkbox_centroides):
+        if self.checkbox_ocupacion.get(): self.buttonEstacionesFijas.invoke()
         if checkbox_centroides.get() == True:
             self.pintar_centroides_bicicletas()
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif checkbox_centroides.get() == False:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
+            utilInfo.close_infocentroide(self)
             for poligono in self.poligonos_centroides_bicicletas:
                 poligono.delete()
 
     def boton_patinetes(self, checkbox_patinetes, clusters=False):
+        if self.checkbox_ocupacion.get(): self.buttonEstacionesFijas.invoke()
         if checkbox_patinetes.get() and not clusters:
             self.pintar_patinetes()
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif checkbox_patinetes.get() and clusters:
             self.pintar_patinetes_clusters_kmeans()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif not checkbox_patinetes.get() and clusters:
             for poligono in self.poligonos_patinetes_clusters:
                 poligono.delete()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif not checkbox_patinetes.get() and not clusters:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
             for poligono in self.poligonos_patinetes:
                 poligono.delete()
 
     def boton_centroides_patinetes(self, checkbox_centroides):
+        if self.checkbox_ocupacion.get(): self.buttonEstacionesFijas.invoke()
         if checkbox_centroides.get() == True:
             self.pintar_centroides_patinetes()
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
         elif checkbox_centroides.get() == False:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
+            utilInfo.close_infocentroide(self)
             for poligono in self.poligonos_centroides_patinetes:
                 poligono.delete()
 
     def boton_demanda_bicicletas(self, checkbox_demanda_bicicletas):
+        if self.checkbox_ocupacion.get(): self.buttonEstacionesFijas.invoke()
         if checkbox_demanda_bicicletas.get() == True:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
             self.pintar_demanda_bicicletas()
         elif checkbox_demanda_bicicletas.get() == False:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
             self.borrar_demanda_bicicletas()
     
     def boton_demanda_patinetes(self, checkbox_demanda_patinetes):
+        if self.checkbox_ocupacion.get(): self.buttonEstacionesFijas.invoke()
         if checkbox_demanda_patinetes.get() == True:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
             self.pintar_demanda_patinetes()
         elif checkbox_demanda_patinetes.get() == False:
             self.actualizar_leyenda_transportes()
+            self.actualizar_leyenda_archivos_seleccionados()
             self.borrar_demanda_patinetes()
 def anadir_mapa(self):
     self.labelMap=tkintermapview.TkinterMapView(self.frame_mapa, width=900, height=700, corner_radius=0)

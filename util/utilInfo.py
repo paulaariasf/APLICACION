@@ -9,9 +9,13 @@ def close_infozona(form_mapa):
         form_mapa.pol_seleccion.delete()
     if hasattr(form_mapa, 'infozona_frame'):
         form_mapa.infozona_frame.destroy()
+    if hasattr(form_mapa, 'infoest_frame') and form_mapa.infoest_frame.winfo_exists(): 
+        form_mapa.infoest_frame.place(x=800, y=500)
 
 def show_info_zona(form_mapa, coords):
     close_infozona(form_mapa)
+
+    if hasattr(form_mapa, 'infoest_frame') and form_mapa.infoest_frame.winfo_exists(): form_mapa.infoest_frame.place(x=600, y=500)
 
     form_mapa.infozona_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
     form_mapa.infozona_frame.place(x=815, y=475)
@@ -47,9 +51,27 @@ def show_info_zona(form_mapa, coords):
             texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de estaciones:{form_mapa.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {form_mapa.dic_mapa_calor['cantidades'][zona-1]}/{form_mapa.dic_mapa_calor['capacidades'][zona-1]}: {(100*(form_mapa.dic_mapa_calor['cantidades'][zona-1]/form_mapa.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
     
     elif form_mapa.clasificacion == "Huecos":
-        texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de huecos libres:{form_mapa.dic_mapa_calor['cantidades'][zona-1]} de {form_mapa.dic_mapa_calor['capacidades'][zona-1]}"
+        texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de huecos libres: {form_mapa.dic_mapa_calor['cantidades'][zona-1]} de {form_mapa.dic_mapa_calor['capacidades'][zona-1]}"
     
     elif form_mapa.clasificacion == "Demanda Bicicletas":
+        texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
+        #texto+=f"Número de bicicletas totales:{form_mapa.dic_mapa_calor['cantidades'][zona-1]}\n"
+        texto+=f"Número de solicitudes: {form_mapa.dic_mapa_calor['demanda_bicicletas'][zona-1]}\n"
+        #bicicletas_disponibles = form_mapa.dic_mapa_calor['cantidades'][zona-1]
+        #solicitudes =  form_mapa.dic_mapa_calor['demanda_bicicletas'][zona-1]
+        #factor_llenado=100*(bicicletas_disponibles-solicitudes)/(bicicletas_disponibles+solicitudes+1)
+        #texto+=f"Oferta-demanda bicicletas: {factor_llenado:.2f}"
+    
+    elif form_mapa.clasificacion == "Demanda Patinetes":
+        texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
+        #texto+=f"Número de patinetes totales:{form_mapa.dic_mapa_calor['cantidades'][zona-1]}\n"
+        texto+=f"Número de solicitudes: {form_mapa.dic_mapa_calor['demanda_patinetes'][zona-1]}\n"
+        #patinetes_disponibles = form_mapa.dic_mapa_calor['cantidades'][zona-1]
+        #solicitudes =  form_mapa.dic_mapa_calor['demanda_patinetes'][zona-1]
+        #factor_llenado=100*(patinetes_disponibles-solicitudes)/(patinetes_disponibles+solicitudes+1)
+        #texto+=f"Oferta-demanda patinetes: {factor_llenado:.2f}"
+
+    elif form_mapa.clasificacion == "Oferta-Demanda Bicicletas":
         texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
         texto+=f"Número de bicicletas totales:{form_mapa.dic_mapa_calor['cantidades'][zona-1]}\n"
         texto+=f"Número de solicitudes: {form_mapa.dic_mapa_calor['demanda_bicicletas'][zona-1]}\n"
@@ -58,7 +80,7 @@ def show_info_zona(form_mapa, coords):
         factor_llenado=100*(bicicletas_disponibles-solicitudes)/(bicicletas_disponibles+solicitudes+1)
         texto+=f"Oferta-demanda bicicletas: {factor_llenado:.2f}"
     
-    elif form_mapa.clasificacion == "Demanda Patinetes":
+    elif form_mapa.clasificacion == "Oferta-Demanda Patinetes":
         texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\n"
         texto+=f"Número de patinetes totales:{form_mapa.dic_mapa_calor['cantidades'][zona-1]}\n"
         texto+=f"Número de solicitudes: {form_mapa.dic_mapa_calor['demanda_patinetes'][zona-1]}\n"
@@ -115,10 +137,12 @@ def show_info_estacion(form_mapa, polygon):
     close_infoest(form_mapa)
 
     form_mapa.infoest_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
-    form_mapa.infoest_frame.place(x=850, y=400)
+    if hasattr(form_mapa, 'infozona_frame') and form_mapa.infozona_frame.winfo_exists(): form_mapa.infoest_frame.place(x=600, y=500)
+    else: form_mapa.infoest_frame.place(x=800, y=500)
+    # x=815, y=475
 
     id, coord_estacion = polygon.name
-    texto_mostrar = dividir_string_por_longitud(form_mapa.estaciones[id]['name'], longitud_max_linea=25)
+    texto_mostrar = dividir_string_por_longitud(form_mapa.estaciones[id]['name'], longitud_max_linea=22)
     info_label = Label(form_mapa.infoest_frame, text=f"Estación seleccionada:\n{texto_mostrar} \n Cantidad de bicicletas: {form_mapa.estaciones[id]['bike_bases']} \n Capacidad total: {form_mapa.estaciones[id]['bike_bases'] + form_mapa.estaciones[id]['free_bases']}", bg="white")
     info_label.pack(side="left", padx=5, pady=5)
 
@@ -133,16 +157,23 @@ def close_infocentroide(form_mapa):
     if hasattr(form_mapa, 'infocentroide_frame'):
         form_mapa.infocentroide_frame.destroy()
 
-def show_info_centroide(form_mapa, id, centroide):
-    cluster_counts = dict(Counter(form_mapa.clustering_bicicletas[form_mapa.selected_archivo_bicicletas.get()]['clusters']))
-
+def show_info_centroide(form_mapa, id, centroide, transporte):
     close_infocentroide(form_mapa)
 
     form_mapa.infocentroide_frame = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
     form_mapa.infocentroide_frame.place(x=800, y=550)
     
-    info_label = Label(form_mapa.infocentroide_frame, text=f"Cantidad de bicicletas en el cluster: {cluster_counts[id]}", bg="white")
-    info_label.pack(side="left", padx=5, pady=5)
+    if transporte =='b':
+        cluster_counts = dict(Counter(form_mapa.clustering_bicicletas[form_mapa.selected_archivo_bicicletas.get()]['clusters']))
+        
+        info_label = Label(form_mapa.infocentroide_frame, text=f"Cantidad de bicicletas en el cluster: {cluster_counts[id]}", bg="white")
+        info_label.pack(side="left", padx=5, pady=5)
+
+    elif transporte=='p':
+        cluster_counts = dict(Counter(form_mapa.clustering_patinetes[form_mapa.selected_archivo_patinetes.get()]['clusters']))
+        
+        info_label = Label(form_mapa.infocentroide_frame, text=f"Cantidad de patinetes en el cluster: {cluster_counts[id]}", bg="white")
+        info_label.pack(side="left", padx=5, pady=5)
 
     #Añadir marcador en el clúster seleccionado
     form_mapa.centroide_seleccion = form_mapa.labelMap.set_marker(centroide[0], centroide[1])
@@ -242,8 +273,34 @@ def show_leyenda_mapa(frame_leyenda_mapa, tipo_mapa, influencia='', cuadricula='
         Label(frame_leyenda_mapa, text=f' Influencia de vecinos: {influencia}', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
         Label(frame_leyenda_mapa, text=f' Tamaño de cuadrícula: {cuadricula}m', font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
 
-"""form_mapa.frame_leyenda_colores = Frame(form_mapa.panel_principal, bg="white", borderwidth=1, relief="solid")
-    form_mapa.frame_leyenda_colores.place(x=30, y=430)
+def show_archivo_seleccionado(frame_archivos, archivo_estaciones='', archivo_bicicletas='', archivo_patinetes='', \
+    archivo_demanda_bicicletas='', archivo_demanda_patinetes=''):
+    if frame_archivos.winfo_children():
+        for widget in frame_archivos.winfo_children():
+            widget.destroy()
+    texto=''
+    if archivo_estaciones != '':
+        if archivo_estaciones == 'Tomar datos en tiempo real':
+            texto+=f'\n\uf3c5 Estaciones: {archivo_estaciones.replace("_", " ")}'
+        elif archivo_estaciones[-5:] == '.json': texto+=f'\n\uf3c5 Estaciones: {archivo_estaciones[11:-5].replace("_", " ")}'
+        else: texto+=f'\n\uf3c5 Estaciones: {archivo_estaciones[11:].replace("_", " ")}'
+    if archivo_bicicletas != '':
+        if archivo_bicicletas[-5:] == '.json': texto+=f'\n Bicicletas: {archivo_bicicletas[11:-5].replace("_", " ")}'
+        else: texto+=f'\n Bicicletas: {archivo_bicicletas[11:].replace("_", " ")}'
+    if archivo_patinetes != '':
+        if archivo_patinetes[-5:] == '.json': texto+=f'\n Patinetes: {archivo_patinetes[10:-5].replace("_", " ")}'
+        else: texto+=f'\n Patinetes: {archivo_patinetes[10:].replace("_", " ")}'
+    if archivo_demanda_bicicletas != '':
+        if archivo_demanda_bicicletas[-5:] == '.json': texto+=f'\n? Solicitudes: {archivo_demanda_bicicletas[12:-15].replace("_", " ")} bicicletas'
+        else: texto+=f'\n? Solicitudes: {archivo_demanda_bicicletas[12:-10].replace("_", " ")} bicicletas'
+    if archivo_demanda_patinetes != '':
+        if archivo_demanda_patinetes[-5:] == '.json': texto+=f'\n? Solicitudes: {archivo_demanda_patinetes[12:-15].replace("_", " ")} patinetes'
+        else: texto+=f'\n? Solicitudes: {archivo_demanda_patinetes[12:-9].replace("_", " ")} patinetes'
+    if archivo_estaciones != '' or archivo_bicicletas != '' or archivo_patinetes != '' or archivo_demanda_bicicletas != '' or archivo_demanda_patinetes != '':
+        texto = f'Archivos seleccionados:' + texto
+        Label(frame_archivos, text=texto, font=("FontAwesome", 10), bg="white", fg="black").pack(side="top")
 
-    texts = ['Estaciones fijas', 'Bicicletas', 'Estaciones virtuales bicicletas', 'Patinetes', 'Estaciones virtuales patinetes']
-    colors = ['blue', '#fe1a1a', '#991010', 'orange', '#d87900']"""
+        """Label(frame_archivos, text='Archivos seleccionados:', font=("FontAwesome", 10, "bold"), bg="white", fg="black").pack(side="top", pady=0)
+        Label(frame_archivos, text=texto, font=("FontAwesome", 10), bg="white", fg="black").pack(side="top", pady=0)"""
+    
+
