@@ -21,11 +21,11 @@
 
 ## Instalación y puesta en marcha
 
-Sigue los siguientes pasos para descargar e iniciar la aplicación en la máquina local:
+Deben seguirse los siguientes pasos para descargar e iniciar la aplicación en la máquina local:
 
 ### 1. Clonar el repositorio
 
-Primero, hay que clonar el repositorio y asegurarse de estar en la rama `main`:
+Primero, debe clonarse el repositorio desde la rama `main`:
 
 ```bash
 git clone https://github.com/paulaariasf/APLICACION.git
@@ -39,21 +39,21 @@ Es importante estar en la rama `main`, donde se encuentra la última versión es
 
 Se recomienda crear un environment para la instalación de las librerías, de manera que se mantenga en un entorno controlado y separado del resto de librerías instaladas en su equipo.
 
-- Instala la versión de Python 3.12.1 en el siguiente [link](https://www.python.org/downloads/release/python-3121/).
+- Instalar la versión de Python 3.12.1 en el siguiente [enlace](https://www.python.org/downloads/release/python-3121/).
 
-- Instala las librerías necesarias ejecutando:
+- Instalar las librerías necesarias ejecutando:
 ```bash
 pip install -r requirements.txt
 ```
 
-- También puedes instalar manualmente las librerías necesarias:
+- También pueden instalarse manualmente las librerías necesarias:
 
 ```bash
 pip install numpy pandas scikit-learn requests tkintermapview matplotlib Pillow
 ```
 
 ### 3. Instalar la fuente FontAwesome
-Esta fuente se ha utilizado para la correcta visualización de los iconos en la aplicación. Para ello, deberá seguir los siguientes pasos:
+Esta fuente se ha utilizado para la correcta visualización de los iconos en la aplicación. Para ello, deberán seguirse los siguientes pasos:
 - Descargar FontAwesome 6 Free for Desktop en el siguiente [enlace](https://fontawesome.com/v6/download)
 - Descomprimir el zip descargado
 - Instalar las fuentes haciendo clic en los archivos `.otf` de la carpeta `otfs` y haciendo clic en Instalar.
@@ -61,11 +61,11 @@ Esta fuente se ha utilizado para la correcta visualización de los iconos en la 
 
 ### 3. Ejecutar la aplicación
 
-Finalmente, hay que lanzar la aplicación con:
+Finalmente, debe lanzarse la aplicación con:
 ```bash
 python main.py
 ```
-Esto abrirá la interfaz gráfica de Link My City, donde podrás visualizar el mapa, gestionar datos y generar mapas de calor interactivos.
+Esto abrirá la interfaz gráfica de Link My City, donde podrá visualizarse el mapa, gestionar datos y generar mapas de calor interactivos.
 
 
 ## Estructura del proyecto
