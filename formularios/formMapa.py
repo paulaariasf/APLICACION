@@ -1119,8 +1119,6 @@ class FormMapaDesign():
             elif self.n == 108: self.alcance = 9
             if self.influencia == 'con':
                 self.dic_mapa_calor['cantidades_suavizadas'] = self.aplicar_gaussiana(self.dic_mapa_calor['cantidades'], self.alcance)
-        with open('diccionario_demanda.json', 'w', encoding='utf-8') as archivo:
-            json.dump(self.dic_mapa_calor, archivo, ensure_ascii=False, indent=4)
         
         colores = ["#FF3300", "#FF6600", "#FF9933", "#FFCC33", "#FFDD33", "#FFFF00", "#CCFF66", "#99FF66", "#66FF33", "#00FF00"]
         
