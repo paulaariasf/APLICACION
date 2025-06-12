@@ -5,48 +5,65 @@ from formularios.formMapa import FormMapaDesign
 
 class FormInicioDesign():
 
-    def __init__(self, panel_principal, logo, aplicacion_ancho, buttonMenuLateral, menuLateral):
+    def __init__(self, panel_principal, imagen, aplicacion_ancho, buttonMenuLateral, menuLateral):
         self.mapa = None
-        #Frames
-        barraSuperior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL, height=50)
-        barraSuperior.pack(side=TOP, fill=X, expand=True, pady=0)
+        # Cargar imágenes
+        self.logo = utilImagenes.leer_imagen("./imagenes/logo.PNG", (400, 400))
+
+        # Frames
+        barraSuperior = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL, height=60)
+        barraSuperior.pack(side=TOP, fill=X)
 
         frame_central = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)
-        frame_central.pack(side=TOP, fill="both", expand=True, pady=0)
+        frame_central.pack(side=TOP, fill=X, pady=0)
 
         frame_izq = Frame(frame_central, bg=COLOR_CUERPO_PRINCIPAL)
-        frame_izq.pack(side="left", fill="both", expand=True, padx=10, pady=0)
+        frame_izq.pack(side="left", fill="both",  padx=20)
 
         frame_dch = Frame(frame_central, bg=COLOR_CUERPO_PRINCIPAL)
-        frame_dch.pack(side="right", fill="both", expand=True, padx=10, pady=0)
+        frame_dch.pack(side="right", fill="both", expand=True, padx=5)
 
         frame_boton = Frame(panel_principal, bg=COLOR_CUERPO_PRINCIPAL)
         frame_boton.pack(side=TOP, fill=X)
 
-        #Titulo
-        labelTitulo = Label(barraSuperior, text="Visualización de datos de sistemas de transporte compartidos")
-        labelTitulo.config(fg="#1F71A9", font=("Roboto", 24, "bold"), bg=COLOR_CUERPO_PRINCIPAL, padx=10)
-        x_titulo=(aplicacion_ancho - labelTitulo.winfo_reqwidth())/2
-        labelTitulo.place(x=x_titulo, y=0)
+        # Título
+        labelTitulo = Label(barraSuperior, text="Bienvenido a LinkMyCity", 
+                            fg="#0057A0", font=("Segoe UI", 30, "bold"), bg=COLOR_CUERPO_PRINCIPAL)
+        labelTitulo.pack(side="top", pady=10)
 
-        #Texto principal
-        labelTexto=Label(frame_izq, anchor="w", text="Bienvenido a la aplicación de transporte \n compartido. En esta aplicación podrá apreciar \n mediante distintos mapas de calor el exceso o \n falta   de   diferentes   medios   de   transporte:\n ● Estaciones fijas\n ● Bicicletas flotantes\n ● Combinación de ambas\n ● Demanda de estos recursos\n En el botón de abajo podrá abrir el mapa donde \nse podrán visualizar los diferentes medios de transporte")
-        labelTexto.config(fg="#1F71A9", font=("Roboto", 18), bg=COLOR_CUERPO_PRINCIPAL, padx=10, anchor="w")
-        labelTexto.pack(side="left", fill="y", expand=False)
+        # Texto principal
+        texto_bienvenida = (
+            "Bienvenido a la aplicación de transporte compartido.\n\n"
+            "En esta aplicación podrá realizar un análisis visual\n"
+            "de transportes compartidos en la ciudad de Madrid:\n\n"
+            "   • Estaciones fijas\n"
+            "   • Bicicletas flotantes\n"
+            "   • Patinetes flotantes\n"
+            "Podrá visualizar los transportes sobre el mapa de la ciudad,\n"
+            "generar mapas de calor interactivos y configurables e incluso\n"
+            "observar la relación entre oferta y demanda en la ciudad.\n\n"
+            "Pulse el botón de abajo para acceder al mapa interactivo."
+        )
 
-        #Imagen portada
-        labelPortada = Label(frame_dch, image=logo, bg=COLOR_CUERPO_PRINCIPAL)
-        labelPortada.place(x=0, y=0, relwidth=1, relheight=1)
+        labelTexto = Label(frame_izq, text=texto_bienvenida, anchor="w", justify="left",
+                        fg="#1F71A9", font=("Segoe UI", 16), bg=COLOR_CUERPO_PRINCIPAL)
+        labelTexto.pack(fill="both", expand=True)
 
+        # Imagen principal en el frame derecho
+        labelPortada = Label(frame_dch, image=self.logo, bg=COLOR_CUERPO_PRINCIPAL)
+        labelPortada.pack(expand=True)
+
+        # Función botón
         def abrir_pagina_principal():
             for widget in panel_principal.winfo_children():
                 widget.destroy()
             buttonMenuLateral.invoke()
             self.mapa = FormMapaDesign(panel_principal, menuLateral)
 
-        # Creación del botón
+        # Botón de inicio
         boton = Button(frame_boton, text="Pulse para iniciar", font=("Roboto", 16), 
-                       bg="#1F71A9", fg="white", width=20, command=abrir_pagina_principal)
+                    bg="#1F71A9", fg="white", width=20, command=abrir_pagina_principal)
         boton.pack(pady=10)
+
     def get_mapa(self):
         return self.mapa
