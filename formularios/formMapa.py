@@ -1976,6 +1976,7 @@ class FormMapaDesign():
     def mostrar_mapa_demanda_bicicletas(self):
         self.borrar_mapacalor()
         self.clasificacion = "Demanda Bicicletas"
+        self.seleccionado_metros.set(500)
         self.actualizar_leyenda_mapa()
         self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
@@ -1983,6 +1984,7 @@ class FormMapaDesign():
     def mostrar_mapa_demanda_patinetes(self):
         self.borrar_mapacalor()
         self.clasificacion = "Demanda Patinetes"
+        self.seleccionado_metros.set(500)
         self.actualizar_leyenda_mapa()
         self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
@@ -1990,6 +1992,7 @@ class FormMapaDesign():
     def mostrar_mapa_oferta_demanda_bicicletas(self):
         self.borrar_mapacalor()
         self.clasificacion = "Oferta-Demanda Bicicletas"
+        self.seleccionado_metros.set(500)
         self.actualizar_leyenda_mapa()
         self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
@@ -1997,6 +2000,7 @@ class FormMapaDesign():
     def mostrar_mapa_oferta_demanda_patinetes(self):
         self.borrar_mapacalor()
         self.clasificacion = "Oferta-Demanda Patinetes"
+        self.seleccionado_metros.set(500)
         self.actualizar_leyenda_mapa()
         self.actualizar_leyenda_archivos_seleccionados()
         self.pintar_mapa()
