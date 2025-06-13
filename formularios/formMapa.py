@@ -362,8 +362,9 @@ class FormMapaDesign():
         frame_opcion.pack(fill=X, pady=2)
 
         boton_principal = Button(frame_opcion, text='Mapa de Calor', bg=COLOR_MENU_LATERAL, fg = 'white', relief = FLAT,
-                                font=fontAwesome, command=lambda: self.toggle_submenu('Mapa de Calor'), width=18, height=0)
-        boton_principal.pack(fill=X, side=LEFT)
+                                font=fontAwesome, command=lambda: self.toggle_submenu('Mapa de Calor'))
+        boton_principal.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
+        boton_principal.pack(side=TOP)
         self.bindHoverEvents(boton_principal)
 
         frame_submenu = Frame(self.scrollable_frame, bg=COLOR_MENU_LATERAL)
@@ -568,7 +569,7 @@ class FormMapaDesign():
         frame_mapademanda.pack(side=TOP, fill=X, pady=2)
 
         self.buttonMapaDemanda = Button(frame_mapademanda, text="Mapa de Demanda", font=font.Font(family="FontAwesome", size=11, weight="bold"),
-                                    anchor='w', command=lambda: self.toggle_submenu('Mapa Demanda'))
+                                    command=lambda: self.toggle_submenu('Mapa Demanda'))
         self.buttonMapaDemanda.config(bd=0, bg=COLOR_MENU_LATERAL, fg="white", width=20, height=2)
         self.buttonMapaDemanda.pack(side=TOP)
         self.bindHoverEvents(self.buttonMapaDemanda)
@@ -1342,31 +1343,41 @@ class FormMapaDesign():
             self.ventana_gestor_demanda_patinetes.destroy()
             self.gestor_demanda_patinetes()
 
-    def cargar_archivo(self, tipo, visualizador=False):
-        #Comprobacion limite
-        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
-            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
-            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
-            return 
+    def cargar_archivo(self, tipo, visualizador=False): 
         
         ruta_relativa = os.path.join(os.getcwd(), "data")
         if tipo == 'estaciones':
+            if len(self.cargados_estaciones) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+                return
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de estaciones",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
         elif tipo == 'bicicletas':
+            if len(self.cargados_bicicletas) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+                return
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de bicicletas",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
         elif tipo == 'patinetes':
+            if len(self.cargados_patinetes) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+                return
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de patinetes",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
         elif tipo == 'demanda bicicletas':
+            if len(self.cargados_demanda_bicicletas) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+                return
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de demanda de bicicletas",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
         elif tipo == 'demanda patinetes':
+            if len(self.cargados_demanda_patinetes) == 5: 
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
+                return
             archivo = filedialog.askopenfilename(title="Cargar archivo JSON de demanda de bicicletas",
                                                  filetypes=[("Archivos JSON", "*.json")],
                                                  initialdir=ruta_relativa)
@@ -1504,8 +1515,7 @@ class FormMapaDesign():
 
     def generar_datos_demanda_bicicletas(self):
         #Comprobacion limite
-        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
-            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+        if len(self.cargados_demanda_bicicletas) == 5: 
             messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
             return
         self.solicitudes_bicicletas = simpledialog.askinteger("Entrada", "Introduce un número:")
@@ -1516,8 +1526,7 @@ class FormMapaDesign():
 
     def generar_datos_demanda_patinetes(self):
         #Comprobacion limite
-        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
-            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+        if len(self.cargados_demanda_patinetes) == 5: 
             messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
             return 
         self.solicitudes_patinetes = simpledialog.askinteger("Entrada", "Introduce un número:")
@@ -1582,13 +1591,12 @@ class FormMapaDesign():
 
     def selector_fecha(self):
         #Comprobacion limite
-        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
-            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
+        if len(self.cargados_estaciones) == 5: 
             messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de cargar uno nuevo')
             return 
         
         self.ventana_fecha = Toplevel(self.frame_mapa)
-        self.ventana_fecha.title("Entrada de Mapa de Calor")
+        self.ventana_fecha.title("Entrada Fecha")
 
         ancho_pantalla = self.ventana_fecha.winfo_screenwidth()
         alto_pantalla = self.ventana_fecha.winfo_screenheight()
@@ -1725,11 +1733,6 @@ class FormMapaDesign():
         ventana_info.mainloop()
 
     def ventana_datos_aleatorios(self, tipo):
-        #Comprobacion limite
-        if len(self.cargados_estaciones) == 5 or len(self.cargados_bicicletas) == 5 or len(self.cargados_patinetes) == 5 \
-            or len(self.cargados_demanda_bicicletas) == 5 or len(self.cargados_demanda_patinetes) == 5: 
-            messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
-            return 
         
         self.ventana_aleatorios = Toplevel(self.frame_mapa)
         self.ventana_aleatorios.title("Generación de datos aleatorios")
@@ -1746,16 +1749,25 @@ class FormMapaDesign():
         self.ventana_aleatorios.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
 
         if tipo == 'estaciones':
+            if len(self.cargados_estaciones) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
+                return
             seleccionado = StringVar(value='est_num_bicicletas')
             texto1, value1 = "Generar aleatoriamente el número de bicicletas por estación", 'est_num_bicicletas'
             texto2, value2 = "Generar la ubicación de las estaciones uniformemente", 'est_uniforme'
             texto3, value3 = "Generar la ubicación de las estaciones centrada", 'est_centrado'
         elif tipo == 'bicicletas':
+            if len(self.cargados_bicicletas) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
+                return
             seleccionado = StringVar(value='bic_estaciones')
             texto1, value1 = "Generar las bicicletas flotantes en función de los datos de las estaciones", 'bic_estaciones'
             texto2, value2 = "Generar la ubicación de las bicicletas uniformemente", 'bic_uniforme'
             texto3, value3 = "Generar la ubicación de las bicicletas centrada", 'bic_centrado'
         elif tipo == 'patinetes':
+            if len(self.cargados_patinetes) == 5:
+                messagebox.showwarning("Aviso",  'Límite de archivos alcanzado, debe borrar algún archivo antes de generar uno nuevo')
+                return
             seleccionado = StringVar(value='pat_estaciones')
             texto1, value1 = "Generar los patinetes en función de los datos de las estaciones", 'pat_estaciones'
             texto2, value2 = "Generar la ubicación de los patinetes uniformemente", 'pat_uniforme'
