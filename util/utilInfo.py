@@ -39,7 +39,7 @@ def show_info_zona(form_mapa, coords):
         if form_mapa.checkbox_mapa_estaciones.get():
             texto+=f"Número de estaciones:{form_mapa.dic_mapa_calor['num_estaciones'][zona-1]}\n"
             texto+=f"Cantidad bicicletas estaciones: {form_mapa.dic_mapa_calor['cantidades_estaciones'][zona-1]}\n"
-        if form_mapa.checkbox_mapa_flotantes.get():
+        if form_mapa.checkbox_mapa_bicicletas.get():
             texto+=f"Número de bicicletas flotantes:{form_mapa.dic_mapa_calor['cantidades_flotantes'][zona-1]}\n"
         if form_mapa.checkbox_mapa_patinetes.get():
             texto+=f"Número de patinetes:{form_mapa.dic_mapa_calor['cantidades_patinetes'][zona-1]}\n"
@@ -49,6 +49,7 @@ def show_info_zona(form_mapa, coords):
     elif form_mapa.clasificacion == "Llenado":
         if form_mapa.dic_mapa_calor['capacidades'] != 0:
             texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de estaciones:{form_mapa.dic_mapa_calor['num_estaciones'][zona-1]}\nCantidad de bicicletas: {form_mapa.dic_mapa_calor['cantidades'][zona-1]}/{form_mapa.dic_mapa_calor['capacidades'][zona-1]}: {(100*(form_mapa.dic_mapa_calor['cantidades'][zona-1]/form_mapa.dic_mapa_calor['capacidades'][zona-1])):.2f}%"
+        form_mapa.infozona_frame.place(x=815, y=515)
     
     elif form_mapa.clasificacion == "Huecos":
         texto=f"Zona seleccionada: {zona} de {form_mapa.n**2}\nNúmero de huecos libres: {form_mapa.dic_mapa_calor['cantidades'][zona-1]} de {form_mapa.dic_mapa_calor['capacidades'][zona-1]}"

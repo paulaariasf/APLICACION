@@ -13,7 +13,7 @@ def clusters_dbscan(eps, coordenadas):
 
 def clusters_kmeans(coordenadas):
     #optimal_k = indices_combinados(coordenadas)
-    kmeans = KMeans(n_clusters=670, init='k-means++',random_state=42)
+    kmeans = KMeans(n_clusters=608, init='k-means++',random_state=42)
     clusters = kmeans.fit_predict(coordenadas)
     centroides = kmeans.cluster_centers_
     sil_score = silhouette_score(coordenadas, clusters)
